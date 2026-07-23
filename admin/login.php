@@ -79,6 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Login
             </button>
         </form>
+        <!-- Tambahkan di bagian bawah form login, sebelum link kembali ke website -->
+<div class="text-center mt-4">
+    <p class="text-[#5C5C50] text-sm">
+        Belum punya akun? 
+        <a href="register.php" class="text-[#2F5233] font-semibold hover:underline transition duration-300">
+            Daftar di sini
+        </a>
+    </p>
+</div>
         <div class="text-center mt-4">
             <a href="<?= BASE_URL ?>" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300">
                 ← Kembali ke Website
