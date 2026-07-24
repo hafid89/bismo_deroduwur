@@ -6,11 +6,11 @@ if (!isLoggedIn()) {
     redirect(BASE_URL . 'admin/login.php');
 }
 
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM berita");
-$total_berita = $stmt->fetch()['total'];
-
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM galeri");
-$total_galeri = $stmt->fetch()['total'];
+$total_berita = getTotalBerita();
+$total_galeri = getTotalGaleri();
+$total_flora = getTotalFlora();
+$total_fauna = getTotalFauna();
+$total_peraturan = getTotalPeraturan();
 
 $stmt = $pdo->query("SELECT * FROM berita ORDER BY created_at DESC LIMIT 5");
 $recent_berita = $stmt->fetchAll();
@@ -49,6 +49,15 @@ $recent_berita = $stmt->fetchAll();
             <a href="galeri/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">
                 Kelola Galeri
             </a>
+            <a href="flora/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">
+                Kelola Flora
+            </a>
+            <a href="fauna/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">
+                Kelola Fauna
+            </a>
+            <a href="peraturan/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">
+                Kelola Peraturan
+            </a>
             <a href="logout.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300 text-red-300">
                 Logout
             </a>
@@ -64,45 +73,63 @@ $recent_berita = $stmt->fetchAll();
             </div>
 
             <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+                <div class="stat-card bg-white p-4 rounded-xl shadow-lg">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-[#5C5C50] text-sm">Total Berita</p>
-                            <p class="text-3xl font-bold text-[#2F5233]"><?= $total_berita ?></p>
+                            <p class="text-[#5C5C50] text-xs">Berita</p>
+                            <p class="text-2xl font-bold text-[#2F5233]"><?= $total_berita ?></p>
                         </div>
-                        <div class="w-12 h-12 bg-[#2F5233] rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-[#2F5233] rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
                             </svg>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg">
+                <div class="stat-card bg-white p-4 rounded-xl shadow-lg">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-[#5C5C50] text-sm">Total Galeri</p>
-                            <p class="text-3xl font-bold text-[#2F5233]"><?= $total_galeri ?></p>
+                            <p class="text-[#5C5C50] text-xs">Galeri</p>
+                            <p class="text-2xl font-bold text-[#2F5233]"><?= $total_galeri ?></p>
                         </div>
-                        <div class="w-12 h-12 bg-[#E0BE45] rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 bg-[#E0BE45] rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg">
+                <div class="stat-card bg-white p-4 rounded-xl shadow-lg">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-[#5C5C50] text-sm">Aksi Cepat</p>
-                            <a href="berita/tambah.php" class="inline-block mt-2 bg-[#2F5233] text-white px-4 py-2 rounded-lg hover:bg-[#4A7A4E] transition duration-300 text-sm">
-                                + Tambah Berita
-                            </a>
+                            <p class="text-[#5C5C50] text-xs">Flora</p>
+                            <p class="text-2xl font-bold text-[#2F5233]"><?= $total_flora ?></p>
                         </div>
-                        <div class="w-12 h-12 bg-[#A9784B] rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
+                        <div class="w-10 h-10 bg-[#3F7D4F] rounded-full flex items-center justify-center">
+                            <span class="text-white text-lg">🌿</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white p-4 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[#5C5C50] text-xs">Fauna</p>
+                            <p class="text-2xl font-bold text-[#2F5233]"><?= $total_fauna ?></p>
+                        </div>
+                        <div class="w-10 h-10 bg-[#C46F2A] rounded-full flex items-center justify-center">
+                            <span class="text-white text-lg">🐾</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card bg-white p-4 rounded-xl shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[#5C5C50] text-xs">Peraturan</p>
+                            <p class="text-2xl font-bold text-[#2F5233]"><?= $total_peraturan ?></p>
+                        </div>
+                        <div class="w-10 h-10 bg-[#A9784B] rounded-full flex items-center justify-center">
+                            <span class="text-white text-lg">📋</span>
                         </div>
                     </div>
                 </div>

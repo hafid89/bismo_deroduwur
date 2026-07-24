@@ -11,14 +11,20 @@ $galeri_preview = getGaleri(6);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gunung Bismo via Deroduwur - Basecamp Pendakian</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Swiper CSS (Untuk Carousel Hero) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
-        .hero-gradient {
-            background: linear-gradient(135deg, rgba(47,82,51,0.9) 0%, rgba(74,122,78,0.7) 100%);
-        }
+        
         .card-hover {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -33,33 +39,260 @@ $galeri_preview = getGaleri(6);
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
+
+        /* Swiper Custom Styles */
+        .hero-swiper {
+            height: 100vh;
+            min-height: 600px;
+        }
+        
+        .hero-swiper .swiper-slide {
+            display: flex;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .hero-swiper .swiper-slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(47, 82, 51, 0.65);
+            z-index: 1;
+        }
+        
+        .hero-swiper .swiper-slide .slide-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Navigation Buttons */
+        .swiper-button-prev,
+        .swiper-button-next {
+            width: 50px !important;
+            height: 50px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border-radius: 50% !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+            transition: all 0.3s ease !important;
+            z-index: 30 !important;
+        }
+        
+        .swiper-button-prev:hover,
+        .swiper-button-next:hover {
+            background: #2F5233 !important;
+            border-color: #2F5233 !important;
+            transform: scale(1.1);
+        }
+        
+        .swiper-button-prev::after,
+        .swiper-button-next::after {
+            font-size: 20px !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        
+        .swiper-button-prev {
+            left: 20px !important;
+        }
+        
+        .swiper-button-next {
+            right: 20px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .swiper-button-prev,
+            .swiper-button-next {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .swiper-button-prev {
+                left: 10px !important;
+            }
+            .swiper-button-next {
+                right: 10px !important;
+            }
+            .swiper-button-prev::after,
+            .swiper-button-next::after {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Pagination Bullets */
+        .swiper-pagination {
+            bottom: 30px !important;
+            z-index: 30 !important;
+        }
+        
+        .swiper-pagination-bullet {
+            width: 12px !important;
+            height: 12px !important;
+            background: rgba(255, 255, 255, 0.5) !important;
+            opacity: 1 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .swiper-pagination-bullet-active {
+            background: #E0BE45 !important;
+            width: 30px !important;
+            border-radius: 6px !important;
+        }
+        
+        /* Autoplay Progress Bar */
+        .autoplay-progress {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            z-index: 40;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .autoplay-progress svg {
+            --progress: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .autoplay-progress svg circle {
+            fill: none;
+            stroke: #E0BE45;
+            stroke-width: 3;
+            stroke-dasharray: 113.097;
+            stroke-dashoffset: calc(113.097 * (1 - var(--progress)));
+            transition: stroke-dashoffset 0.3s ease;
+        }
     </style>
 </head>
-<body>
+<body class="bg-cream text-ink">
 
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-<!-- Hero Section -->
-<section class="relative min-h-screen flex items-center bg-cover bg-center" style="background-image: url('assets/images/hero-bg.jpg');">
-    <div class="hero-gradient absolute inset-0"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="max-w-3xl">
-            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 animate-float">
-                Jalur Asri, Belum Banyak Terjamah
-            </h1>
-            <p class="text-xl text-white/90 mb-8">
-                Temukan pengalaman mendaki yang autentik di Gunung Bismo melalui Basecamp Deroduwur.
-                Nikmati keindahan alam yang masih terjaga dan ekosistem yang lestari.
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="<?= BASE_URL ?>jalur.php" class="bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105">
-                    Telusur Jalur Pendakian
-                </a>
-                <a href="https://wa.me/6281234567890" target="_blank" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-full font-semibold transition duration-300 border-2 border-white">
-                    Hubungi Kami
-                </a>
+<!-- Hero Section Carousel -->
+<section class="relative h-screen min-h-[600px] overflow-hidden bg-black">
+    <div class="swiper hero-swiper w-full h-full">
+        <div class="swiper-wrapper">
+
+            <!-- Slide 1: Keasrian Jalur -->
+            <div class="swiper-slide" style="background-image: url('<?= BASE_URL ?>assets/images/spots/puncak-indrapasta.jpg');">
+                <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
+                    <div class="max-w-3xl">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 animate-float">
+                            Jalur Asri, Belum Banyak Terjamah
+                        </h1>
+                        <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                            Temukan pengalaman mendaki yang autentik di Gunung Bismo melalui Basecamp Deroduwur. Nikmati keindahan alam yang masih terjaga dan ekosistem yang lestari.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="<?= BASE_URL ?>jalur.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+                                Telusur Jalur Pendakian
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                            <a href="https://wa.me/6281390195488" target="_blank" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-full font-semibold transition duration-300 border-2 border-white inline-flex items-center gap-2">
+                                Hubungi Kami
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Slide 2: Tentang Bismo via Deroduwur -->
+            <div class="swiper-slide" style="background-image: url('<?= BASE_URL ?>assets/images/spots/basecamp.jpg');">
+                <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
+                    <div class="max-w-3xl">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+                            Gerbang Pendakian Sisi Selatan
+                        </h1>
+                        <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                            Jalur Deroduwur menyajikan trek yang landai di awal, kerapian vegetasi hutan yang rapat, serta keramahan warga lokal yang siap menyambut petualangan Anda.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="<?= BASE_URL ?>kisah.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+                                Tentang Basecamp
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Flora & Fauna -->
+            <div class="swiper-slide" style="background-image: url('<?= BASE_URL ?>assets/images/spots/kantong-semar.jpg');">
+                <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
+                    <div class="max-w-3xl">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+                            Kekayaan Flora & Fauna Hutan Bismo
+                        </h1>
+                        <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                            Sepanjang perjalanan, jumpai keanekaragaman hayati seperti Anggrek Hutan, Cantigi, serta riuhnya kicauan burung endemik yang menemani langkah Anda.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="<?= BASE_URL ?>alam.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+                                Jelajahi Alam Bismo
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Spot Favorit & Puncak -->
+            <div class="swiper-slide" style="background-image: url('<?= BASE_URL ?>assets/images/spots/pos-4.jpg');">
+                <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
+                    <div class="max-w-3xl">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+                            Spot Ikonik & Panorama Puncak
+                        </h1>
+                        <p class="text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                            Nikmati keindahan Pos-pos sepanjang jalur, hingga panorama Puncak Indraprasta dan Hastinapura yang menyajikan pemandangan spektakuler.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="<?= BASE_URL ?>galeri.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+                                Lihat Spot Foto
+                                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+        <!-- Tombol Navigasi Panah -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+
+        <!-- Pagination Bullets -->
+        <div class="swiper-pagination"></div>
+
+       
     </div>
 </section>
 
@@ -83,7 +316,7 @@ $galeri_preview = getGaleri(6);
 </section>
 
 <!-- Highlight Nilai Plus -->
-<section class="py-20 bg-white">
+<section class="py-20 bg-cream">
     <div class="container mx-auto px-4">
         <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Keunggulan Basecamp Deroduwur</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -127,24 +360,31 @@ $galeri_preview = getGaleri(6);
     </div>
 </section>
 
-<!-- Preview Galeri -->
+<!-- Preview Galeri dengan Modal -->
 <section class="py-20 bg-[#FAF7F2]">
     <div class="container mx-auto px-4">
         <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Jejak Visual</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($galeri_preview as $foto): ?>
-            <div class="overflow-hidden rounded-2xl shadow-lg card-hover">
-                <a href="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" data-lightbox="gallery">
+            <div class="overflow-hidden rounded-2xl shadow-lg card-hover cursor-pointer group">
+                <div onclick="openModal(
+                    '<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>',
+                    '<?= htmlspecialchars($foto['judul']) ?>',
+                    '<?= ucfirst(htmlspecialchars($foto['kategori'])) ?>',
+                    '<?= htmlspecialchars($foto['deskripsi']) ?>',
+                    '<?= isset($foto['created_at']) ? formatTanggal($foto['created_at']) : '' ?>'
+                )">
                     <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
                          alt="<?= htmlspecialchars($foto['judul']) ?>" 
-                         class="w-full h-64 object-cover">
+                         class="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105">
                     <?php if ($foto['judul']): ?>
                     <div class="p-4 bg-white">
                         <p class="text-[#2F5233] font-semibold"><?= htmlspecialchars($foto['judul']) ?></p>
                         <p class="text-xs text-[#A9784B]">#<?= htmlspecialchars($foto['kategori']) ?></p>
+                        <p class="text-xs text-gray-400 mt-1">👆 Klik untuk melihat detail</p>
                     </div>
                     <?php endif; ?>
-                </a>
+                </div>
             </div>
             <?php endforeach; ?>
         </div>
@@ -157,7 +397,7 @@ $galeri_preview = getGaleri(6);
 </section>
 
 <!-- Berita Terbaru -->
-<section class="py-20 bg-white">
+<section class="py-20 bg-cream">
     <div class="container mx-auto px-4">
         <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Kabar Bismo</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -193,10 +433,17 @@ $galeri_preview = getGaleri(6);
         <h2 class="text-3xl md:text-4xl font-bold mb-6">Siap Mendaki Gunung Bismo?</h2>
         <p class="text-xl mb-8 text-white/90">Hubungi kami untuk informasi lebih lanjut tentang jalur pendakian</p>
         <div class="flex flex-wrap justify-center gap-6">
-            <a href="https://wa.me/6281234567890" target="_blank" class="bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105">
+            <a href="https://wa.me/6281390195488" target="_blank" class="bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
                 Hubungi via WhatsApp
             </a>
-            <a href="<?= BASE_URL ?>kontak.php" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-full font-semibold transition duration-300 border-2 border-white">
+            <a href="<?= BASE_URL ?>kontak.php" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-full font-semibold transition duration-300 border-2 border-white inline-flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
                 Temui Kami
             </a>
         </div>
@@ -205,7 +452,109 @@ $galeri_preview = getGaleri(6);
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
+<!-- Swiper JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Custom JS -->
 <script src="assets/js/main.js"></script>
-<script src="assets/js/lightbox.js"></script>
+<!-- Modal Popup -->
+<script src="assets/js/modal.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. Inisialisasi Swiper Carousel Hero Section
+    if (document.querySelector('.hero-swiper')) {
+        const progressCircle = document.querySelector('.autoplay-progress svg circle');
+        const progressContent = document.querySelector('.autoplay-progress span');
+        
+        const heroSwiper = new Swiper('.hero-swiper', {
+            loop: true,
+            speed: 800,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            on: {
+                autoplayTimeLeft: function(s, time, progress) {
+                    if (progressCircle) {
+                        progressCircle.style.setProperty('--progress', 1 - progress);
+                    }
+                    if (progressContent) {
+                        progressContent.textContent = Math.ceil(time / 1000) + 's';
+                    }
+                }
+            }
+        });
+
+        // Toggle autoplay on progress click
+        const progressEl = document.querySelector('.autoplay-progress');
+        if (progressEl) {
+            progressEl.addEventListener('click', function() {
+                if (heroSwiper.autoplay.running) {
+                    heroSwiper.autoplay.stop();
+                    this.querySelector('span').textContent = '▶';
+                } else {
+                    heroSwiper.autoplay.start();
+                    this.querySelector('span').textContent = '⏸';
+                }
+            });
+        }
+    }
+
+    // 2. Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    // 3. Smooth Scroll untuk Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId !== '#') {
+                e.preventDefault();
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+
+    // 4. Navbar Scroll Effect
+    const navbar = document.querySelector('nav');
+    if (navbar) {
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 100) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>

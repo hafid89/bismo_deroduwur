@@ -12,7 +12,7 @@
         * { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-[#FAF7F2]">
 
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
@@ -50,16 +50,16 @@
     <div class="container mx-auto px-4 max-w-4xl">
         <h2 class="text-3xl font-bold text-[#2F5233] mb-6">Profil Pengelola</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                <div class="w-32 h-32 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl text-gray-500">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border border-emerald-900/10">
+                <div class="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl text-gray-500">
                     👤
                 </div>
                 <h3 class="text-xl font-bold text-[#2F5233]">Mas Taufik</h3>
                 <p class="text-[#5C5C50]">Ketua Pengelola</p>
                 <p class="text-sm text-[#5C5C50] mt-2">Berpengalaman lebih dari 10 tahun dalam pengelolaan basecamp</p>
             </div>
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-                <div class="w-32 h-32 bg-gray-300 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl text-gray-500">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border border-emerald-900/10">
+                <div class="w-32 h-32 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl text-gray-500">
                     👤
                 </div>
                 <h3 class="text-xl font-bold text-[#2F5233]">Mas Wahyu</h3>
@@ -73,48 +73,64 @@
 <!-- Lokasi & Fasilitas -->
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-3xl font-bold text-[#2F5233] mb-6">Lokasi & Fasilitas</h2>
-        
-        <!-- Google Maps Embed -->
-        <div class="mb-8 rounded-xl overflow-hidden shadow-lg">
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.5!2d110.4!3d-7.6!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMzYnMDAuMCJTIDExMMKwMjQnMDAuMCJF!5e0!3m2!1sid!2sid!4v1234567890" 
-                width="100%" 
-                height="400" 
-                style="border:0;" 
-                allowfullscreen="" 
-                loading="lazy">
-            </iframe>
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-2">
+            <div>
+                <h2 class="text-3xl font-bold text-[#2F5233]">Lokasi & Fasilitas</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                    📍 Dusun Buntu, Desa Deroduwur, Kec. Mojotengah, Kab. Wonosobo, Jawa Tengah
+                </p>
+            </div>
+            <!-- Tombol Direct Navigasi Google Maps Sesuai Koordinat Presisi Baru -->
+            <a href="https://www.google.com/maps/search/?api=1&query=-7.2772452311451215,109.88243926075317" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="inline-flex items-center gap-2 text-xs md:text-sm bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-4 py-2.5 rounded-lg transition shadow">
+                <span>📍 Buka Google Maps</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
         </div>
+        
+       <!-- Google Maps Embed Akurat Mode Satelit (-7.2772452311451215, 109.88243926075317) -->
+<div class="mb-10 rounded-2xl overflow-hidden shadow-xl border border-gray-200">
+    <iframe 
+        src="https://maps.google.com/maps?q=-7.2772452311451215,109.88243926075317&hl=id&z=17&t=k&output=embed" 
+        width="100%" 
+        height="420" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+</div>
 
         <h3 class="text-2xl font-bold text-[#2F5233] mb-4">Fasilitas yang Tersedia</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-lg">
+            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-xl border border-gray-100">
                 <span class="text-2xl">🅿️</span>
                 <div>
-                    <h4 class="font-semibold text-[#2F5233]">Parkir Luas</h4>
-                    <p class="text-sm text-[#5C5C50]">Area parkir yang aman untuk kendaraan</p>
+                    <h4 class="font-semibold text-[#2F5233]">Parkir Luas & Aman</h4>
+                    <p class="text-sm text-[#5C5C50]">Area parkir kendaraan roda 2 & roda 4 yang terjangkau dan dijaga 24 jam</p>
                 </div>
             </div>
-            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-lg">
+            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-xl border border-gray-100">
                 <span class="text-2xl">🚻</span>
                 <div>
-                    <h4 class="font-semibold text-[#2F5233]">Toilet</h4>
-                    <p class="text-sm text-[#5C5C50]">Fasilitas toilet yang bersih dan terawat</p>
+                    <h4 class="font-semibold text-[#2F5233]">Toilet & Kamar Mandi</h4>
+                    <p class="text-sm text-[#5C5C50]">Fasilitas toilet yang bersih dan air pegunungan yang segar</p>
                 </div>
             </div>
-            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-lg">
+            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-xl border border-gray-100">
                 <span class="text-2xl">🍜</span>
                 <div>
-                    <h4 class="font-semibold text-[#2F5233]">Warung Makan</h4>
-                    <p class="text-sm text-[#5C5C50]">Tersedia warung dengan makanan lokal</p>
+                    <h4 class="font-semibold text-[#2F5233]">Warung & Basecamp Rest</h4>
+                    <p class="text-sm text-[#5C5C50]">Tersedia makanan hangat, kopi, dan tempat istirahat sebelum mendaki</p>
                 </div>
             </div>
-            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-lg">
+            <div class="flex items-start space-x-3 p-4 bg-[#FAF7F2] rounded-xl border border-gray-100">
                 <span class="text-2xl">🏕️</span>
                 <div>
-                    <h4 class="font-semibold text-[#2F5233]">Area Camping</h4>
-                    <p class="text-sm text-[#5C5C50]">Tempat berkemah yang nyaman</p>
+                    <h4 class="font-semibold text-[#2F5233]">Area Resting & Persewaan</h4>
+                    <p class="text-sm text-[#5C5C50]">Tempat persiapan, pengecekan peralatan, dan rental perlengkapan outdoor</p>
                 </div>
             </div>
         </div>
@@ -126,17 +142,17 @@
     <div class="container mx-auto px-4 max-w-4xl">
         <h2 class="text-3xl font-bold text-center mb-8">Keunikan Deroduwur</h2>
         <div class="space-y-6">
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10">
                 <h3 class="text-xl font-bold text-[#E0BE45] mb-2">🌿 Alam yang Masih Terjaga</h3>
-                <p>Deroduwur menawarkan pengalaman mendaki di jalur yang masih alami dengan keanekaragaman hayati yang kaya. Flora dan fauna asli masih dapat ditemukan dengan mudah di sepanjang jalur pendakian.</p>
+                <p class="text-gray-200 leading-relaxed">Deroduwur menawarkan pengalaman mendaki di jalur yang masih alami dengan keanekaragaman hayati yang kaya. Flora dan fauna asli seperti Kantong Semar dan burung lokal masih dapat ditemukan dengan mudah.</p>
             </div>
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10">
                 <h3 class="text-xl font-bold text-[#E0BE45] mb-2">🙏 Nilai Budaya & Religi</h3>
-                <p>Basecamp ini terletak di area yang memiliki nilai budaya dan religi yang kuat, memberikan pengalaman spiritual tersendiri bagi para pendaki yang menghargai kearifan lokal.</p>
+                <p class="text-gray-200 leading-relaxed">Basecamp terletak di Dusun Buntu yang kaya akan kearifan lokal, adat istiadat, serta sejarah religi pesarean kuno yang sangat dihormati masyarakat setempat.</p>
             </div>
-            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl">
+            <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10">
                 <h3 class="text-xl font-bold text-[#E0BE45] mb-2">🤝 Pengelolaan Berbasis Komunitas</h3>
-                <p>Dikelola oleh masyarakat setempat dengan semangat gotong royong, setiap kunjungan ke Deroduwur turut mendukung perekonomian lokal dan pelestarian budaya.</p>
+                <p class="text-gray-200 leading-relaxed">Dikelola langsung oleh pemuda dan warga lokal Dusun Buntu dengan semangat gotong royong demi menjaga keselamatan pendaki sekaligus pelestarian alam.</p>
             </div>
         </div>
     </div>

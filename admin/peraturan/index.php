@@ -7,33 +7,30 @@ if (!isLoggedIn()) {
 }
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 10;
+$limit = 20;
 $offset = ($page - 1) * $limit;
 
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM berita");
-$total = $stmt->fetch()['total'];
+$total = getTotalPeraturan();
 $totalPages = ceil($total / $limit);
-
-$limit = intval($limit);
-$offset = intval($offset);
-$stmt = $pdo->query("SELECT * FROM berita ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
-$berita_list = $stmt->fetchAll();
+$peraturan_list = getPeraturanPaginated($page, $limit);
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Berita - Admin</title>
+    <title>Kelola Peraturan - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
+        .badge-kewajiban { background: #3F7D4F; color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-larangan { background: #B3452F; color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-fasilitas { background: #3E6CBC; color: white; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
     </style>
 </head>
 <body class="bg-[#FAF7F2]">
 <div class="flex h-screen">
-    <!-- Sidebar -->
     <!-- Sidebar -->
     <div class="w-64 bg-[#2F5233] text-white p-6">
         <h2 class="text-2xl font-bold mb-8">Panel Admin</h2>
@@ -41,9 +38,9 @@ $berita_list = $stmt->fetchAll();
             <a href="../dashboard.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Dashboard</a>
             <a href="../berita/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Berita</a>
             <a href="../galeri/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Galeri</a>
-            <a href="index.php" class="block py-2 px-4 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300">Kelola Flora</a>
+            <a href="../flora/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Flora</a>
             <a href="../fauna/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Fauna</a>
-            <a href="../peraturan/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Peraturan</a>
+            <a href="index.php" class="block py-2 px-4 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300">Kelola Peraturan</a>
             <a href="../logout.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300 text-red-300">Logout</a>
         </nav>
     </div>
@@ -52,9 +49,9 @@ $berita_list = $stmt->fetchAll();
     <div class="flex-1 overflow-y-auto">
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-[#2F5233]">Kelola Berita</h1>
+                <h1 class="text-3xl font-bold text-[#2F5233]">📋 Kelola Peraturan</h1>
                 <a href="tambah.php" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-2 rounded-full transition duration-300">
-                    + Tambah Berita
+                    + Tambah Peraturan
                 </a>
             </div>
 
@@ -64,28 +61,34 @@ $berita_list = $stmt->fetchAll();
                         <thead>
                             <tr class="bg-[#FAF7F2] border-b border-gray-200">
                                 <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">#</th>
-                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Judul</th>
-                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Tanggal</th>
-                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Foto</th>
+                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Kategori</th>
+                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Teks</th>
+                                <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Denda</th>
                                 <th class="text-left py-3 px-6 text-[#5C5C50] font-semibold">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($berita_list as $index => $berita): ?>
+                            <?php 
+                            $no = $offset + 1;
+                            foreach ($peraturan_list as $item): 
+                                $badgeClass = $item['kategori'] == 'kewajiban' ? 'badge-kewajiban' : ($item['kategori'] == 'larangan' ? 'badge-larangan' : 'badge-fasilitas');
+                            ?>
                             <tr class="border-b border-gray-100 hover:bg-gray-50 transition duration-300">
-                                <td class="py-3 px-6"><?= $offset + $index + 1 ?></td>
-                                <td class="py-3 px-6 font-medium"><?= htmlspecialchars($berita['judul']) ?></td>
-                                <td class="py-3 px-6 text-[#5C5C50]"><?= formatTanggal($berita['tanggal']) ?></td>
+                                <td class="py-3 px-6 text-[#5C5C50]"><?= $no++ ?></td>
                                 <td class="py-3 px-6">
-                                    <?php if ($berita['foto']): ?>
-                                    <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($berita['foto']) ?>" class="w-16 h-12 object-cover rounded">
+                                    <span class="<?= $badgeClass ?>"><?= ucfirst(htmlspecialchars($item['kategori'])) ?></span>
+                                </td>
+                                <td class="py-3 px-6 text-[#5C5C50]"><?= htmlspecialchars($item['teks']) ?></td>
+                                <td class="py-3 px-6">
+                                    <?php if ($item['denda']): ?>
+                                    <span class="text-red-600 font-semibold text-sm"><?= htmlspecialchars($item['denda']) ?></span>
                                     <?php else: ?>
-                                    <span class="text-gray-400">Tidak ada</span>
+                                    <span class="text-gray-400 text-sm">-</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 px-6">
-                                    <a href="edit.php?id=<?= $berita['id'] ?>" class="text-blue-600 hover:text-blue-800 mr-3 transition duration-300">Edit</a>
-                                    <a href="hapus.php?id=<?= $berita['id'] ?>" class="text-red-600 hover:text-red-800 transition duration-300" onclick="return confirm('Yakin ingin menghapus berita ini?')">Hapus</a>
+                                    <a href="edit.php?id=<?= $item['id'] ?>" class="text-blue-600 hover:text-blue-800 mr-3 transition duration-300">Edit</a>
+                                    <a href="hapus.php?id=<?= $item['id'] ?>" class="text-red-600 hover:text-red-800 transition duration-300" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

@@ -7,24 +7,19 @@ if (!isLoggedIn()) {
 }
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 12;
+$limit = 10;
 $offset = ($page - 1) * $limit;
 
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM galeri");
-$total = $stmt->fetch()['total'];
+$total = getTotalFlora();
 $totalPages = ceil($total / $limit);
-
-$limit = intval($limit);
-$offset = intval($offset);
-$stmt = $pdo->query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
-$galeri_list = $stmt->fetchAll();
+$flora_list = getFloraPaginated($page, $limit);
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Galeri - Admin</title>
+    <title>Kelola Flora - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -58,24 +53,33 @@ $galeri_list = $stmt->fetchAll();
     <div class="flex-1 overflow-y-auto">
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-[#2F5233]">Kelola Galeri</h1>
+                <h1 class="text-3xl font-bold text-[#2F5233]">🌿 Kelola Flora</h1>
                 <a href="tambah.php" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-2 rounded-full transition duration-300">
-                    + Tambah Foto
+                    + Tambah Flora
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <?php foreach ($galeri_list as $foto): ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <?php foreach ($flora_list as $flora): ?>
                 <div class="gallery-item bg-white rounded-xl shadow-lg overflow-hidden">
-                    <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
-                         alt="<?= htmlspecialchars($foto['judul']) ?>" 
+                    <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
+                    <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>" 
+                         alt="<?= htmlspecialchars($flora['nama']) ?>" 
                          class="w-full h-48 object-cover">
+                    <?php else: ?>
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-4xl text-gray-400">
+                        🌿
+                    </div>
+                    <?php endif; ?>
                     <div class="p-4">
-                        <h4 class="font-semibold text-[#2F5233]"><?= htmlspecialchars($foto['judul']) ?></h4>
-                        <p class="text-sm text-[#5C5C50]">Kategori: <?= ucfirst(htmlspecialchars($foto['kategori'])) ?></p>
+                        <h4 class="font-bold text-[#2F5233]"><?= htmlspecialchars($flora['nama']) ?></h4>
+                        <?php if (!empty($flora['nama_ilmiah'])): ?>
+                        <p class="text-sm text-[#A9784B]"><?= htmlspecialchars($flora['nama_ilmiah']) ?></p>
+                        <?php endif; ?>
+                        <p class="text-sm text-[#5C5C50] mt-1 line-clamp-2"><?= htmlspecialchars($flora['deskripsi']) ?></p>
                         <div class="mt-3 flex space-x-2">
-                            <a href="edit.php?id=<?= $foto['id'] ?>" class="text-blue-600 hover:text-blue-800 text-sm transition duration-300">Edit</a>
-                            <a href="hapus.php?id=<?= $foto['id'] ?>" class="text-red-600 hover:text-red-800 text-sm transition duration-300" onclick="return confirm('Yakin ingin menghapus foto ini?')">Hapus</a>
+                            <a href="edit.php?id=<?= $flora['id'] ?>" class="text-blue-600 hover:text-blue-800 text-sm transition duration-300">Edit</a>
+                            <a href="hapus.php?id=<?= $flora['id'] ?>" class="text-red-600 hover:text-red-800 text-sm transition duration-300" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
                         </div>
                     </div>
                 </div>

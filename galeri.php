@@ -12,7 +12,6 @@ $galeri = getGaleri();
     <title>Jejak Visual - Gunung Bismo via Deroduwur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/lightbox.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
@@ -21,8 +20,14 @@ $galeri = getGaleri();
             cursor: pointer;
         }
         .gallery-item:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .gallery-item img {
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
         }
         .filter-btn {
             transition: all 0.3s ease;
@@ -30,6 +35,9 @@ $galeri = getGaleri();
         .filter-btn.active {
             background-color: #2F5233;
             color: white;
+        }
+        .filter-btn:hover:not(.active) {
+            background-color: #e5e7eb;
         }
     </style>
 </head>
@@ -64,21 +72,28 @@ $galeri = getGaleri();
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="galleryGrid">
             <?php foreach ($galeri as $foto): ?>
-            <div class="gallery-item rounded-2xl overflow-hidden shadow-lg" data-category="<?= htmlspecialchars($foto['kategori']) ?>">
-                <a href="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" data-lightbox="gallery" data-title="<?= htmlspecialchars($foto['judul']) ?>">
+            <div class="gallery-item rounded-2xl overflow-hidden shadow-lg bg-white" data-category="<?= htmlspecialchars($foto['kategori']) ?>">
+                <div onclick="openModal(
+                    '<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>',
+                    '<?= htmlspecialchars($foto['judul']) ?>',
+                    '<?= ucfirst(htmlspecialchars($foto['kategori'])) ?>',
+                    '<?= htmlspecialchars($foto['deskripsi']) ?>',
+                    '<?= isset($foto['created_at']) ? formatTanggal($foto['created_at']) : '' ?>'
+                )">
                     <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
                          alt="<?= htmlspecialchars($foto['judul']) ?>" 
                          class="w-full h-72 object-cover">
                     <?php if ($foto['judul']): ?>
-                    <div class="p-4 bg-white">
+                    <div class="p-4">
                         <p class="text-[#2F5233] font-semibold"><?= htmlspecialchars($foto['judul']) ?></p>
                         <?php if ($foto['deskripsi']): ?>
-                        <p class="text-sm text-[#5C5C50]"><?= htmlspecialchars($foto['deskripsi']) ?></p>
+                        <p class="text-sm text-[#5C5C50] line-clamp-2"><?= htmlspecialchars($foto['deskripsi']) ?></p>
                         <?php endif; ?>
-                        <p class="text-xs text-[#A9784B] mt-1">Kategori: <?= ucfirst(htmlspecialchars($foto['kategori'])) ?></p>
+                        <p class="text-xs text-[#A9784B] mt-1">📁 <?= ucfirst(htmlspecialchars($foto['kategori'])) ?></p>
+                        <p class="text-xs text-gray-400 mt-1">👆 Klik untuk detail</p>
                     </div>
                     <?php endif; ?>
-                </a>
+                </div>
             </div>
             <?php endforeach; ?>
         </div>
@@ -87,8 +102,12 @@ $galeri = getGaleri();
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
+<!-- Modal JS -->
+<script src="assets/js/modal.js"></script>
+
+<!-- Main JS -->
 <script src="assets/js/main.js"></script>
-<script src="assets/js/lightbox.js"></script>
+
 <script>
 // Filter Gallery
 document.querySelectorAll('.filter-btn').forEach(btn => {

@@ -1,4 +1,11 @@
-<?php require_once __DIR__ . '/includes/config.php'; ?>
+<?php 
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/functions.php';
+
+// Ambil data dari database
+$flora_list = getFlora();
+$fauna_list = getFauna();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -16,6 +23,17 @@
         .card-hover:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .card-hover img {
+            transition: transform 0.3s ease;
+        }
+        .card-hover:hover img {
+            transform: scale(1.05);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5C5C50;
         }
     </style>
 </head>
@@ -48,85 +66,87 @@
     </div>
 </section>
 
-<!-- Flora -->
+<!-- Flora Dinamis -->
 <section class="py-16 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
         <h2 class="text-3xl font-bold text-[#2F5233] mb-6">🌿 Flora</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/flora-kantong-semar.jpg" alt="Kantong Semar" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Kantong Semar</h4>
-                    <p class="text-sm text-[#A9784B]">Nepenthes sp.</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Tanaman karnivora endemik, ditemukan di dekat Pos I</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/flora-pakis.jpg" alt="Pakis" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Hutan Pakis</h4>
-                    <p class="text-sm text-[#A9784B]">Various species</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Kawasan hutan pakis yang rimbun sebelum Pos I</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/flora-edelweiss.jpg" alt="Edelweiss" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Edelweiss</h4>
-                    <p class="text-sm text-[#A9784B]">Anaphalis javanica</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Bunga abadi yang ditemukan di area puncak</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/flora-anggrek.jpg" alt="Anggrek Hutan" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Anggrek Hutan</h4>
-                    <p class="text-sm text-[#A9784B]">Orchidaceae</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Berbagai jenis anggrek liar di sepanjang jalur</p>
-                </div>
-            </div>
+        
+        <?php if (empty($flora_list)): ?>
+        <div class="empty-state bg-white rounded-xl shadow-lg">
+            <p class="text-lg">Belum ada data flora</p>
+            <p class="text-sm text-gray-400 mt-1">Silakan tambahkan melalui admin panel</p>
         </div>
+        <?php else: ?>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <?php foreach ($flora_list as $flora): ?>
+            <div class="bg-white rounded-xl overflow-hidden shadow-lg card-hover">
+                <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
+                <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>" 
+                     alt="<?= htmlspecialchars($flora['nama']) ?>" 
+                     class="w-full h-48 object-cover">
+                <?php else: ?>
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                    <span>🌿</span>
+                </div>
+                <?php endif; ?>
+                <div class="p-4">
+                    <h4 class="font-bold text-[#2F5233]"><?= htmlspecialchars($flora['nama']) ?></h4>
+                    <?php if (!empty($flora['nama_ilmiah'])): ?>
+                    <p class="text-sm text-[#A9784B]"><?= htmlspecialchars($flora['nama_ilmiah']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($flora['deskripsi'])): ?>
+                    <p class="text-sm text-[#5C5C50] mt-1"><?= htmlspecialchars($flora['deskripsi']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($flora['lokasi'])): ?>
+                    <p class="text-xs text-[#A9784B] mt-2">📍 <?= htmlspecialchars($flora['lokasi']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 
-<!-- Fauna -->
+<!-- Fauna Dinamis -->
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4 max-w-4xl">
         <h2 class="text-3xl font-bold text-[#2F5233] mb-6">🐾 Fauna</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-[#FAF7F2] rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/fauna-elang.jpg" alt="Elang" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Elang Jawa</h4>
-                    <p class="text-sm text-[#A9784B]">Nisaetus bartelsi</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Burung pemangsa endemik yang sering terlihat di sekitar puncak</p>
-                </div>
-            </div>
-            <div class="bg-[#FAF7F2] rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/fauna-kera.jpg" alt="Kera" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Kera Ekor Panjang</h4>
-                    <p class="text-sm text-[#A9784B]">Macaca fascicularis</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Ditemukan di sekitar basecamp dan hutan pinus</p>
-                </div>
-            </div>
-            <div class="bg-[#FAF7F2] rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/fauna-kupu.jpg" alt="Kupu-kupu" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Kupu-kupu Tropis</h4>
-                    <p class="text-sm text-[#A9784B]">Various species</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Beragam jenis kupu-kupu di area berbunga</p>
-                </div>
-            </div>
-            <div class="bg-[#FAF7F2] rounded-xl overflow-hidden shadow-lg card-hover">
-                <img src="assets/images/fauna-burung.jpg" alt="Burung" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-[#2F5233]">Burung Endemik</h4>
-                    <p class="text-sm text-[#A9784B]">Various species</p>
-                    <p class="text-sm text-[#5C5C50] mt-1">Beragam burung khas Gunung Bismo</p>
-                </div>
-            </div>
+        
+        <?php if (empty($fauna_list)): ?>
+        <div class="empty-state bg-[#FAF7F2] rounded-xl shadow-lg">
+            <p class="text-lg">Belum ada data fauna</p>
+            <p class="text-sm text-gray-400 mt-1">Silakan tambahkan melalui admin panel</p>
         </div>
+        <?php else: ?>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <?php foreach ($fauna_list as $fauna): ?>
+            <div class="bg-[#FAF7F2] rounded-xl overflow-hidden shadow-lg card-hover">
+                <?php if (!empty($fauna['foto']) && file_exists(UPLOAD_PATH . 'fauna/' . $fauna['foto'])): ?>
+                <img src="<?= BASE_URL ?>uploads/fauna/<?= htmlspecialchars($fauna['foto']) ?>" 
+                     alt="<?= htmlspecialchars($fauna['nama']) ?>" 
+                     class="w-full h-48 object-cover">
+                <?php else: ?>
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                    <span>🐾</span>
+                </div>
+                <?php endif; ?>
+                <div class="p-4">
+                    <h4 class="font-bold text-[#2F5233]"><?= htmlspecialchars($fauna['nama']) ?></h4>
+                    <?php if (!empty($fauna['nama_ilmiah'])): ?>
+                    <p class="text-sm text-[#A9784B]"><?= htmlspecialchars($fauna['nama_ilmiah']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($fauna['deskripsi'])): ?>
+                    <p class="text-sm text-[#5C5C50] mt-1"><?= htmlspecialchars($fauna['deskripsi']) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($fauna['lokasi'])): ?>
+                    <p class="text-xs text-[#A9784B] mt-2">📍 <?= htmlspecialchars($fauna['lokasi']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 

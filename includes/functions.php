@@ -72,6 +72,7 @@ function redirect($url) {
     exit();
 }
 
+// ============ FUNGSI BERITA ============
 // Fungsi untuk get berita terbaru
 function getBeritaTerbaru($limit = 3) {
     global $pdo;
@@ -80,6 +81,42 @@ function getBeritaTerbaru($limit = 3) {
     return $stmt->fetchAll();
 }
 
+// Fungsi untuk get total berita
+function getTotalBerita() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM berita");
+    $result = $stmt->fetch();
+    return $result ? (int)$result['total'] : 0;
+}
+
+// Fungsi untuk get berita by id
+function getBeritaById($id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM berita WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+// Fungsi untuk get related berita
+function getRelatedBerita($id, $limit = 3) {
+    global $pdo;
+    $limit = intval($limit);
+    $stmt = $pdo->prepare("SELECT * FROM berita WHERE id != ? ORDER BY tanggal DESC LIMIT $limit");
+    $stmt->execute([$id]);
+    return $stmt->fetchAll();
+}
+
+// Fungsi untuk get berita dengan pagination
+function getBeritaPaginated($page = 1, $limit = 10) {
+    global $pdo;
+    $page = intval($page);
+    $limit = intval($limit);
+    $offset = ($page - 1) * $limit;
+    $stmt = $pdo->query("SELECT * FROM berita ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+    return $stmt->fetchAll();
+}
+
+// ============ FUNGSI GALERI ============
 // Fungsi untuk get galeri
 function getGaleri($limit = null) {
     global $pdo;
@@ -90,6 +127,14 @@ function getGaleri($limit = null) {
     }
     $stmt = $pdo->query($sql);
     return $stmt->fetchAll();
+}
+
+// Fungsi untuk get total galeri
+function getTotalGaleri() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM galeri");
+    $result = $stmt->fetch();
+    return $result ? (int)$result['total'] : 0;
 }
 
 // Fungsi untuk get galeri by tag
@@ -118,7 +163,115 @@ function getGaleriByKategori($kategori, $limit = null) {
     return $stmt->fetchAll();
 }
 
-// Fungsi untuk pagination
+// Fungsi untuk get galeri dengan pagination
+function getGaleriPaginated($page = 1, $limit = 12) {
+    global $pdo;
+    $page = intval($page);
+    $limit = intval($limit);
+    $offset = ($page - 1) * $limit;
+    $stmt = $pdo->query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+    return $stmt->fetchAll();
+}
+
+// ============ FUNGSI FLORA ============
+function getFlora() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM flora ORDER BY created_at DESC");
+    return $stmt->fetchAll();
+}
+
+function getFloraById($id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM flora WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+function getTotalFlora() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM flora");
+    $result = $stmt->fetch();
+    return $result ? (int)$result['total'] : 0;
+}
+
+function getFloraPaginated($page = 1, $limit = 10) {
+    global $pdo;
+    $page = intval($page);
+    $limit = intval($limit);
+    $offset = ($page - 1) * $limit;
+    $stmt = $pdo->query("SELECT * FROM flora ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+    return $stmt->fetchAll();
+}
+
+// ============ FUNGSI FAUNA ============
+function getFauna() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM fauna ORDER BY created_at DESC");
+    return $stmt->fetchAll();
+}
+
+function getFaunaById($id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM fauna WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+function getTotalFauna() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM fauna");
+    $result = $stmt->fetch();
+    return $result ? (int)$result['total'] : 0;
+}
+
+function getFaunaPaginated($page = 1, $limit = 10) {
+    global $pdo;
+    $page = intval($page);
+    $limit = intval($limit);
+    $offset = ($page - 1) * $limit;
+    $stmt = $pdo->query("SELECT * FROM fauna ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+    return $stmt->fetchAll();
+}
+
+// ============ FUNGSI PERATURAN ============
+function getPeraturan() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM peraturan ORDER BY kategori, id");
+    return $stmt->fetchAll();
+}
+
+function getPeraturanById($id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM peraturan WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+function getPeraturanByKategori($kategori) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM peraturan WHERE kategori = ? ORDER BY id");
+    $stmt->execute([$kategori]);
+    return $stmt->fetchAll();
+}
+
+function getTotalPeraturan() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM peraturan");
+    $result = $stmt->fetch();
+    return $result ? (int)$result['total'] : 0;
+}
+
+function getPeraturanPaginated($page = 1, $limit = 10) {
+    global $pdo;
+    $page = intval($page);
+    $limit = intval($limit);
+    $offset = ($page - 1) * $limit;
+    $stmt = $pdo->query("SELECT * FROM peraturan ORDER BY kategori, id LIMIT $limit OFFSET $offset");
+    return $stmt->fetchAll();
+}
+
+// ============ FUNGSI UMUM ============
+// Fungsi untuk pagination (generic)
 function getPaginatedData($table, $page = 1, $limit = 10, $orderBy = 'created_at DESC') {
     global $pdo;
     $page = intval($page);
@@ -130,7 +283,7 @@ function getPaginatedData($table, $page = 1, $limit = 10, $orderBy = 'created_at
     return $stmt->fetchAll();
 }
 
-// Fungsi untuk get total data
+// Fungsi untuk get total data (generic)
 function getTotalData($table) {
     global $pdo;
     $stmt = $pdo->query("SELECT COUNT(*) as total FROM $table");
@@ -138,25 +291,7 @@ function getTotalData($table) {
     return $result ? (int)$result['total'] : 0;
 }
 
-// Fungsi untuk get berita by id
-function getBeritaById($id) {
-    global $pdo;
-    $stmt = $pdo->prepare("SELECT * FROM berita WHERE id = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetch();
-}
-
-// Fungsi untuk get related berita
-function getRelatedBerita($id, $limit = 3) {
-    global $pdo;
-    $limit = intval($limit);
-    $stmt = $pdo->prepare("SELECT * FROM berita WHERE id != ? ORDER BY tanggal DESC LIMIT $limit");
-    $stmt->execute([$id]);
-    return $stmt->fetchAll();
-}
-
 // Fungsi untuk sanitasi input
 function sanitizeInput($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
 }
-?>

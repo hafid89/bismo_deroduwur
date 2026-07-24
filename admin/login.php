@@ -79,6 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Login
             </button>
         </form>
+        <!-- Tambahkan di bawah form login, sebelum tombol submit -->
+<div class="text-right mb-4">
+    <a href="lupa-password.php" class="text-sm text-[#2F5233] hover:text-[#4A7A4E] hover:underline transition duration-300">
+        Lupa password?
+    </a>
+</div>
         <!-- Tambahkan di bagian bawah form login, sebelum link kembali ke website -->
 <div class="text-center mt-4">
     <p class="text-[#5C5C50] text-sm">
