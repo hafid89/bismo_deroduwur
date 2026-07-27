@@ -249,7 +249,7 @@
 
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-<!-- Hero Section - Style sama seperti index.php -->
+<!-- Hero Section  -->
 <section class="hero-kisah" style="background-image: url('<?= BASE_URL ?>assets/images/kisah/pengelola.jpg');">
     <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
         <div class="max-w-7xl mx-auto">
