@@ -1,0 +1,142 @@
+/* Lightbox styles - Fixed */
+#lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: pointer;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+#lightbox .close-btn {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 100000;
+    transition: transform 0.3s ease;
+    font-family: Arial, sans-serif;
+}
+
+#lightbox .close-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Pastikan footer tidak terpengaruh lightbox */
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+:root {
+    --color-forest: #2F5233;
+    --color-forest-light: #418B24;
+    --color-sunrise: #E0BE45;
+    --color-sunrise-dark: #C46F2A;
+    --color-earth: #A9784B;
+    --color-cream: #FAF7F2;
+    --color-ink: #26261F;
+    --color-ink-muted: #5C5C50;
+    --color-info: #3E6C8C;
+    --color-success: #3FD74F;
+    --color-warning: #C98A2E;
+    --color-error: #B3452F;
+    --color-white: #FFFFFF;
+}
+
+body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+}
+
+.bg-forest { background-color: var(--color-forest) !important; }
+.bg-forest-light { background-color: var(--color-forest-light) !important; }
+.bg-sunrise { background-color: var(--color-sunrise) !important; }
+.bg-sunrise-dark { background-color: var(--color-sunrise-dark) !important; }
+.bg-earth { background-color: var(--color-earth) !important; }
+.bg-cream { background-color: var(--color-cream) !important; }
+.bg-ink { background-color: var(--color-ink) !important; }
+.bg-ink-muted { background-color: var(--color-ink-muted) !important; }
+.bg-info { background-color: var(--color-info) !important; }
+.bg-success { background-color: var(--color-success) !important; }
+.bg-warning { background-color: var(--color-warning) !important; }
+.bg-error { background-color: var(--color-error) !important; }
+
+.text-forest { color: var(--color-forest) !important; }
+.text-forest-light { color: var(--color-forest-light) !important; }
+.text-sunrise { color: var(--color-sunrise) !important; }
+.text-sunrise-dark { color: var(--color-sunrise-dark) !important; }
+.text-earth { color: var(--color-earth) !important; }
+.text-cream { color: var(--color-cream) !important; }
+.text-ink { color: var(--color-ink) !important; }
+.text-ink-muted { color: var(--color-ink-muted) !important; }
+.text-info { color: var(--color-info) !important; }
+.text-success { color: var(--color-success) !important; }
+.text-warning { color: var(--color-warning) !important; }
+.text-error { color: var(--color-error) !important; }
+
+.border-forest { border-color: var(--color-forest) !important; }
+.border-sunrise { border-color: var(--color-sunrise) !important; }
+.border-sunrise-dark { border-color: var(--color-sunrise-dark) !important; }
+.border-earth { border-color: var(--color-earth) !important; }
+.border-cream { border-color: var(--color-cream) !important; }
+.border-ink-muted { border-color: var(--color-ink-muted) !important; }
+
+.bg-sunrise-10 { background-color: rgba(224, 190, 69, 0.12) !important; }
+.bg-forest-10 { background-color: rgba(47, 82, 51, 0.12) !important; }
+
+.btn-primary {
+    background-color: var(--color-forest);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-forest-light);
+}
+
+.btn-secondary {
+    background-color: var(--color-sunrise);
+    color: var(--color-white);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-sunrise-dark);
+}
+
+.btn-tertiary {
+    background-color: var(--color-earth);
+    color: var(--color-white);
+}
+
+.btn-tertiary:hover {
+    background-color: var(--color-sunrise-dark);
+}
+
+.hover\:bg-forest:hover { background-color: var(--color-forest) !important; }
+.hover\:bg-forest-light:hover { background-color: var(--color-forest-light) !important; }
+.hover\:bg-sunrise:hover { background-color: var(--color-sunrise) !important; }
+.hover\:bg-sunrise-dark:hover { background-color: var(--color-sunrise-dark) !important; }
+.hover\:text-sunrise:hover { color: var(--color-sunrise) !important; }
+.hover\:text-forest:hover { color: var(--color-forest) !important; }
+.hover\:text-forest-light:hover { color: var(--color-forest-light) !important; }
+.hover\:text-ink-muted:hover { color: var(--color-ink-muted) !important; }
+
+.bg-error-10 { background-color: rgba(179, 69, 47, 0.1) !important; }
