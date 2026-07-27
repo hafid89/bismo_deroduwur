@@ -8,39 +8,99 @@ if (!isLoggedIn()) {
 
 $error = '';
 $success = '';
+$old_nama = '';
+$old_nama_ilmiah = '';
+$old_deskripsi = '';
+$old_lokasi = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = trim($_POST['nama']);
     $nama_ilmiah = trim($_POST['nama_ilmiah']);
     $deskripsi = trim($_POST['deskripsi']);
     $lokasi = trim($_POST['lokasi']);
+    
+    // Simpan nilai lama untuk ditampilkan kembali
+    $old_nama = $nama;
+    $old_nama_ilmiah = $nama_ilmiah;
+    $old_deskripsi = $deskripsi;
+    $old_lokasi = $lokasi;
 
+    // ========== VALIDASI ==========
+    $errors = [];
+
+    // 1. Cek apakah nama kosong
     if (empty($nama)) {
-        $error = 'Nama fauna wajib diisi';
-    } else {
-        $foto = '';
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'fauna/');
-            if ($upload['success']) {
-                $foto = $upload['filename'];
-            } else {
-                $error = $upload['message'];
-            }
-        }
+        $errors[] = 'Nama fauna wajib diisi';
+    }
 
-        if (empty($error)) {
-            try {
-                $stmt = $pdo->prepare("INSERT INTO fauna (nama, nama_ilmiah, deskripsi, foto, lokasi) VALUES (?, ?, ?, ?, ?)");
-                if ($stmt->execute([$nama, $nama_ilmiah, $deskripsi, $foto, $lokasi])) {
-                    $_SESSION['message'] = 'Data fauna berhasil ditambahkan!';
-                    $_SESSION['message_type'] = 'success';
-                    redirect(BASE_URL . 'admin/fauna/index.php');
-                } else {
-                    $error = 'Gagal menambahkan data';
-                }
-            } catch (PDOException $e) {
-                $error = 'Error: ' . $e->getMessage();
+    // 2. Cek apakah nama mengandung angka
+    if (!empty($nama) && preg_match('/[0-9]/', $nama)) {
+        $errors[] = 'Nama fauna tidak boleh mengandung angka';
+    }
+
+    // 3. Cek apakah nama hanya terdiri dari huruf dan spasi (opsional)
+    if (!empty($nama) && !preg_match('/^[a-zA-Z\s\-\.]+$/', $nama)) {
+        $errors[] = 'Nama fauna hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)';
+    }
+
+    // 4. Cek apakah nama sudah ada di database (duplikat)
+    if (!empty($nama)) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM fauna WHERE nama = ?");
+        $stmt->execute([$nama]);
+        if ($stmt->fetchColumn() > 0) {
+            $errors[] = 'Nama fauna "' . htmlspecialchars($nama) . '" sudah ada di database. Silakan gunakan nama lain.';
+        }
+    }
+
+    // 5. Cek apakah nama ilmiah mengandung angka (opsional)
+    if (!empty($nama_ilmiah) && preg_match('/[0-9]/', $nama_ilmiah)) {
+        $errors[] = 'Nama ilmiah tidak boleh mengandung angka';
+    }
+
+    // 6. Cek panjang nama (maksimal 100 karakter)
+    if (!empty($nama) && strlen($nama) > 100) {
+        $errors[] = 'Nama fauna maksimal 100 karakter';
+    }
+
+    // 7. Cek panjang nama ilmiah (maksimal 100 karakter)
+    if (!empty($nama_ilmiah) && strlen($nama_ilmiah) > 100) {
+        $errors[] = 'Nama ilmiah maksimal 100 karakter';
+    }
+
+    // 8. Cek panjang lokasi (maksimal 100 karakter)
+    if (!empty($lokasi) && strlen($lokasi) > 100) {
+        $errors[] = 'Lokasi maksimal 100 karakter';
+    }
+
+    // 9. Cek file upload
+    $foto = '';
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'fauna/');
+        if ($upload['success']) {
+            $foto = $upload['filename'];
+        } else {
+            $errors[] = $upload['message'];
+        }
+    }
+
+    // Jika ada error, tampilkan
+    if (!empty($errors)) {
+        $error = implode('<br>', $errors);
+    } else {
+        // Simpan ke database
+        try {
+            $stmt = $pdo->prepare("INSERT INTO fauna (nama, nama_ilmiah, deskripsi, foto, lokasi) VALUES (?, ?, ?, ?, ?)");
+            if ($stmt->execute([$nama, $nama_ilmiah, $deskripsi, $foto, $lokasi])) {
+                $_SESSION['message'] = 'Data fauna "' . htmlspecialchars($nama) . '" berhasil ditambahkan!';
+                $_SESSION['message_type'] = 'success';
+                redirect(BASE_URL . 'admin/fauna/index.php');
+            } else {
+                $errors[] = 'Gagal menambahkan data. Silakan coba lagi.';
+                $error = implode('<br>', $errors);
             }
+        } catch (PDOException $e) {
+            $errors[] = 'Error: ' . $e->getMessage();
+            $error = implode('<br>', $errors);
         }
     }
 }
@@ -68,6 +128,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .preview-image:hover {
             transform: scale(1.02);
         }
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .error-list li {
+            padding: 4px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .error-list li::before {
+            content: '⚠️';
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="bg-[#FAF7F2]">
@@ -90,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-[#2F5233]">🐾 Tambah Fauna</h1>
-                    <p class="text-[#5C5C50] text-sm mt-1">Tambahkan data fauna baru</p>
+                    <p class="text-[#5C5C50] text-sm mt-1">Tambahkan data fauna baru ke database</p>
                 </div>
                 <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,55 +176,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <?php if ($error): ?>
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-start">
-                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                </svg>
-                <span><?= htmlspecialchars($error) ?></span>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-4">
+                <div class="font-semibold mb-1">Terdapat kesalahan:</div>
+                <ul class="error-list text-sm">
+                    <?php foreach (explode('<br>', $error) as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
             <?php endif; ?>
 
-            <form method="POST" action="" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg p-8">
+            <form method="POST" action="" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg p-8" id="faunaForm">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nama Fauna -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-semibold mb-2">
                             Nama Fauna <span class="text-red-500">*</span>
+                            <span class="text-xs text-gray-400 font-normal">(Hanya huruf, tanpa angka)</span>
                         </label>
-                        <input type="text" name="nama" value="<?= isset($_POST['nama']) ? htmlspecialchars($_POST['nama']) : '' ?>" 
+                        <input type="text" name="nama" value="<?= htmlspecialchars($old_nama) ?>" 
                                class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
-                               placeholder="Contoh: Elang Jawa" required>
+                               placeholder="Contoh: Elang Jawa" 
+                               required
+                               oninput="this.value = this.value.replace(/[0-9]/g, '')">
+                        <p class="text-xs text-gray-400 mt-1">⚠️ Nama tidak boleh mengandung angka</p>
                     </div>
+
+                    <!-- Nama Ilmiah -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-semibold mb-2">
                             Nama Ilmiah
+                            <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                         </label>
-                        <input type="text" name="nama_ilmiah" value="<?= isset($_POST['nama_ilmiah']) ? htmlspecialchars($_POST['nama_ilmiah']) : '' ?>" 
+                        <input type="text" name="nama_ilmiah" value="<?= htmlspecialchars($old_nama_ilmiah) ?>" 
                                class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
                                placeholder="Contoh: Nisaetus bartelsi">
                     </div>
                 </div>
 
+                <!-- Deskripsi -->
                 <div class="mb-4">
                     <label class="block text-gray-700 font-semibold mb-2">
                         Deskripsi
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
                     <textarea name="deskripsi" rows="4" 
                               class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
-                              placeholder="Deskripsikan fauna ini..."><?= isset($_POST['deskripsi']) ? htmlspecialchars($_POST['deskripsi']) : '' ?></textarea>
+                              placeholder="Deskripsikan fauna ini..."><?= htmlspecialchars($old_deskripsi) ?></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Maksimal 65.535 karakter</p>
                 </div>
 
+                <!-- Lokasi -->
                 <div class="mb-4">
                     <label class="block text-gray-700 font-semibold mb-2">
                         Lokasi Ditemukan
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
-                    <input type="text" name="lokasi" value="<?= isset($_POST['lokasi']) ? htmlspecialchars($_POST['lokasi']) : '' ?>" 
+                    <input type="text" name="lokasi" value="<?= htmlspecialchars($old_lokasi) ?>" 
                            class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
-                           placeholder="Contoh: Sekitar Puncak, Basecamp">
+                           placeholder="Contoh: Hutan Pos 2 hingga Pos 3">
+                    <p class="text-xs text-gray-400 mt-1">Maksimal 100 karakter</p>
                 </div>
 
+                <!-- Upload Foto -->
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">
                         Foto Fauna
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
                     <div class="flex items-center justify-center w-full">
                         <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-[#FAF7F2] transition duration-300">
@@ -158,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                                 <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau drag & drop</p>
-                                <p class="text-xs text-gray-500">JPG, PNG, GIF (Maks 5MB)</p>
+                                <p class="text-xs text-gray-500">JPG, PNG, GIF, WEBP (Maks 5MB)</p>
                             </div>
                             <input type="file" name="foto" accept="image/*" class="hidden" onchange="previewImage(this)">
                         </label>
@@ -169,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
+                <!-- Tombol Aksi -->
                 <div class="flex gap-4">
                     <button type="submit" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300 transform hover:scale-105 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,6 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
+// Preview image sebelum upload
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
@@ -199,6 +294,32 @@ function previewImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+// Validasi form sebelum submit
+document.getElementById('faunaForm').addEventListener('submit', function(e) {
+    const nama = document.querySelector('input[name="nama"]').value.trim();
+    
+    // Cek apakah ada angka di nama
+    if (/\d/.test(nama)) {
+        e.preventDefault();
+        alert('❌ Nama fauna tidak boleh mengandung angka!');
+        return false;
+    }
+    
+    // Cek apakah nama hanya huruf dan spasi
+    if (!/^[a-zA-Z\s\-\.]+$/.test(nama)) {
+        e.preventDefault();
+        alert('❌ Nama fauna hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)!');
+        return false;
+    }
+    
+    return true;
+});
+
+// Mencegah input angka di field nama secara real-time
+document.querySelector('input[name="nama"]').addEventListener('input', function() {
+    this.value = this.value.replace(/[0-9]/g, '');
+});
 </script>
 </body>
 </html>

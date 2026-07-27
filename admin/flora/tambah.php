@@ -8,33 +8,93 @@ if (!isLoggedIn()) {
 
 $error = '';
 $success = '';
+$old_nama = '';
+$old_nama_ilmiah = '';
+$old_deskripsi = '';
+$old_lokasi = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = trim($_POST['nama']);
     $nama_ilmiah = trim($_POST['nama_ilmiah']);
     $deskripsi = trim($_POST['deskripsi']);
     $lokasi = trim($_POST['lokasi']);
+    
+    // Simpan nilai lama untuk ditampilkan kembali
+    $old_nama = $nama;
+    $old_nama_ilmiah = $nama_ilmiah;
+    $old_deskripsi = $deskripsi;
+    $old_lokasi = $lokasi;
 
+    // ========== VALIDASI ==========
+    $errors = [];
+
+    // 1. Cek apakah nama kosong
     if (empty($nama)) {
-        $error = 'Nama flora wajib diisi';
-    } else {
-        $foto = '';
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'flora/');
-            if ($upload['success']) {
-                $foto = $upload['filename'];
-            } else {
-                $error = $upload['message'];
-            }
-        }
+        $errors[] = 'Nama flora wajib diisi';
+    }
 
-        if (empty($error)) {
-            $stmt = $pdo->prepare("INSERT INTO flora (nama, nama_ilmiah, deskripsi, foto, lokasi) VALUES (?, ?, ?, ?, ?)");
-            if ($stmt->execute([$nama, $nama_ilmiah, $deskripsi, $foto, $lokasi])) {
-                $success = 'Data flora berhasil ditambahkan!';
-            } else {
-                $error = 'Gagal menambahkan data';
-            }
+    // 2. Cek apakah nama mengandung angka
+    if (!empty($nama) && preg_match('/[0-9]/', $nama)) {
+        $errors[] = 'Nama flora tidak boleh mengandung angka';
+    }
+
+    // 3. Cek apakah nama hanya terdiri dari huruf dan spasi (opsional)
+    if (!empty($nama) && !preg_match('/^[a-zA-Z\s\-\.]+$/', $nama)) {
+        $errors[] = 'Nama flora hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)';
+    }
+
+    // 4. Cek apakah nama sudah ada di database (duplikat)
+    if (!empty($nama)) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM flora WHERE nama = ?");
+        $stmt->execute([$nama]);
+        if ($stmt->fetchColumn() > 0) {
+            $errors[] = 'Nama flora "' . htmlspecialchars($nama) . '" sudah ada di database. Silakan gunakan nama lain.';
+        }
+    }
+
+    // 5. Cek apakah nama ilmiah mengandung angka (opsional)
+    if (!empty($nama_ilmiah) && preg_match('/[0-9]/', $nama_ilmiah)) {
+        $errors[] = 'Nama ilmiah tidak boleh mengandung angka';
+    }
+
+    // 6. Cek panjang nama (maksimal 100 karakter)
+    if (!empty($nama) && strlen($nama) > 100) {
+        $errors[] = 'Nama flora maksimal 100 karakter';
+    }
+
+    // 7. Cek panjang nama ilmiah (maksimal 100 karakter)
+    if (!empty($nama_ilmiah) && strlen($nama_ilmiah) > 100) {
+        $errors[] = 'Nama ilmiah maksimal 100 karakter';
+    }
+
+    // 8. Cek panjang lokasi (maksimal 100 karakter)
+    if (!empty($lokasi) && strlen($lokasi) > 100) {
+        $errors[] = 'Lokasi maksimal 100 karakter';
+    }
+
+    // 9. Cek file upload
+    $foto = '';
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'flora/');
+        if ($upload['success']) {
+            $foto = $upload['filename'];
+        } else {
+            $errors[] = $upload['message'];
+        }
+    }
+
+    // Jika ada error, tampilkan
+    if (!empty($errors)) {
+        $error = implode('<br>', $errors);
+    } else {
+        // Simpan ke database
+        $stmt = $pdo->prepare("INSERT INTO flora (nama, nama_ilmiah, deskripsi, foto, lokasi) VALUES (?, ?, ?, ?, ?)");
+        if ($stmt->execute([$nama, $nama_ilmiah, $deskripsi, $foto, $lokasi])) {
+            $_SESSION['message'] = 'Data flora "' . htmlspecialchars($nama) . '" berhasil ditambahkan!';
+            $_SESSION['message_type'] = 'success';
+            redirect(BASE_URL . 'admin/flora/index.php');
+        } else {
+            $error = 'Gagal menambahkan data. Silakan coba lagi.';
         }
     }
 }
@@ -49,6 +109,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #2F5233;
+            box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1);
+        }
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .error-list li {
+            padding: 4px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .error-list li::before {
+            content: '⚠️';
+            flex-shrink: 0;
+        }
+        .preview-image {
+            transition: all 0.3s ease;
+        }
+        .preview-image:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-[#FAF7F2]">
@@ -69,43 +157,161 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="flex-1 overflow-y-auto">
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-[#2F5233]">🌿 Tambah Flora</h1>
-                <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300">← Kembali</a>
+                <div>
+                    <h1 class="text-3xl font-bold text-[#2F5233]">🌿 Tambah Flora</h1>
+                    <p class="text-[#5C5C50] text-sm mt-1">Tambahkan data flora baru ke database</p>
+                </div>
+                <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Kembali
+                </a>
             </div>
 
             <?php if ($error): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-            <?php if ($success): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4"><?= htmlspecialchars($success) ?></div>
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg mb-4">
+                <div class="font-semibold mb-1">Terdapat kesalahan:</div>
+                <ul class="error-list text-sm">
+                    <?php foreach (explode('<br>', $error) as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
             <?php endif; ?>
 
-            <form method="POST" action="" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg p-8">
+            <form method="POST" action="" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg p-8" id="floraForm">
+                <!-- Nama Flora -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Nama Flora <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]" required>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Nama Flora <span class="text-red-500">*</span>
+                        <span class="text-xs text-gray-400 font-normal">(Hanya huruf, tanpa angka)</span>
+                    </label>
+                    <input type="text" name="nama" value="<?= htmlspecialchars($old_nama) ?>" 
+                           class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
+                           placeholder="Contoh: Edelweiss Longifolia" 
+                           required
+                           oninput="this.value = this.value.replace(/[0-9]/g, '')">
+                    <p class="text-xs text-gray-400 mt-1">⚠️ Nama tidak boleh mengandung angka</p>
                 </div>
+
+                <!-- Nama Ilmiah -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Nama Ilmiah</label>
-                    <input type="text" name="nama_ilmiah" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Nama Ilmiah
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="text" name="nama_ilmiah" value="<?= htmlspecialchars($old_nama_ilmiah) ?>" 
+                           class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
+                           placeholder="Contoh: Anaphalis Longifolia">
                 </div>
+
+                <!-- Deskripsi -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Deskripsi</label>
-                    <textarea name="deskripsi" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]"></textarea>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Deskripsi
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <textarea name="deskripsi" rows="4" 
+                              class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
+                              placeholder="Deskripsikan flora ini..."><?= htmlspecialchars($old_deskripsi) ?></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Maksimal 65.535 karakter</p>
                 </div>
+
+                <!-- Lokasi -->
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Lokasi</label>
-                    <input type="text" name="lokasi" placeholder="Contoh: Dekat Pos I" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Lokasi Ditemukan
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="text" name="lokasi" value="<?= htmlspecialchars($old_lokasi) ?>" 
+                           class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
+                           placeholder="Contoh: Hutan Pos 3 hingga Pos 4">
+                    <p class="text-xs text-gray-400 mt-1">Maksimal 100 karakter</p>
                 </div>
+
+                <!-- Upload Foto -->
                 <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Foto</label>
-                    <input type="file" name="foto" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-[#2F5233] focus:outline-none">
-                    <p class="text-sm text-gray-500 mt-1">Maksimal 5MB, format: JPG, PNG, GIF</p>
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Foto Flora
+                        <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-[#FAF7F2] transition duration-300">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau drag & drop</p>
+                                <p class="text-xs text-gray-500">JPG, PNG, GIF, WEBP (Maks 5MB)</p>
+                            </div>
+                            <input type="file" name="foto" accept="image/*" class="hidden" onchange="previewImage(this)">
+                        </label>
+                    </div>
+                    <div id="imagePreview" class="mt-3 hidden">
+                        <p class="text-sm text-[#2F5233] font-medium mb-2">Preview:</p>
+                        <img id="previewImg" src="#" alt="Preview" class="preview-image w-40 h-32 object-cover rounded-lg shadow-md">
+                    </div>
                 </div>
-                <button type="submit" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300 transform hover:scale-105">Simpan</button>
+
+                <!-- Tombol Aksi -->
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300 transform hover:scale-105 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Simpan Flora
+                    </button>
+                    <a href="index.php" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-semibold transition duration-300">
+                        Batal
+                    </a>
+                </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+// Preview image sebelum upload
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Validasi form sebelum submit
+document.getElementById('floraForm').addEventListener('submit', function(e) {
+    const nama = document.querySelector('input[name="nama"]').value.trim();
+    
+    // Cek apakah ada angka di nama
+    if (/\d/.test(nama)) {
+        e.preventDefault();
+        alert('❌ Nama flora tidak boleh mengandung angka!');
+        return false;
+    }
+    
+    // Cek apakah nama hanya huruf dan spasi
+    if (!/^[a-zA-Z\s\-\.]+$/.test(nama)) {
+        e.preventDefault();
+        alert('❌ Nama flora hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)!');
+        return false;
+    }
+    
+    return true;
+});
+
+// Mencegah input angka di field nama secara real-time
+document.querySelector('input[name="nama"]').addEventListener('input', function() {
+    this.value = this.value.replace(/[0-9]/g, '');
+});
+</script>
 </body>
 </html>
