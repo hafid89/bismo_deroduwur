@@ -60,6 +60,7 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
     <title>Dashboard Admin - Gunung Bismo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         * { font-family: 'Inter', sans-serif; }
         
@@ -77,6 +78,47 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
             background: linear-gradient(180deg, #1e3a2a 0%, #2a4a35 100%);
             box-shadow: 4px 0 20px rgba(0,0,0,0.08);
         }
+        /* Di file CSS atau di <style> */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Jarak antara icon dan teks */
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #4a5568;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link i {
+    font-size: 18px; /* Ukuran icon */
+    width: 24px; /* Lebar tetap untuk icon */
+    text-align: center;
+    flex-shrink: 0; /* Mencegah icon mengecil */
+}
+
+.nav-link .badge {
+    margin-left: auto; /* Dorong badge ke kanan */
+    background: #2F5233;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.nav-link:hover {
+    background: rgba(47, 82, 51, 0.1);
+}
+
+.nav-link.active {
+    background: #2F5233;
+    color: white;
+}
+
+.nav-link.active .badge {
+    background: white;
+    color: #2F5233;
+}
         .sidebar .nav-link {
             position: relative;
             padding: 10px 16px;
@@ -291,7 +333,7 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <!-- Brand -->
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
             <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">
-                🏔️
+                <i class="bi bi-mountain text-lg"></i>
             </div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
@@ -302,30 +344,30 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <!-- Nav -->
         <nav class="flex-1 space-y-1">
             <a href="dashboard.php" class="nav-link active flex items-center">
-                <span class="icon">📊</span> Dashboard
+                <i class="bi bi-bar-chart"></i> Dashboard
             </a>
             <a href="berita/index.php" class="nav-link flex items-center">
-                <span class="icon">📰</span> Berita
+                <i class="bi bi-newspaper"></i>Berita
                 <span class="badge"><?= $total_berita ?></span>
             </a>
             <a href="galeri/index.php" class="nav-link flex items-center">
-                <span class="icon">🖼️</span> Galeri
+                <i class="bi bi-image"></i> Galeri
                 <span class="badge"><?= $total_galeri ?></span>
             </a>
             <a href="flora/index.php" class="nav-link flex items-center">
-                <span class="icon">🌿</span> Flora
+                <i class="bi bi-leaf"></i> Flora
                 <span class="badge"><?= $total_flora ?></span>
             </a>
             <a href="fauna/index.php" class="nav-link flex items-center">
-                <span class="icon">🐾</span> Fauna
+                <i class="bi bi-paw"></i> Fauna
                 <span class="badge"><?= $total_fauna ?></span>
             </a>
             <a href="peraturan/index.php" class="nav-link flex items-center">
-                <span class="icon">📋</span> Peraturan
+                <i class="bi bi-list-check"></i> Peraturan
                 <span class="badge"><?= $total_peraturan ?></span>
             </a>
             <a href="spot-jalur/index.php" class="nav-link flex items-center">
-                <span class="icon">📍</span> Spot Jalur
+                <i class="bi bi-geo-alt"></i> Spot Jalur
                 <span class="badge"><?= $total_spot ?></span>
             </a>
         </nav>
@@ -333,7 +375,7 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <!-- Bottom -->
         <div class="pt-4 border-t border-white/10 mt-auto">
             <a href="logout.php" class="nav-link flex items-center text-red-300/70 hover:text-red-300">
-                <span class="icon">🚪</span> Keluar
+                <i class="bi bi-box-arrow-left"></i> Keluar
             </a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">
                 v1.0 • KKN 84.384
@@ -348,14 +390,14 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 animate-in">
             <div>
                 <p class="text-sm text-[#8a7e72] font-medium"><?= $sapaan ?></p>
-                <h1 class="text-2xl md:text-3xl font-bold greeting-text">Halo, <?= $nama_admin ?> 👋</h1>
+                <h1 class="text-2xl md:text-3xl font-bold greeting-text">Halo, <?= $nama_admin ?> <i class="bi bi-hand-thumbs-up" style="font-size: 1.5rem;"></i></h1>
                 <p class="text-sm text-[#8a7e72] mt-0.5">Selamat datang di panel admin Gunung Bismo via Deroduwur</p>
             </div>
             <div class="flex items-center gap-3 text-sm text-[#8a7e72] bg-white/70 backdrop-blur px-4 py-2 rounded-xl shadow-sm border border-white/50">
-                <span>📅</span>
+                <i class="bi bi-calendar3"></i>
                 <span><?= date('l, d F Y') ?></span>
                 <span class="w-px h-4 bg-gray-200"></span>
-                <span>🕐</span>
+                <i class="bi bi-clock"></i>
                 <span id="clock"><?= date('H:i') ?></span>
             </div>
         </div>
@@ -392,11 +434,11 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <?php if (!empty($spot_stats)): ?>
         <div class="flex flex-wrap gap-3 mb-6 animate-in delay-3">
             <?php foreach ($spot_stats as $s):
-                $emoji = $s['jenis'] == 'spot' ? '📍' : ($s['jenis'] == 'flora' ? '🌿' : ($s['jenis'] == 'fauna' ? '🐾' : '🌄'));
+                $icon_class = $s['jenis'] == 'spot' ? 'bi-geo-alt' : ($s['jenis'] == 'flora' ? 'bi-leaf' : ($s['jenis'] == 'fauna' ? 'bi-paw' : 'bi-mountains'));
                 $color = $s['jenis'] == 'spot' ? '#2F5233' : ($s['jenis'] == 'flora' ? '#3F7D4F' : ($s['jenis'] == 'fauna' ? '#C46F2A' : '#A9784B'));
             ?>
             <div class="bg-white/80 backdrop-blur rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm border border-white/50 text-sm">
-                <span><?= $emoji ?></span>
+                <i class="bi <?= $icon_class ?>"></i>
                 <span class="font-medium text-[#2d241c]"><?= ucfirst($s['jenis'])?></span>
                 <span class="text-[#8a7e72]">·</span>
                 <span class="font-bold" style="color: <?= $color ?>"><?= $s['jumlah'] ?></span>
@@ -411,7 +453,7 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
             <!-- ===== BERITA TERBARU ===== -->
             <div class="lg:col-span-2 table-container animate-in delay-4">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-bold text-[#1e3a2a]">📰 Berita Terbaru</h3>
+                    <h3 class="text-base font-bold text-[#1e3a2a]"><i class="bi bi-newspaper"></i> Berita Terbaru</h3>
                     <a href="berita/index.php" class="text-sm text-[#4a7a4e] font-medium hover:underline">Lihat semua</a>
                 </div>
                 <table>
@@ -460,19 +502,19 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <!-- ===== QUICK ACTIONS ===== -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 animate-in delay-6">
             <a href="berita/tambah.php" class="quick-action">
-                <span class="emoji">📰</span>
+                <span class="emoji"><i class="bi bi-newspaper"></i></span>
                 <span class="label">Tambah Berita</span>
             </a>
             <a href="galeri/tambah.php" class="quick-action">
-                <span class="emoji">🖼️</span>
+                <span class="emoji"><i class="bi bi-image"></i></span>
                 <span class="label">Tambah Galeri</span>
             </a>
             <a href="spot-jalur/tambah.php" class="quick-action">
-                <span class="emoji">📍</span>
+                <span class="emoji"><i class="bi bi-geo-alt"></i></span>
                 <span class="label">Tambah Spot</span>
             </a>
             <a href="peraturan/tambah.php" class="quick-action">
-                <span class="emoji">📋</span>
+                <span class="emoji"><i class="bi bi-list-check"></i></span>
                 <span class="label">Tambah Peraturan</span>
             </a>
         </div>

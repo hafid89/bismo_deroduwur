@@ -245,6 +245,7 @@ $lokasi_list = $stmt->fetchAll();
         .delay-5 { animation-delay: 0.25s; }
         .delay-6 { animation-delay: 0.3s; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
 <div class="flex h-screen overflow-hidden">
@@ -252,7 +253,7 @@ $lokasi_list = $stmt->fetchAll();
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">🏔️</div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -260,17 +261,17 @@ $lokasi_list = $stmt->fetchAll();
         </div>
 
         <nav class="flex-1 space-y-1">
-            <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
-            <a href="../berita/index.php" class="nav-link"><span class="icon">📰</span> Berita</a>
-            <a href="../galeri/index.php" class="nav-link"><span class="icon">🖼️</span> Galeri</a>
-            <a href="index.php" class="nav-link active"><span class="icon">🌿</span> Flora <span class="badge"><?= $total_flora ?></span></a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
-            <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
-            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
+            <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
+            <a href="../berita/index.php" class="nav-link"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita</a>
+            <a href="../galeri/index.php" class="nav-link"><span class="icon"><i class="bi bi-image"></i></span> Galeri</a>
+            <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-leaf"></i></span> Flora <span class="badge"><?= $total_flora ?></span></a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
+            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">
-            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon"><i class="bi bi-box-arrow-left"></i></span> Keluar</a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
         </div>
     </aside>
@@ -281,7 +282,7 @@ $lokasi_list = $stmt->fetchAll();
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 animate-in delay-1">
             <div>
-                <p class="text-sm text-[#8a7e72] font-medium">🌿 Manajemen Tumbuhan</p>
+                <p class="text-sm text-[#8a7e72] font-medium"><i class="bi bi-leaf"></i> Manajemen Tumbuhan</p>
                 <h1 class="text-2xl font-bold text-[#1e3a2a]">Kelola Flora</h1>
                 <p class="text-sm text-[#8a7e72]">Kelola data flora di Gunung Bismo</p>
             </div>
@@ -312,7 +313,7 @@ $lokasi_list = $stmt->fetchAll();
                 <p class="num"><?= $limit ?></p>
             </div>
             <div class="stat-card animate-in delay-5">
-                <p class="label">📍 Lokasi</p>
+                <p class="label"><i class="bi bi-geo-alt"></i> Lokasi</p>
                 <p class="num text-sm font-medium" style="font-size:14px; color:#4a7a4e;">
                     <?= count($lokasi_list) ?> area
                 </p>
@@ -323,7 +324,7 @@ $lokasi_list = $stmt->fetchAll();
         <?php if (empty($flora_list)): ?>
         <div class="bg-white rounded-xl shadow-lg p-12 text-center animate-in delay-3">
             <div class="empty-state">
-                <span class="icon">🌿</span>
+                <span class="icon"><i class="bi bi-leaf"></i></span>
                 <h3 class="text-lg font-bold text-[#2d241c] mb-1">Belum Ada Data Flora</h3>
                 <p class="text-sm text-[#8a7e72] mb-4">Mulai dengan menambahkan data flora pertama</p>
                 <a href="tambah.php" class="btn-primary-custom">+ Tambah Flora</a>
@@ -341,7 +342,7 @@ $lokasi_list = $stmt->fetchAll();
                          alt="<?= htmlspecialchars($flora['nama']) ?>">
                     <?php else: ?>
                     <div class="w-full h-full flex items-center justify-center text-5xl text-[#b8aaa0]">
-                        🌿
+                        <i class="bi bi-leaf"></i>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -349,7 +350,7 @@ $lokasi_list = $stmt->fetchAll();
                     <div class="flex items-start justify-between gap-2">
                         <h4 class="font-bold text-[#1e3a2a] text-sm leading-tight"><?= htmlspecialchars($flora['nama']) ?></h4>
                         <?php if (!empty($flora['lokasi'])): ?>
-                        <span class="badge-lokasi text-xs whitespace-nowrap">📍 <?= htmlspecialchars($flora['lokasi']) ?></span>
+                        <span class="badge-lokasi text-xs whitespace-nowrap"><i class="bi bi-geo-alt"></i> <?= htmlspecialchars($flora['lokasi']) ?></span>
                         <?php endif; ?>
                     </div>
                     <?php if (!empty($flora['nama_ilmiah'])): ?>

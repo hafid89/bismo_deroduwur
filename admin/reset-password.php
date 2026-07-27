@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $valid_token) {
                     Password Baru
                 </label>
                 <div class="input-icon">
-                    <span class="icon">🔒</span>
+                    <span class="icon"><i class="bi bi-lock"></i></span>
                     <input type="password" id="password" name="password" 
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"
                            placeholder="Minimal 6 karakter"
@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $valid_token) {
 
             <!-- Informasi Token -->
             <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-700">
-                <p>🔐 Token valid. Silakan buat password baru.</p>
+                <p><i class="bi bi-shield-lock"></i> Token valid. Silakan buat password baru.</p>
             </div>
 
             <button type="submit" 
@@ -284,7 +284,7 @@ function matchPassword(value) {
         matchText.textContent = '';
         matchText.style.color = '#6b7280';
     } else if (value === password) {
-        matchText.textContent = '✅ Password cocok';
+        matchText.textContent = '<i class="bi bi-check-circle"></i> Password cocok';
         matchText.style.color = '#3F7D4F';
     } else {
         matchText.textContent = '❌ Password tidak cocok';

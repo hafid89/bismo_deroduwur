@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Email Terdaftar
                 </label>
                 <div class="input-icon">
-                    <span class="icon">✉️</span>
+                    <span class="icon"><i class="bi bi-envelope"></i></span>
                     <input type="email" id="email" name="email" 
                            value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>"
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"

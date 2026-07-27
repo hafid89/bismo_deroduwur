@@ -140,10 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '⚠️';
+            content: '<i class="bi bi-exclamation-triangle"></i>';
             flex-shrink: 0;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="bg-[#FAF7F2]">
 <div class="flex h-screen">
@@ -164,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-[#2F5233]">🐾 Tambah Fauna</h1>
+                    <h1 class="text-3xl font-bold text-[#2F5233]"><i class="bi bi-paw"></i> Tambah Fauna</h1>
                     <p class="text-[#5C5C50] text-sm mt-1">Tambahkan data fauna baru ke database</p>
                 </div>
                 <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
@@ -199,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                placeholder="Contoh: Elang Jawa" 
                                required
                                oninput="this.value = this.value.replace(/[0-9]/g, '')">
-                        <p class="text-xs text-gray-400 mt-1">⚠️ Nama tidak boleh mengandung angka</p>
+                        <p class="text-xs text-gray-400 mt-1"><i class="bi bi-exclamation-triangle"></i> Nama tidak boleh mengandung angka</p>
                     </div>
 
                     <!-- Nama Ilmiah -->

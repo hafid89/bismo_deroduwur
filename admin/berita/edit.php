@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .alert-error { background: #fce4ec; border-left: 4px solid #ef5350; color: #5c1a1a; padding: 12px 16px; border-radius: 10px; }
         .error-list { list-style: none; padding: 0; margin: 0; }
         .error-list li { padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
-        .error-list li::before { content: '⚠️'; flex-shrink: 0; }
+        .error-list li::before { content: '<i class="bi bi-exclamation-triangle"></i>'; flex-shrink: 0; }
 
         .card-form { background: #fff; border-radius: 16px; padding: 28px 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); }
         .preview-image:hover { transform: scale(1.02); }
@@ -121,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .animate-in { animation: fadeUp 0.45s ease forwards; opacity: 0; }
         .delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; } .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
 <div class="flex h-screen overflow-hidden">
@@ -128,23 +129,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Sidebar -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">🏔️</div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
             </div>
         </div>
         <nav class="flex-1 space-y-1">
-            <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
-            <a href="index.php" class="nav-link active"><span class="icon">📰</span> Berita</a>
-            <a href="../galeri/index.php" class="nav-link"><span class="icon">🖼️</span> Galeri</a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon">🌿</span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
-            <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
-            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
+            <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
+            <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita</a>
+            <a href="../galeri/index.php" class="nav-link"><span class="icon"><i class="bi bi-image"></i></span> Galeri</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
+            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
         </nav>
         <div class="pt-4 border-t border-white/10 mt-auto">
-            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon"><i class="bi bi-box-arrow-left"></i></span> Keluar</a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
         </div>
     </aside>
@@ -153,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="flex-1 overflow-y-auto p-6 md:p-8">
         <div class="flex items-center justify-between mb-6 animate-in delay-1">
             <div>
-                <p class="text-sm text-[#8a7e72] font-medium">📰 Edit Konten</p>
+                <p class="text-sm text-[#8a7e72] font-medium"><i class="bi bi-newspaper"></i> Edit Konten</p>
                 <h1 class="text-2xl font-bold text-[#1e3a2a]">Edit Berita</h1>
                 <p class="text-sm text-[#8a7e72]">Perbarui informasi berita</p>
             </div>
@@ -179,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php if (!empty($berita['foto']) && file_exists(BERITA_UPLOAD_PATH . $berita['foto'])): ?>
                         <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($berita['foto']) ?>" class="w-full h-full object-cover">
                         <?php else: ?>
-                        <div class="w-full h-full flex items-center justify-center text-2xl text-[#b8aaa0] bg-[#f0ebe6]">📰</div>
+                        <div class="w-full h-full flex items-center justify-center text-2xl text-[#b8aaa0] bg-[#f0ebe6]"><i class="bi bi-newspaper"></i></div>
                         <?php endif; ?>
                     </div>
                     <div><p class="text-sm font-medium text-[#1e3a2a]">Foto saat ini</p><p class="text-xs text-[#8a7e72]">Upload foto baru untuk mengganti</p></div>

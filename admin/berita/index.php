@@ -33,6 +33,7 @@ $berita_list = $stmt->fetchAll();
     <title>Kelola Berita - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         * { font-family: 'Inter', sans-serif; transition: all 0.2s ease; }
         
@@ -238,7 +239,7 @@ $berita_list = $stmt->fetchAll();
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">🏔️</div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -246,17 +247,17 @@ $berita_list = $stmt->fetchAll();
         </div>
 
         <nav class="flex-1 space-y-1">
-            <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
-            <a href="index.php" class="nav-link active"><span class="icon">📰</span> Berita <span class="badge"><?= $total ?></span></a>
-            <a href="../galeri/index.php" class="nav-link"><span class="icon">🖼️</span> Galeri</a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon">🌿</span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
-            <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
-            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
+            <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
+            <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita <span class="badge"><?= $total ?></span></a>
+            <a href="../galeri/index.php" class="nav-link"><i class="bi bi-image"></i> Galeri</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
+            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">
-            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon"><i class="bi bi-box-arrow-left"></i></span> Keluar</a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
         </div>
     </aside>
@@ -267,7 +268,7 @@ $berita_list = $stmt->fetchAll();
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 animate-in delay-1">
             <div>
-                <p class="text-sm text-[#8a7e72] font-medium">📰 Manajemen Konten</p>
+                <p class="text-sm text-[#8a7e72] font-medium"><i class="bi bi-newspaper"></i> Manajemen Konten</p>
                 <h1 class="text-2xl font-bold text-[#1e3a2a]">Kelola Berita</h1>
                 <p class="text-sm text-[#8a7e72]">Kelola semua berita dan informasi terkini</p>
             </div>
@@ -298,7 +299,7 @@ $berita_list = $stmt->fetchAll();
                 <p class="num"><?= $limit ?></p>
             </div>
             <div class="stat-card animate-in delay-5">
-                <p class="label">📅 Terakhir</p>
+                <p class="label"><i class="bi bi-calendar3"></i> Terakhir</p>
                 <p class="num text-sm font-medium" style="font-size:14px; color:#4a7a4e;">
                     <?php 
                     $last = $pdo->query("SELECT tanggal FROM berita ORDER BY created_at DESC LIMIT 1")->fetch();
@@ -326,7 +327,7 @@ $berita_list = $stmt->fetchAll();
                         <tr>
                             <td colspan="5">
                                 <div class="empty-state">
-                                    <div class="icon">📭</div>
+                                    <div class="icon"><i class="bi bi-inbox"></i></div>
                                     <p class="font-medium text-[#2d241c]">Belum ada berita</p>
                                     <p class="text-sm">Mulai dengan menambahkan berita pertama</p>
                                     <a href="tambah.php" class="btn-primary-custom mt-3 text-sm inline-block">+ Tambah Berita</a>

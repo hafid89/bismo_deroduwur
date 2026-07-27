@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '⚠️';
+            content: '<i class="bi bi-exclamation-triangle"></i>';
             flex-shrink: 0;
         }
         .preview-image {
@@ -158,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: scale(1.02);
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="bg-[#FAF7F2]">
 <div class="flex h-screen">
@@ -180,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-[#2F5233]">🖼️ Tambah Galeri</h1>
+                    <h1 class="text-3xl font-bold text-[#2F5233]"><i class="bi bi-image"></i> Tambah Galeri</h1>
                     <p class="text-[#5C5C50] text-sm mt-1">Tambahkan foto baru ke galeri</p>
                 </div>
                 <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
@@ -216,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            minlength="3"
                            maxlength="255"
                            oninput="this.value = this.value.replace(/[0-9]/g, '')">
-                    <p class="text-xs text-gray-400 mt-1">⚠️ Judul tidak boleh mengandung angka</p>
+                    <p class="text-xs text-gray-400 mt-1"><i class="bi bi-exclamation-triangle"></i> Judul tidak boleh mengandung angka</p>
                 </div>
 
                 <!-- Kategori -->

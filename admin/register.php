@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Nama Lengkap
                 </label>
                 <div class="input-icon">
-                    <span class="icon">👤</span>
+                    <span class="icon"><i class="bi bi-person"></i></span>
                     <input type="text" id="full_name" name="full_name" 
                            value="<?= isset($_POST['full_name']) ? htmlspecialchars($_POST['full_name']) : '' ?>"
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Username
                 </label>
                 <div class="input-icon">
-                    <span class="icon">🔑</span>
+                    <span class="icon"><i class="bi bi-key"></i></span>
                     <input type="text" id="username" name="username" 
                            value="<?= isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>"
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Email
                 </label>
                 <div class="input-icon">
-                    <span class="icon">✉️</span>
+                    <span class="icon"><i class="bi bi-envelope"></i></span>
                     <input type="email" id="email" name="email" 
                            value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>"
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Password
                 </label>
                 <div class="input-icon">
-                    <span class="icon">🔒</span>
+                    <span class="icon"><i class="bi bi-lock"></i></span>
                     <input type="password" id="password" name="password" 
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233] transition duration-300"
                            placeholder="Minimal 6 karakter"
@@ -271,7 +271,7 @@ function matchPassword(value) {
         matchText.textContent = '';
         matchText.style.color = '#6b7280';
     } else if (value === password) {
-        matchText.textContent = '✅ Password cocok';
+        matchText.textContent = '<i class="bi bi-check-circle"></i> Password cocok';
         matchText.style.color = '#3F7D4F';
     } else {
         matchText.textContent = '❌ Password tidak cocok';

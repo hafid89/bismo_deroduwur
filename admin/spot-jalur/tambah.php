@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '⚠️';
+            content: '<i class="bi bi-exclamation-triangle"></i>';
             flex-shrink: 0;
         }
         .preview-image {
@@ -171,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: scale(1.02);
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="bg-[#FAF7F2]">
 <div class="flex h-screen">
@@ -189,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-[#2F5233]">📍 Tambah Spot Jalur</h1>
+                    <h1 class="text-3xl font-bold text-[#2F5233]"><i class="bi bi-geo-alt"></i> Tambah Spot Jalur</h1>
                     <p class="text-[#5C5C50] text-sm mt-1">Tambahkan spot baru di sepanjang jalur pendakian</p>
                 </div>
                 <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
@@ -280,10 +281,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Jenis <span class="text-red-500">*</span>
                     </label>
                     <select name="jenis" class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" required>
-                        <option value="spot" <?= $old_jenis == 'spot' ? 'selected' : '' ?>>📍 Spot</option>
-                        <option value="flora" <?= $old_jenis == 'flora' ? 'selected' : '' ?>>🌿 Flora</option>
-                        <option value="fauna" <?= $old_jenis == 'fauna' ? 'selected' : '' ?>>🐾 Fauna</option>
-                        <option value="wilayah" <?= $old_jenis == 'wilayah' ? 'selected' : '' ?>>🌄 Wilayah</option>
+                        <option value="spot" <?= $old_jenis == 'spot' ? 'selected' : '' ?>><i class="bi bi-geo-alt"></i> Spot</option>
+                        <option value="flora" <?= $old_jenis == 'flora' ? 'selected' : '' ?>><i class="bi bi-leaf"></i> Flora</option>
+                        <option value="fauna" <?= $old_jenis == 'fauna' ? 'selected' : '' ?>><i class="bi bi-paw"></i> Fauna</option>
+                        <option value="wilayah" <?= $old_jenis == 'wilayah' ? 'selected' : '' ?>><i class="bi bi-mountains"></i> Wilayah</option>
                     </select>
                 </div>
 

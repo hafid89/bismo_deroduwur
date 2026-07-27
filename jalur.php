@@ -2,6 +2,23 @@
 // Get spot data (urutan dari Database: Basecamp -> Pos 1 -> ... -> Puncak)
 $stmt = $pdo->query("SELECT * FROM spot_jalur ORDER BY urutan ASC");
 $spots = $stmt->fetchAll();
+
+// Koordinat spot yang sudah ditentukan
+$spotCoordinates = [
+    'Basecamp Deroduwur' => ['lat' => -7.277109360392517, 'lng' => 109.88252197062681],
+    'Pos Ojek' => ['lat' => -7.2767872, 'lng' => 109.8826357],
+    'Hutan Pakis' => ['lat' => -7.2757148, 'lng' => 109.8825928],
+    'Pos I' => ['lat' => -7.261790953381199, 'lng' => 109.88517987714762],
+    'Banyu Bismo' => ['lat' => -7.261247285357853, 'lng' => 109.88578710849409],
+    'Kantong Semar' => ['lat' => -7.2608867, 'lng' => 109.8852702],
+    'Pos II' => ['lat' => -7.257795841701307, 'lng' => 109.88617187577394],
+    'Pos III' => ['lat' => -7.252985478281804, 'lng' => 109.88824678002217],
+    'Tanjakan Jalak Wangi' => ['lat' => -7.2524526, 'lng' => 109.8885454],
+    'Pos IV' => ['lat' => -7.2500403947923155, 'lng' => 109.88889473470591],
+    'Sunrise Camp' => ['lat' => -7.24736831503517, 'lng' => 109.88807604023916],
+    'Puncak Hastinapura' => ['lat' => -7.2472013510496085, 'lng' => 109.88833085009672],
+    'Puncak Indraprasta' => ['lat' => -7.239103523689495, 'lng' => 109.88885808274736],
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -9,17 +26,23 @@ $spots = $stmt->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telusur Jalur - Gunung Bismo via Deroduwur</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Outfit', sans-serif; }
 
-        /* Hero Section - Sama seperti index dan kisah */
         .hero-jalur {
-            height: 100vh;
-            min-height: 600px;
-            max-height: 800px;
+            height: 60vh;
+            min-height: 400px;
+            max-height: 500px;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -56,7 +79,6 @@ $spots = $stmt->fetchAll();
             margin-right: auto;
         }
 
-        /* Animasi fade untuk hero */
         .hero-fade {
             opacity: 0;
             transform: translateY(30px);
@@ -72,7 +94,134 @@ $spots = $stmt->fetchAll();
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Toggle Button */
+        #map-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            background: #f0f4f8;
+        }
+
+        .custom-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .custom-marker:hover {
+            transform: scale(1.3);
+        }
+
+        .marker-basecamp {
+            background: #3b82f6;
+            width: 28px;
+            height: 28px;
+        }
+
+        .marker-puncak {
+            background: #ef4444;
+            width: 28px;
+            height: 28px;
+        }
+
+        .marker-pos {
+            background: #22c55e;
+        }
+
+        .marker-spot {
+            background: #eab308;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .custom-popup .leaflet-popup-content {
+            margin: 0;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .popup-content {
+            padding: 12px 16px;
+        }
+
+        .popup-content h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 4px;
+        }
+
+        .popup-content p {
+            font-size: 12px;
+            color: #5C5C50;
+            margin: 2px 0;
+        }
+
+        .popup-content .popup-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .popup-content .popup-image:hover {
+            opacity: 0.9;
+        }
+
+        .map-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .map-controls button {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2F5233;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .map-controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: #2F5233;
+            color: white;
+        }
+
         .toggle-btn {
             transition: all 0.3s ease;
             position: relative;
@@ -94,28 +243,6 @@ $spots = $stmt->fetchAll();
             background: #d1d5db;
         }
 
-        /* Modal Overlay */
-        .modal-overlay {
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            transform: translateY(20px);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        /* View Container */
         .view-container {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -130,188 +257,48 @@ $spots = $stmt->fetchAll();
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* SVG Trail Container - Interaktif */
-        .trail-svg-container {
-            position: relative;
-            width: 100%;
-            max-width: 850px;
-            margin: 0 auto;
-            padding: 20px 0 40px 0;
-        }
-
-        #trail-svg {
-            width: 100%;
-            height: auto;
-            overflow: visible;
-            background: #f8fafc;
-            border-radius: 16px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .path-bg {
-            stroke: #CBD5E1;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-
-        .path-active {
-            stroke: #ef4444;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-            transition: stroke-dashoffset 0.1s linear;
-        }
-
-        /* Spot Pin Styling */
-        .spot-pin {
+        .map-legend {
             position: absolute;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            scale: 0.5;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .spot-pin.active {
-            opacity: 1;
-            scale: 1;
-        }
-
-        .pin-dot {
-            width: 24px;
-            height: 24px;
-            background: #22c55e;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            z-index: 10;
-        }
-
-        .spot-pin:hover .pin-dot, .spot-pin.expanded .pin-dot {
-            transform: scale(1.4);
-            background: #eab308;
-        }
-
-        .pin-dot.puncak {
-            background: #ef4444;
-            width: 30px;
-            height: 30px;
-            border-color: #fef08a;
-        }
-
-        .pin-dot.basecamp {
-            background: #3b82f6;
-            width: 30px;
-            height: 30px;
-            border-color: #93c5fd;
-        }
-
-        .pin-label {
-            position: absolute;
-            top: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(4px);
-            color: white;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 3px 12px;
-            border-radius: 20px;
-            white-space: nowrap;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 5;
-        }
-
-        .spot-pin.active .pin-label {
-            opacity: 1;
-        }
-
-        .spot-card {
-            position: absolute;
-            width: 260px;
-            max-width: 75vw;
-            background: rgba(255, 255, 255, 0.98);
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
             backdrop-filter: blur(8px);
-            border-radius: 14px;
-            padding: 12px 14px;
-            box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.2);
-            border-left: 5px solid #2F5233;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 12px;
+            min-width: 140px;
         }
 
-        .spot-pin.pos-left .spot-card { 
-            right: 40px; 
-            top: 50%;
-            transform: translateY(-50%) translateX(-10px);
+        .map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
         }
 
-        .spot-pin.pos-right .spot-card { 
-            left: 40px; 
-            top: 50%;
-            transform: translateY(-50%) translateX(10px);
+        .map-legend-item .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            flex-shrink: 0;
         }
 
-        .spot-pin.active .spot-card {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(-50%) translateX(0);
+        .dot-blue { background: #3b82f6; }
+        .dot-red { background: #ef4444; }
+        .dot-green { background: #22c55e; }
+        .dot-yellow { background: #eab308; }
+        .dot-route { 
+            width: 20px;
+            height: 4px;
+            background: #ef4444;
+            border-radius: 2px;
+            flex-shrink: 0;
         }
 
-        .card-details {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.4s ease-in-out;
-        }
-
-        .spot-pin:hover .spot-card, 
-        .spot-pin.expanded .spot-card {
-            width: 300px;
-            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.3);
-            z-index: 100 !important;
-        }
-
-        .spot-pin:hover .card-details,
-        .spot-pin.expanded .card-details {
-            max-height: 300px;
-            opacity: 1;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #e2e8f0;
-        }
-
-        .spot-img-container {
-            width: 100%;
-            height: 120px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 6px;
-            background-color: #e2e8f0;
-        }
-
-        .spot-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .spot-img-container img:hover {
-            transform: scale(1.05);
-        }
-
-        /* Poster View - Gambar Peta */
+        /* Poster View */
         .poster-container {
             position: relative;
             width: 100%;
@@ -353,7 +340,6 @@ $spots = $stmt->fetchAll();
             background: rgba(0,0,0,0.85);
         }
 
-        /* Lightbox */
         .lightbox-modal {
             display: none;
             position: fixed;
@@ -395,52 +381,34 @@ $spots = $stmt->fetchAll();
             transform: scale(1.2);
         }
 
-        /* Custom Scrollbar */
-        .modal-scroll-body::-webkit-scrollbar { width: 8px; }
-        .modal-scroll-body::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 4px; }
-        .modal-scroll-body::-webkit-scrollbar-thumb { background: #2F5233; border-radius: 4px; }
-
         @media (max-width: 768px) {
+            #map-container {
+                height: 500px;
+            }
             .hero-jalur {
-                height: 85vh;
-                min-height: 450px;
+                height: 40vh;
+                min-height: 300px;
             }
-            .spot-card {
-                width: 180px !important;
-                padding: 8px 10px;
+            .map-controls {
+                bottom: 10px;
+                gap: 6px;
             }
-            .spot-pin:hover .spot-card, 
-            .spot-pin.expanded .spot-card {
-                width: 220px !important;
+            .map-controls button {
+                font-size: 10px;
+                padding: 6px 12px;
             }
-            .pin-label {
-                font-size: 8px;
-                padding: 2px 8px;
-                top: 28px;
-            }
-            .pin-dot {
-                width: 18px;
-                height: 18px;
-            }
-            .pin-dot.puncak, .pin-dot.basecamp {
-                width: 22px;
-                height: 22px;
-            }
-            .lightbox-close {
-                top: 20px;
-                right: 20px;
-                font-size: 30px;
-            }
-            .toggle-btn {
-                font-size: 13px;
-                padding: 8px 16px !important;
+            .map-legend {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 10px;
+                min-width: 100px;
             }
         }
 
         @media (max-width: 480px) {
-            .hero-jalur {
-                height: 80vh;
-                min-height: 400px;
+            #map-container {
+                height: 400px;
             }
             .hero-title {
                 font-size: clamp(1.8rem, 7vw, 2.2rem);
@@ -448,26 +416,6 @@ $spots = $stmt->fetchAll();
             .hero-subtitle {
                 font-size: clamp(0.8rem, 2.5vw, 0.95rem);
                 padding: 0 15px;
-            }
-            .spot-card {
-                width: 150px !important;
-                padding: 6px 8px;
-            }
-            .spot-pin:hover .spot-card, 
-            .spot-pin.expanded .spot-card {
-                width: 180px !important;
-            }
-            .spot-img-container {
-                height: 70px;
-            }
-            .pin-label {
-                display: none;
-            }
-            .poster-overlay {
-                font-size: 10px;
-                padding: 4px 10px;
-                bottom: 10px;
-                right: 10px;
             }
         }
     </style>
@@ -484,8 +432,7 @@ $spots = $stmt->fetchAll();
                 Telusur <span class="text-[#E0BE45]">Jalur Pendakian</span>
             </h1>
             <p class="hero-subtitle text-base md:text-lg lg:text-2xl text-white/90 leading-relaxed hero-fade delay-2 max-w-3xl mx-auto">
-                Jelajahi setiap pos dan spot menarik di sepanjang jalur pendakian Gunung Bismo via Deroduwur. 
-                Pilih mode tampilan sesuai keinginan Anda.
+                Jelajahi setiap pos dan spot menarik di sepanjang jalur pendakian Gunung Bismo via Deroduwur.
             </p>
         </div>
     </div>
@@ -495,15 +442,15 @@ $spots = $stmt->fetchAll();
 <section class="py-12 bg-white">
     <div class="container mx-auto px-4 max-w-6xl">
         <div class="text-center mb-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233]">Peta & Visualisasi Jalur</h2>
-            <p class="text-[#5C5C50] mt-2">Pilih mode tampilan: Interaktif atau Poster</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233]">Peta Interaktif Jalur Pendakian</h2>
+            <p class="text-[#5C5C50] mt-2">Zoom, geser, dan klik marker untuk melihat detail spot</p>
         </div>
 
         <!-- Toggle Button -->
         <div class="flex justify-center mb-8">
             <div class="inline-flex bg-gray-100 rounded-2xl p-1.5 shadow-md">
                 <button id="toggleInteraktif" class="toggle-btn active px-6 py-3 rounded-xl font-semibold text-sm transition duration-300">
-                    Interaktif
+                    Peta Interaktif
                 </button>
                 <button id="togglePoster" class="toggle-btn px-6 py-3 rounded-xl font-semibold text-sm transition duration-300">
                     Poster
@@ -515,139 +462,57 @@ $spots = $stmt->fetchAll();
         <div id="viewInteraktif" class="view-container active">
             <div class="bg-[#FAF7F2] rounded-2xl shadow-xl p-4 md:p-6 border border-gray-200">
                 
-                <!-- Tombol Aksi -->
-                <div class="flex flex-wrap justify-center gap-4 mb-6">
-                    <button onclick="openLightbox('<?= BASE_URL ?>assets/images/peta-jalur-bismo.jpg')" 
-                            class="inline-flex items-center gap-2 bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md hover:shadow-lg">
-                     Lihat Peta Full
-                    </button>
-                    <a href="<?= BASE_URL ?>assets/images/peta-jalur-bismo.jpg" download="Peta-Jalur-Gunung-Bismo-Deroduwur.jpg" 
-                       class="inline-flex items-center gap-2 bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md hover:shadow-lg">
-                    Download Peta
-                    </a>
-                </div>
-
-                <!-- SVG Visualisasi Interaktif dengan Background Peta -->
-                <div class="trail-svg-container" id="trailContainer">
+                <div id="map-container">
+                    <div id="map"></div>
                     
-                    <svg id="trail-svg" viewBox="0 0 800 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Background Peta (Grid/Garis Kontur) -->
-                        <rect width="800" height="1600" fill="#f0f4f8" rx="16"/>
-                        
-                        <!-- Garis Kontur / Grid -->
-                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
-                        </pattern>
-                        <rect width="800" height="1600" fill="url(#grid)"/>
-                        
-                        <!-- Garis Kontur Topografi (Dekoratif) -->
-                        <path d="M 100 200 Q 300 150 500 250 T 700 200" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 50 400 Q 250 350 450 420 T 750 380" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 80 600 Q 280 550 480 620 T 720 580" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 60 800 Q 260 750 460 820 T 740 780" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 120 1000 Q 320 950 520 1020 T 700 980" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 90 1200 Q 290 1150 490 1220 T 710 1180" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-                        <path d="M 110 1400 Q 310 1350 510 1420 T 690 1380" stroke="#d1d5db" stroke-width="1" fill="none" opacity="0.5"/>
-
-                        <!-- Background Path (Abu-abu) - Jalur Utama -->
-                        <path class="path-bg" d="M 400 100 L 330 180 L 400 280 L 325 380 L 415 500 L 330 620 L 400 750 L 325 890 L 415 1030 L 330 1180 L 400 1330 L 370 1500" />
-                        
-                        <!-- Active Path (Merah - akan terisi sesuai scroll) -->
-                        <path id="route-path" class="path-active" d="M 400 100 L 330 180 L 400 280 L 325 380 L 415 500 L 330 620 L 400 750 L 325 890 L 415 1030 L 330 1180 L 400 1330 L 370 1500" />
-                        
-                        <!-- Marker Basecamp -->
-                        <circle cx="370" cy="1500" r="12" fill="#3b82f6" stroke="white" stroke-width="3"/>
-                        <text x="370" y="1550" fill="#1e293b" font-size="14" font-weight="700" text-anchor="middle">🏕️ Basecamp Deroduwur</text>
-                        
-                        <!-- Marker Puncak -->
-                        <circle cx="400" cy="100" r="12" fill="#ef4444" stroke="white" stroke-width="3"/>
-                        <text x="400" y="70" fill="#ef4444" font-size="14" font-weight="700" text-anchor="middle">🏔️ Puncak Indraprasta (2365 MDPL)</text>
-                        
-                        <!-- Legenda -->
-                        <rect x="20" y="20" width="180" height="90" rx="10" fill="white" stroke="#e2e8f0" stroke-width="1" opacity="0.9"/>
-                        <text x="35" y="45" fill="#1e293b" font-size="12" font-weight="700">📌 Legenda</text>
-                        <circle cx="35" cy="65" r="6" fill="#22c55e"/>
-                        <text x="50" y="69" fill="#5C5C50" font-size="11">Pos Peristirahatan</text>
-                        <circle cx="35" cy="85" r="6" fill="#ef4444"/>
-                        <text x="50" y="89" fill="#5C5C50" font-size="11">Puncak</text>
-                        <circle cx="35" cy="105" r="6" fill="#3b82f6"/>
-                        <text x="50" y="109" fill="#5C5C50" font-size="11">Basecamp</text>
-                    </svg>
-
-                    <!-- Mapping Spot Koordinat -->
-                    <?php 
-                    $coordsPeta = [
-                        ['x' => 370, 'y' => 1500, 'side' => 'left', 'label' => 'Basecamp'],
-                        ['x' => 400, 'y' => 1330, 'side' => 'right', 'label' => 'Pos Ojek'],
-                        ['x' => 330, 'y' => 1180, 'side' => 'left', 'label' => 'Gerbang'],
-                        ['x' => 415, 'y' => 1030, 'side' => 'right', 'label' => 'Pos I'],
-                        ['x' => 325, 'y' => 890,  'side' => 'left', 'label' => 'Hutan Pakis'],
-                        ['x' => 400, 'y' => 750,  'side' => 'right', 'label' => 'Pos II'],
-                        ['x' => 330, 'y' => 620,  'side' => 'left', 'label' => 'Tanjakan Jalak'],
-                        ['x' => 415, 'y' => 500,  'side' => 'right', 'label' => 'Pos III'],
-                        ['x' => 325, 'y' => 380,  'side' => 'left', 'label' => 'Pos IV'],
-                        ['x' => 400, 'y' => 280,  'side' => 'right', 'label' => 'Sunrise Camp'],
-                        ['x' => 330, 'y' => 180,  'side' => 'left', 'label' => 'Puncak Hastinapura'],
-                        ['x' => 400, 'y' => 100,  'side' => 'right', 'label' => 'Puncak Indraprasta'],
-                    ];
-
-                    foreach ($spots as $index => $spot): 
-                        $coord = $coordsPeta[$index] ?? ['x' => 400, 'y' => 1500 - ($index * 120), 'side' => ($index % 2 == 0 ? 'right' : 'left'), 'label' => $spot['nama']];
-                        $posX = ($coord['x'] / 800) * 100;
-                        $posY = ($coord['y'] / 1600) * 100;
-                        
-                        $spotProgress = $coord['y'] / 1600;
-                        $zIndex = 50 - $index;
-
-                        $isPuncak = strpos(strtolower($spot['nama']), 'puncak') !== false || strpos(strtolower($spot['nama']), 'indraprasta') !== false;
-                        $isBasecamp = strpos(strtolower($spot['nama']), 'basecamp') !== false;
-
-                        $fotoUrl = !empty($spot['foto']) && file_exists(__DIR__ . '/assets/images/telusurjalur/' . $spot['foto']) 
-                            ? 'assets/images/telusurjalur/' . $spot['foto'] 
-                            : 'assets/images/default-spot.jpg';
-                    ?>
-                    <div class="spot-pin pos-<?= $coord['side'] ?>" 
-                         style="left: <?= $posX ?>%; top: <?= $posY ?>%; z-index: <?= $zIndex ?>;" 
-                         data-progress="<?= $spotProgress ?>">
-                         
-                        <div class="pin-dot <?= $isPuncak ? 'puncak' : ($isBasecamp ? 'basecamp' : '') ?>"></div>
-                        
-                        <div class="pin-label"><?= htmlspecialchars($coord['label']) ?></div>
-
-                        <div class="spot-card">
-                            <div class="flex items-center justify-between gap-1">
-                                <h4 class="font-bold text-[#2F5233] text-xs md:text-sm leading-tight truncate"><?= htmlspecialchars($spot['nama']) ?></h4>
-                                <span class="text-sm flex-shrink-0"><?= $isPuncak ? '🏔️' : ($isBasecamp ? '⛰️' : '📍') ?></span>
-                            </div>
-                            
-                            <?php if (!empty($spot['ketinggian'])): ?>
-                                <p class="text-[10px] text-[#A9784B] font-medium leading-tight mt-0.5">📍 <?= htmlspecialchars($spot['ketinggian']) ?></p>
-                            <?php endif; ?>
-
-                            <?php if (!empty($spot['estimasi_waktu'])): ?>
-                                <p class="text-[10px] text-gray-500 font-medium">⏱️ <?= htmlspecialchars($spot['estimasi_waktu']) ?></p>
-                            <?php endif; ?>
-
-                            <div class="card-details">
-                                <div class="spot-img-container" onclick="event.stopPropagation(); openLightbox('<?= htmlspecialchars($fotoUrl) ?>')">
-                                    <img src="<?= htmlspecialchars($fotoUrl) ?>" alt="<?= htmlspecialchars($spot['nama']) ?>" loading="lazy">
-                                </div>
-                                
-                                <?php if (!empty($spot['deskripsi'])): ?>
-                                    <p class="text-[11px] text-gray-600 mt-1 leading-snug line-clamp-3"><?= htmlspecialchars($spot['deskripsi']) ?></p>
-                                <?php endif; ?>
-                                
-                                <?php if (!empty($spot['lokasi'])): ?>
-                                    <p class="text-[10px] text-gray-400 mt-1">📍 <?= htmlspecialchars($spot['lokasi']) ?></p>
-                                <?php endif; ?>
-                            </div>
+                    <div class="map-legend">
+                        <div class="font-bold text-[#2F5233] text-xs mb-2">📌 Legenda</div>
+                        <div class="map-legend-item">
+                            <span class="dot dot-blue"></span>
+                            <span>Basecamp</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="dot dot-red"></span>
+                            <span>Puncak</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="dot dot-green"></span>
+                            <span>Pos</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="dot dot-yellow"></span>
+                            <span>Spot</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="dot-route"></span>
+                            <span>Jalur Pendakian</span>
                         </div>
                     </div>
-                    <?php endforeach; ?>
+
+                    <div class="map-controls">
+                        <button onclick="zoomToRoute()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            Zoom ke Jalur
+                        </button>
+                        <button onclick="resetMap()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Reset Peta
+                        </button>
+                        <button onclick="toggleSatellite()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Ganti Layer
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="text-center py-4 text-sm font-medium text-[#2F5233] border-t border-gray-200 mt-4">
-                    🏕️ Basecamp Deroduwur — 🏔️ Puncak Indraprasta (2365 MDPL)
+                    🏕️ Basecamp Deroduwur — 🏔️ Puncak Indraprasta (2.365 MDPL) — Total <?= count($spots) ?> Spot
                 </div>
             </div>
         </div>
@@ -681,7 +546,7 @@ $spots = $stmt->fetchAll();
     </div>
 </section>
 
-<!-- Lightbox untuk Full Gambar -->
+<!-- Lightbox -->
 <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
     <img id="lightboxImage" src="" alt="Full Size Image">
@@ -689,96 +554,443 @@ $spots = $stmt->fetchAll();
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js"></script>
+
 <script>
+// Data koordinat spot dari PHP
+const spotData = <?php 
+    $data = [];
+    foreach ($spots as $spot) {
+        $nama = $spot['nama'];
+        $coord = $spotCoordinates[$nama] ?? null;
+        if ($coord) {
+            $data[] = [
+                'nama' => $nama,
+                'lat' => $coord['lat'],
+                'lng' => $coord['lng'],
+                'ketinggian' => $spot['ketinggian'] ?? '',
+                'estimasi_waktu' => $spot['estimasi_waktu'] ?? '',
+                'deskripsi' => $spot['deskripsi'] ?? '',
+                'foto' => $spot['foto'] ?? '',
+                'jenis' => $spot['jenis'] ?? 'spot',
+                'urutan' => $spot['urutan'] ?? 0,
+            ];
+        }
+    }
+    echo json_encode($data);
+?>;
+
+// JALUR DARI FILE CSV TERBARU (Jalur pendakian via deroduwur (3).csv)
+const routeCoordinates = [
+    [-7.2770562, 109.8825237],
+[-7.2767872, 109.8826357],
+[-7.2757148, 109.8825928],
+[-7.2752581, 109.8828156],
+[-7.2744509, 109.8829181],
+[-7.2739613, 109.8830189],
+[-7.273284, 109.883333],
+[-7.2721874, 109.8837758],
+[-7.2717826, 109.8840347],
+[-7.2712559, 109.8842518],
+[-7.2708504, 109.8842335],
+[-7.2699529, 109.8842136],
+[-7.2694747, 109.8843735],
+[-7.2689949, 109.8846133],
+[-7.2683798, 109.8848259],
+[-7.2679233, 109.8850609],
+[-7.2677351, 109.8851619],
+[-7.2668234, 109.8852363],
+[-7.266371, 109.8853584],
+[-7.2661602, 109.8854075],
+[-7.2659321, 109.8854507],
+[-7.265703, 109.885534],
+[-7.2654802, 109.8856544],
+[-7.2651703, 109.8856417],
+[-7.2642031, 109.8858515],
+[-7.26395, 109.8858919],
+[-7.2635154, 109.8858486],
+[-7.2629557, 109.8856502],
+[-7.2623517, 109.8858317],
+[-7.2620439, 109.8857649],
+[-7.2617883, 109.8858372],
+[-7.2617184, 109.8858288],
+[-7.2615554, 109.885934],
+[-7.2614385, 109.8859219],
+[-7.2613856, 109.8858831],
+[-7.2613144, 109.8858947],
+[-7.2612479, 109.8857937],
+[-7.2611551, 109.8857844],
+[-7.2612099, 109.8856485],
+[-7.2614374, 109.8855811],
+[-7.2618648, 109.8851879],
+[-7.2615012, 109.8851486],
+[-7.2611918, 109.8851911],
+[-7.2608867, 109.8852702],
+[-7.2605857, 109.8854572],
+[-7.2602817, 109.8855851],
+[-7.260116, 109.8856089],
+[-7.259958, 109.8856971],
+[-7.259878, 109.885847],
+[-7.2595429, 109.8860754],
+[-7.259127, 109.8863032],
+[-7.25874, 109.8864016],
+[-7.2585246, 109.8865246],
+[-7.2582659, 109.8866141],
+[-7.2580547, 109.8865778],
+[-7.2577571, 109.8861499],
+[-7.2575421, 109.8864271],
+[-7.2572557, 109.8866805],
+[-7.2569692, 109.8868196],
+[-7.2568389, 109.8869962],
+[-7.2566717, 109.8871798],
+[-7.2562234, 109.8874987],
+[-7.2557446, 109.8875623],
+[-7.2552754, 109.8877037],
+[-7.2548183, 109.8878519],
+[-7.2543733, 109.8880464],
+[-7.2539504, 109.8881584],
+[-7.2536777, 109.8882124],
+[-7.2532612, 109.8882048],
+[-7.2529703, 109.8880439],
+[-7.2528128, 109.8882316],
+[-7.2524526, 109.8885454],
+[-7.2520991, 109.8887334],
+[-7.2517645, 109.8888568],
+[-7.2515336, 109.8889894],
+[-7.251025, 109.8889203],
+[-7.2505995, 109.8889878],
+[-7.2503344, 109.8890463],
+[-7.2499948, 109.8887045],
+[-7.2494714, 109.8883852],
+[-7.2492835, 109.8883583],
+[-7.2487973, 109.8885673],
+[-7.2485979, 109.8886466],
+[-7.2483352, 109.8885268],
+[-7.2479739, 109.8882753],
+[-7.2476824, 109.8880519],
+[-7.2475293, 109.8880062],
+[-7.2473624, 109.8880529],
+[-7.2472151, 109.8882211],
+[-7.2471969, 109.888359],
+[-7.2471704, 109.8883005],
+[-7.2471139, 109.8882996],
+[-7.2470512, 109.8882994],
+[-7.2469993, 109.8882954],
+[-7.2469436, 109.8882712],
+[-7.246891, 109.8882652],
+[-7.2468618, 109.8882398],
+[-7.2468333, 109.8882301],
+[-7.2467554, 109.888168],
+[-7.2466826, 109.8881221],
+[-7.246582, 109.8880745],
+[-7.2464867, 109.8880424],
+[-7.2464161, 109.8880456],
+[-7.2462742, 109.8880265],
+[-7.2462187, 109.8880276],
+[-7.2461563, 109.8880082],
+[-7.2461136, 109.8880225],
+[-7.2460625, 109.8879968],
+[-7.245986, 109.8879923],
+[-7.2459438, 109.8879654],
+[-7.2458887, 109.8879664],
+[-7.2458493, 109.8879389],
+[-7.2458101, 109.8879458],
+[-7.2457873, 109.8879275],
+[-7.2457335, 109.8879189],
+[-7.2457127, 109.8879351],
+[-7.2456753, 109.8879154],
+[-7.2456557, 109.8879197],
+[-7.2456341, 109.8879195],
+[-7.2455946, 109.8878918],
+[-7.2455427, 109.8878852],
+[-7.2454994, 109.8878618],
+[-7.2454789, 109.887859],
+[-7.2454024, 109.8878203],
+[-7.2453638, 109.8877937],
+[-7.2453179, 109.8877773],
+[-7.245281, 109.8877929],
+[-7.2452499, 109.8877831],
+[-7.2452247, 109.8877786],
+[-7.2451697, 109.8877636],
+[-7.2451476, 109.8877519],
+[-7.2451135, 109.8877545],
+[-7.2450871, 109.8877417],
+[-7.2450534, 109.887723],
+[-7.2449978, 109.88774],
+[-7.2449062, 109.8877304],
+[-7.244841, 109.8876945],
+[-7.2447944, 109.8876832],
+[-7.2447388, 109.8876885],
+[-7.2446649, 109.8876668],
+[-7.2445776, 109.8876172],
+[-7.2445174, 109.8876022],
+[-7.2445032, 109.8876088],
+[-7.2444561, 109.8875968],
+[-7.2443882, 109.8876066],
+[-7.244347, 109.8876024],
+[-7.2442291, 109.8875683],
+[-7.2441993, 109.8875586],
+[-7.2441817, 109.887568],
+[-7.2441061, 109.8875615],
+[-7.2440741, 109.8875446],
+[-7.2439401, 109.8875309],
+[-7.2438888, 109.8875235],
+[-7.2438436, 109.8875051],
+[-7.2437306, 109.8875058],
+[-7.243675, 109.8874991],
+[-7.2436204, 109.8874982],
+[-7.2434649, 109.8875127],
+[-7.2434381, 109.8874935],
+[-7.243384, 109.8875043],
+[-7.2430779, 109.8873254],
+[-7.2430176, 109.887248],
+[-7.2429774, 109.8872445],
+[-7.2429396, 109.8872683],
+[-7.2429243, 109.8872563],
+[-7.2428785, 109.8872815],
+[-7.2428007, 109.887311],
+[-7.2427571, 109.8873356],
+[-7.242717, 109.887328],
+[-7.2426746, 109.8873292],
+[-7.2426404, 109.8873237],
+[-7.2424686, 109.8873573],
+[-7.2423698, 109.8873504],
+[-7.2423131, 109.8873552],
+[-7.2422286, 109.8873674],
+[-7.2421666, 109.8873614],
+[-7.2421216, 109.8873332],
+[-7.2420679, 109.8873343],
+[-7.2420566, 109.887318],
+[-7.2420072, 109.887316],
+[-7.2419928, 109.8872925],
+[-7.2419502, 109.8873043],
+[-7.2418389, 109.8873097],
+[-7.2417015, 109.8873282],
+[-7.2416234, 109.8873732],
+[-7.2415916, 109.8873831],
+[-7.2415582, 109.8873792],
+[-7.2415378, 109.8873955],
+[-7.2415045, 109.8874051],
+[-7.2414872, 109.8874434],
+[-7.2414684, 109.8874522],
+[-7.2414496, 109.8874502],
+[-7.2414232, 109.8874603],
+[-7.2413513, 109.8874414],
+[-7.2413091, 109.8874495],
+[-7.2412876, 109.8874764],
+[-7.2411843, 109.8874936],
+[-7.2411723, 109.8875138],
+[-7.2411527, 109.8875226],
+[-7.2411397, 109.8875364],
+[-7.2410776, 109.8875525],
+[-7.2410251, 109.8875827],
+[-7.2410122, 109.8876137],
+[-7.2409698, 109.88764],
+[-7.2409501, 109.8876785],
+[-7.2408966, 109.8877124],
+[-7.2408376, 109.8877484],
+[-7.2407896, 109.8877802],
+[-7.2407529, 109.8877834],
+[-7.2407193, 109.8878141],
+[-7.2406718, 109.8878339],
+[-7.2406376, 109.8878378],
+[-7.2406189, 109.8878543],
+[-7.2405495, 109.8878723],
+[-7.24052, 109.8878752],
+[-7.2404922, 109.8878963],
+[-7.2404543, 109.8879111],
+[-7.2404039, 109.8879129],
+[-7.2403596, 109.8879279],
+[-7.2403195, 109.8879545],
+[-7.2402658, 109.8879688],
+[-7.2401991, 109.8880065],
+[-7.2401253, 109.8880538],
+[-7.2400351, 109.8880738],
+[-7.2399793, 109.888141],
+[-7.2399217, 109.8881816],
+[-7.2398678, 109.8882087],
+[-7.2398366, 109.8882388],
+[-7.2398198, 109.888238],
+[-7.23977, 109.888281],
+[-7.2397512, 109.8883706],
+[-7.2396966, 109.8884584],
+[-7.2396493, 109.8884909],
+[-7.2396226, 109.8885478],
+[-7.239575, 109.8885494],
+[-7.239498, 109.8885878],
+[-7.2394432, 109.8885721],
+[-7.2393841, 109.8886292],
+[-7.2392889, 109.8886548],
+[-7.2391185, 109.8888444],
+];
+
+// Inisialisasi Peta
+let map;
+let currentLayer = 'satellite';
+let markerLayer;
+let routeLayer;
+let routePolyline;
+
+const BASE_URL = '<?= BASE_URL ?>';
+
+function initMap() {
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+        maxZoom: 20,
+        minZoom: 10,
+    });
+
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+        minZoom: 10,
+    });
+
+    map = L.map('map', {
+        center: [-7.26, 109.885],
+        zoom: 14,
+        zoomControl: false,
+        gestureHandling: true,
+        layers: [satelliteLayer],
+    });
+
+    L.control.zoom({
+        position: 'bottomright'
+    }).addTo(map);
+
+    map._satelliteLayer = satelliteLayer;
+    map._streetLayer = streetLayer;
+
+    addMarkers();
+    addRoute();
+
+    setTimeout(() => {
+        zoomToRoute();
+    }, 500);
+}
+
+function getMarkerIcon(spot) {
+    const isBasecamp = spot.nama.toLowerCase().includes('basecamp');
+    const isPuncak = spot.nama.toLowerCase().includes('puncak');
+    const isPos = spot.nama.toLowerCase().includes('pos');
+    
+    let className = 'custom-marker';
+    if (isBasecamp) className += ' marker-basecamp';
+    else if (isPuncak) className += ' marker-puncak';
+    else if (isPos) className += ' marker-pos';
+    else className += ' marker-spot';
+    
+    return L.divIcon({
+        className: className,
+        iconSize: [isBasecamp || isPuncak ? 28 : 20, isBasecamp || isPuncak ? 28 : 20],
+        iconAnchor: [isBasecamp || isPuncak ? 14 : 10, isBasecamp || isPuncak ? 14 : 10],
+    });
+}
+
+function addMarkers() {
+    markerLayer = L.layerGroup().addTo(map);
+
+    spotData.forEach((spot, index) => {
+        const icon = getMarkerIcon(spot);
+        const marker = L.marker([spot.lat, spot.lng], { icon: icon });
+        
+        const fotoUrl = spot.foto ? `${BASE_URL}uploads/spot/${spot.foto}` : `${BASE_URL}assets/images/default-spot.jpg`;
+        const fotoHtml = spot.foto ? `<img src="${fotoUrl}" alt="${spot.nama}" class="popup-image" onclick="event.stopPropagation(); openLightbox('${fotoUrl}')">` : '';
+        
+        const popupContent = `
+            <div class="popup-content">
+                <h3>${spot.nama}</h3>
+                ${spot.ketinggian ? `<p>📏 ${spot.ketinggian}</p>` : ''}
+                ${spot.estimasi_waktu ? `<p>⏱️ ${spot.estimasi_waktu}</p>` : ''}
+                ${spot.deskripsi ? `<p class="text-gray-500 text-xs">${spot.deskripsi}</p>` : ''}
+                ${fotoHtml}
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent, {
+            className: 'custom-popup',
+            maxWidth: 300,
+            minWidth: 200,
+        });
+        
+        markerLayer.addLayer(marker);
+    });
+}
+
+function addRoute() {
+    routePolyline = L.polyline(routeCoordinates, {
+        color: '#ef4444',
+        weight: 4,
+        opacity: 0.9,
+        smoothFactor: 1,
+        lineJoin: 'round',
+    });
+
+    const glowPolyline = L.polyline(routeCoordinates, {
+        color: '#ef4444',
+        weight: 10,
+        opacity: 0.2,
+        smoothFactor: 1,
+        lineJoin: 'round',
+    });
+
+    routeLayer = L.layerGroup([glowPolyline, routePolyline]).addTo(map);
+}
+
+function zoomToRoute() {
+    const bounds = L.latLngBounds(routeCoordinates);
+    map.fitBounds(bounds, { 
+        padding: [40, 40],
+        maxZoom: 15,
+    });
+}
+
+function resetMap() {
+    map.setView([-7.26, 109.885], 14);
+}
+
+function toggleSatellite() {
+    if (currentLayer === 'satellite') {
+        map.removeLayer(map._satelliteLayer);
+        map.addLayer(map._streetLayer);
+        currentLayer = 'street';
+    } else {
+        map.removeLayer(map._streetLayer);
+        map.addLayer(map._satelliteLayer);
+        currentLayer = 'satellite';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle functionality
+    setTimeout(initMap, 300);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     const toggleInteraktif = document.getElementById('toggleInteraktif');
     const togglePoster = document.getElementById('togglePoster');
     const viewInteraktif = document.getElementById('viewInteraktif');
     const viewPoster = document.getElementById('viewPoster');
 
     toggleInteraktif.addEventListener('click', function() {
-        // Update toggle buttons
         toggleInteraktif.classList.add('active');
         togglePoster.classList.remove('active');
-        
-        // Update views
         viewInteraktif.classList.add('active');
         viewPoster.classList.remove('active');
-        
-        // Re-trigger trail animation
-        setTimeout(updateTrailAnimation, 300);
+        setTimeout(() => {
+            if (map) map.invalidateSize();
+        }, 300);
     });
 
     togglePoster.addEventListener('click', function() {
-        // Update toggle buttons
         togglePoster.classList.add('active');
         toggleInteraktif.classList.remove('active');
-        
-        // Update views
         viewPoster.classList.add('active');
         viewInteraktif.classList.remove('active');
     });
-
-    // Trail animation
-    const trailContainer = document.getElementById('trailContainer');
-    const path = document.getElementById('route-path');
-    const pins = document.querySelectorAll('.spot-pin');
-
-    if (!path || !trailContainer) return;
-
-    const pathLength = path.getTotalLength();
-    path.style.strokeDasharray = pathLength;
-    path.style.strokeDashoffset = pathLength;
-
-    function updateTrailAnimation() {
-        if (!viewInteraktif.classList.contains('active')) return;
-        
-        const containerRect = trailContainer.getBoundingClientRect();
-        const containerHeight = containerRect.height;
-        const scrollY = window.scrollY;
-        const offsetTop = containerRect.top + window.scrollY;
-        
-        const viewportHeight = window.innerHeight;
-        const visibleStart = Math.max(0, offsetTop - scrollY);
-        const visibleEnd = Math.min(viewportHeight, offsetTop + containerHeight - scrollY);
-        const visibleHeight = Math.max(0, visibleEnd - visibleStart);
-        
-        let progress = visibleHeight / containerHeight;
-        progress = Math.max(0, Math.min(1, progress));
-
-        const drawLength = pathLength * progress;
-        path.style.strokeDashoffset = pathLength - drawLength;
-
-        pins.forEach(pin => {
-            const pinProgress = parseFloat(pin.getAttribute('data-progress'));
-            if (progress >= pinProgress - 0.05) {
-                pin.classList.add('active');
-            } else {
-                pin.classList.remove('active');
-                pin.classList.remove('expanded');
-            }
-        });
-    }
-
-    // Fitur Klik Pin / Kartu untuk Toggle Expand
-    pins.forEach(pin => {
-        pin.addEventListener('click', function(e) {
-            e.stopPropagation();
-            pins.forEach(p => { if (p !== pin) p.classList.remove('expanded'); });
-            pin.classList.toggle('expanded');
-        });
-    });
-
-    // Update on scroll
-    window.addEventListener('scroll', updateTrailAnimation);
-    window.addEventListener('resize', updateTrailAnimation);
-    
-    // Initial update
-    setTimeout(updateTrailAnimation, 500);
 });
 
-// Lightbox functions
 function openLightbox(imageSrc) {
     const modal = document.getElementById('lightboxModal');
     const img = document.getElementById('lightboxImage');
@@ -797,7 +1009,6 @@ function closeLightbox() {
     }
 }
 
-// Close lightbox with ESC key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeLightbox();

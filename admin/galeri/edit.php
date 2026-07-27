@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '⚠️';
+            content: '<i class="bi bi-exclamation-triangle"></i>';
             flex-shrink: 0;
         }
         .alert-error {
@@ -277,6 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .delay-3 { animation-delay: 0.15s; }
         .delay-4 { animation-delay: 0.2s; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
 <div class="flex h-screen overflow-hidden">
@@ -284,7 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">🏔️</div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -292,17 +293,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <nav class="flex-1 space-y-1">
-            <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
-            <a href="../berita/index.php" class="nav-link"><span class="icon">📰</span> Berita</a>
-            <a href="index.php" class="nav-link active"><span class="icon">🖼️</span> Galeri</a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon">🌿</span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
-            <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
-            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
+            <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
+            <a href="../berita/index.php" class="nav-link"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita</a>
+            <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-image"></i></span> Galeri</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
+            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">
-            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon"><i class="bi bi-box-arrow-left"></i></span> Keluar</a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
         </div>
     </aside>
@@ -313,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Header -->
         <div class="flex items-center justify-between mb-6 animate-in delay-1">
             <div>
-                <p class="text-sm text-[#8a7e72] font-medium">🖼️ Edit Galeri</p>
+                <p class="text-sm text-[#8a7e72] font-medium"><i class="bi bi-image"></i> Edit Galeri</p>
                 <h1 class="text-2xl font-bold text-[#1e3a2a]">Edit Foto</h1>
                 <p class="text-sm text-[#8a7e72]">Edit data foto di galeri</p>
             </div>
@@ -350,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                              class="w-full h-full object-cover">
                         <?php else: ?>
                         <div class="w-full h-full flex items-center justify-center text-2xl text-[#b8aaa0] bg-[#f0ebe6]">
-                            🖼️
+                            <i class="bi bi-image"></i>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -373,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            minlength="3"
                            maxlength="255"
                            oninput="this.value = this.value.replace(/[0-9]/g, '')">
-                    <p class="text-xs text-gray-400 mt-1">⚠️ Judul tidak boleh mengandung angka</p>
+                    <p class="text-xs text-gray-400 mt-1"><i class="bi bi-exclamation-triangle"></i> Judul tidak boleh mengandung angka</p>
                 </div>
 
                 <!-- Kategori -->
@@ -382,9 +383,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Kategori <span class="text-red-500">*</span>
                     </label>
                     <select name="kategori" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" required>
-                        <option value="jalur" <?= $foto['kategori'] == 'jalur' ? 'selected' : '' ?>>📍 Jalur</option>
-                        <option value="ekosistem" <?= $foto['kategori'] == 'ekosistem' ? 'selected' : '' ?>>🌿 Ekosistem</option>
-                        <option value="kegiatan" <?= $foto['kategori'] == 'kegiatan' ? 'selected' : '' ?>>🎯 Kegiatan</option>
+                        <option value="jalur" <?= $foto['kategori'] == 'jalur' ? 'selected' : '' ?>><i class="bi bi-geo-alt"></i> Jalur</option>
+                        <option value="ekosistem" <?= $foto['kategori'] == 'ekosistem' ? 'selected' : '' ?>><i class="bi bi-leaf"></i> Ekosistem</option>
+                        <option value="kegiatan" <?= $foto['kategori'] == 'kegiatan' ? 'selected' : '' ?>><i class="bi bi-activity"></i> Kegiatan</option>
                     </select>
                     <span class="badge-kategori <?= $foto['kategori'] == 'jalur' ? 'badge-jalur' : ($foto['kategori'] == 'ekosistem' ? 'badge-ekosistem' : 'badge-kegiatan') ?> mt-2 inline-block">
                         Kategori saat ini: <?= ucfirst($foto['kategori']) ?>
