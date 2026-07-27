@@ -181,15 +181,28 @@
             background: rgba(224,190,69,0.16);
         }
 
-        .schedule-card.active {
-            transform: scale(1.03);
-            box-shadow: 0 22px 40px rgba(0,0,0,0.22);
-            border-color: #E0BE45;
-            background: rgba(224,190,69,0.16);
+        .schedule-card.active .day-title {
+            color: #E0BE45;
         }
 
         .schedule-card.active .day-title {
             color: #E0BE45;
+        }
+
+        .fee-card {
+            transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            will-change: transform, box-shadow;
+        }
+
+        .fee-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.16);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.2);
         }
 
         /* Responsive */
@@ -224,7 +237,7 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-[#FAF7F2]">
 
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
@@ -244,14 +257,14 @@
 </section>
 
 <!-- Alur Registrasi - Timeline -->
-<section class="py-20 bg-white">
+<section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
         <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-4">Alur Registrasi Pendakian</h2>
-        <p class="text-center text-[#5C5C50] mb-12 max-w-2xl mx-auto">
+        <p class="text-center text-[#5C5C50] mb-12 max-w-4xl mx-auto">
             Ikuti langkah-langkah berikut untuk melakukan registrasi pendakian Gunung Bismo via Deroduwur
         </p>
 
-        <div class="bg-[#FAF7F2] rounded-2xl shadow-xl p-8 md:p-12">
+        <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <div class="space-y-0">
                 <!-- Timeline Item 1 -->
                 <div class="timeline-item">
@@ -286,23 +299,31 @@
 </section>
 
 <!-- Jam Pelayanan -->
-<section class="py-24 bg-[#2F5233] text-white">
-    <div class="container mx-auto px-4 max-w-5xl">
+<section class="py-16 bg-[#2F5233] text-white">
+    <div class="container mx-auto px-4">
         <div class="max-w-3xl mx-auto text-center">
-            <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Jam Pelayanan Basecamp</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div class="schedule-card rounded-xl p-7 bg-white/10 backdrop-blur-sm hover:bg-white/15 transition duration-300" data-period="Senin - Kamis">
-                    <p class="font-bold day-title text-[#E0BE45] text-lg mb-4">Senin - Kamis</p>
+            <h2 class="text-5xl font-bold mb-8">Jam Pelayanan Basecamp</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="schedule-card rounded-xl p-6 bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition duration-300" data-period="Senin - Kamis">
+                    <p class="font-bold text-[#E0BE45] text-lg">Senin - Kamis</p>
                     <p class="text-white/90 text-lg">01:00 – 22:00</p>
                 </div>
-                <div class="schedule-card rounded-xl p-7 bg-white/10 backdrop-blur-sm hover:bg-white/15 transition duration-300" data-period="Jum'at">
-                    <p class="font-bold day-title text-[#E0BE45] text-lg mb-4">Jum'at</p>
+                <div class="schedule-card rounded-xl p-6 bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition duration-300" data-period="Jum'at">
+                    <p class="font-bold text-[#E0BE45] text-lg">Jum'at</p>
                     <p class="text-white/90 text-lg">01:00 – 10:00</p>
                     <p class="text-white/90 text-lg">13:00 – 22:00</p>
                 </div>
-                <div class="schedule-card rounded-xl p-7 bg-white/10 backdrop-blur-sm hover:bg-white/15 transition duration-300" data-period="Sabtu - Minggu">
-                    <p class="font-bold day-title text-[#E0BE45] text-lg mb-4">Sabtu - Minggu</p>
+                <div class="schedule-card rounded-xl p-6 bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition duration-300" data-period="Sabtu - Minggu">
+                    <p class="font-bold text-[#E0BE45] text-lg">Sabtu - Minggu</p>
                     <p class="text-white/90 text-lg">01:00 – 22:00</p>
+                </div>
+            </div>
+
+            <div class="mt-8 max-w-md mx-auto">
+                <div class="fee-card rounded-3xl p-8 text-center border border-white/15">
+                    <p class="text-sm uppercase tracking-[0.35em] text-white/70 mb-4">Biaya Registrasi</p>
+                    <p class="text-5xl font-bold text-white">Rp 35.000</p>
+                    <p class="text-white/80 mt-3">Sudah termasuk biaya administrasi dan tiket registrasi pendakian</p>
                 </div>
             </div>
         </div>
@@ -310,7 +331,7 @@
 </section>
 
 <!-- Peraturan - Kewajiban & Larangan -->
-<section class="py-20 bg-white">
+<section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-5xl">
         <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-4">Peraturan Pendakian</h2>
         <p class="text-center text-[#5C5C50] mb-12 max-w-2xl mx-auto">
@@ -329,7 +350,7 @@
                     $kewajiban = $stmt->fetchAll();
                     foreach ($kewajiban as $item):
                     ?>
-                    <div class="rule-card success bg-[#FAF7F2] p-4 rounded-xl flex items-start border-l-4 border-[#3F7D4F]">
+                    <div class="rule-card success bg-white p-4 rounded-xl flex items-start border-l-4 border-[#3F7D4F]">
                         <span class="text-[#3F7D4F] text-xl mr-3 flex-shrink-0">✓</span>
                         <span class="text-[#5C5C50]"><?= htmlspecialchars($item['teks']) ?></span>
                     </div>
@@ -348,13 +369,12 @@
                     $larangan = $stmt->fetchAll();
                     foreach ($larangan as $item):
                     ?>
-                    <div class="rule-card danger bg-[#FAF7F2] p-4 rounded-xl border-l-4 border-[#B3452F]">
+                    <div class="rule-card danger bg-white p-4 rounded-xl border-l-4 border-[#B3452F]">
                         <div class="flex items-start justify-between gap-2">
                             <div class="flex items-start">
                                 <span class="text-[#B3452F] text-xl mr-3 flex-shrink-0">✕</span>
                                 <span class="text-[#5C5C50]"><?= htmlspecialchars($item['teks']) ?></span>
                             </div>
-                            <span class="denda-badge flex-shrink-0"><?= htmlspecialchars($item['denda']) ?></span>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -373,14 +393,16 @@
 </section>
 
 <!-- Informasi Porter, Rental, Ojek -->
-<section class="py-20 bg-[#FAF7F2]">
-    <div class="container mx-auto px-4 max-w-5xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-4">Layanan Pendukung</h2>
-        <p class="text-center text-[#5C5C50] mb-12 max-w-2xl mx-auto">
-            Porter, rental alat, dan ojek tersedia untuk memudahkan perjalanan pendakian Anda
-        </p>
+<section class="py-10 bg-[#FAF7F2]">
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Informasi Porter, Rental, Ojek -->
+<section class="py-20 bg-[#FAF7F2]">
             <!-- Porter -->
             <div class="service-card bg-white rounded-2xl p-8 text-center shadow-lg">
                 <div class="icon-wrapper text-5xl mb-4">🎒</div>

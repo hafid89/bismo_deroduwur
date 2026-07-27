@@ -49,33 +49,45 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         Telusur Jalur
                     </a>
 
-                    <!-- Dropdown Siap Mendaki -->
+                    <!-- Siap Mendaki - Langsung ke Peraturan (tanpa dropdown) -->
+                    <a href="<?= BASE_URL ?>peraturan.php" class="<?= $current_page == 'peraturan.php' ? 'text-sunrise font-bold' : 'text-white hover:text-sunrise' ?> transition duration-300 whitespace-nowrap">
+                        Siap Mendaki
+                    </a>
+
+                    <!-- Dropdown Alam Bismo -->
                     <div class="relative group">
-                        <a href="#" class="text-white hover:text-sunrise transition duration-300 flex items-center whitespace-nowrap py-2">
-                            Siap Mendaki
+                        <a href="<?= BASE_URL ?>alam.php" class="<?= $current_page == 'alam.php' ? 'text-sunrise font-bold' : 'text-white hover:text-sunrise' ?> transition duration-300 flex items-center whitespace-nowrap py-2">
+                            Alam Bismo
                             <svg class="w-3.5 h-3.5 ml-1 text-white group-hover:text-sunrise" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </a>
-                        <div class="navbar-dropdown-menu absolute left-0 mt-0 w-56 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:bg-forest transition-all duration-300 z-50 border border-white/20 overflow-hidden">
-                            <a href="<?= BASE_URL ?>persiapan.php" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200 border-b border-white/10">Persiapan & Logistik</a>
-                            <a href="<?= BASE_URL ?>peraturan.php" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200">Peraturan & Larangan</a>
+                        <div class="navbar-dropdown-menu absolute left-0 mt-0 w-48 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:bg-forest transition-all duration-300 z-50 border border-white/20 overflow-hidden">
+                            <a href="<?= BASE_URL ?>alam.php#flora" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200 border-b border-white/10">Flora</a>
+                            <a href="<?= BASE_URL ?>alam.php#fauna" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200">🐾Fauna</a>
                         </div>
                     </div>
 
-                    <a href="<?= BASE_URL ?>alam.php" class="<?= $current_page == 'alam.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?> transition duration-300 whitespace-nowrap">
-                        Alam Bismo
-                    </a>
+                    <!-- Dropdown Jejak Visual -->
+                    <div class="relative group">
+                        <a href="<?= BASE_URL ?>galeri.php" class="<?= $current_page == 'galeri.php' ? 'text-sunrise font-bold' : 'text-white hover:text-sunrise' ?> transition duration-300 flex items-center whitespace-nowrap py-2">
+                            Jejak Visual
+                            <svg class="w-3.5 h-3.5 ml-1 text-white group-hover:text-sunrise" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+                        <div class="navbar-dropdown-menu absolute left-0 mt-0 w-48 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:bg-forest transition-all duration-300 z-50 border border-white/20 overflow-hidden">
+                            <a href="<?= BASE_URL ?>galeri.php?filter=jalur" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200 border-b border-white/10">Jalur</a>
+                            <a href="<?= BASE_URL ?>galeri.php?filter=ekosistem" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200 border-b border-white/10">Ekosistem</a>
+                            <a href="<?= BASE_URL ?>galeri.php?filter=kegiatan" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200">Kegiatan</a>
+                        </div>
+                    </div>
 
-                    <a href="<?= BASE_URL ?>galeri.php" class="<?= $current_page == 'galeri.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?> transition duration-300 whitespace-nowrap">
-                        Jejak Visual
-                    </a>
-
-                    <a href="<?= BASE_URL ?>berita.php" class="<?= $current_page == 'berita.php' || $current_page == 'berita-detail.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?> transition duration-300 whitespace-nowrap">
+                    <a href="<?= BASE_URL ?>berita.php" class="<?= $current_page == 'berita.php' || $current_page == 'berita-detail.php' ? 'text-sunrise font-bold' : 'text-white hover:text-sunrise' ?> transition duration-300 whitespace-nowrap">
                         Kabar Bismo
                     </a>
 
-                    <a href="<?= BASE_URL ?>kontak.php" class="<?= $current_page == 'kontak.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?> transition duration-300 whitespace-nowrap">
+                    <a href="<?= BASE_URL ?>kontak.php" class="<?= $current_page == 'kontak.php' ? 'text-sunrise font-bold' : 'text-white hover:text-sunrise' ?> transition duration-300 whitespace-nowrap">
                         Temui Kami
                     </a>
                 </div>
@@ -99,10 +111,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a href="<?= BASE_URL ?>" class="block py-2 <?= $current_page == 'index.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Beranda</a>
             <a href="<?= BASE_URL ?>kisah.php" class="block py-2 <?= $current_page == 'kisah.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Kisah Kami</a>
             <a href="<?= BASE_URL ?>jalur.php" class="block py-2 <?= $current_page == 'jalur.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Telusur Jalur</a>
-            <a href="<?= BASE_URL ?>persiapan.php" class="block py-2 <?= $current_page == 'persiapan.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Persiapan & Logistik</a>
-            <a href="<?= BASE_URL ?>peraturan.php" class="block py-2 <?= $current_page == 'peraturan.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Peraturan & Larangan</a>
-            <a href="<?= BASE_URL ?>alam.php" class="block py-2 <?= $current_page == 'alam.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Alam Bismo</a>
-            <a href="<?= BASE_URL ?>galeri.php" class="block py-2 <?= $current_page == 'galeri.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Jejak Visual</a>
+            <a href="<?= BASE_URL ?>peraturan.php" class="block py-2 <?= $current_page == 'peraturan.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Siap Mendaki</a>
+            
+            <!-- Mobile Submenu Alam Bismo -->
+            <div class="pl-4 border-l-2 border-white/20 ml-2">
+                <p class="text-xs text-white/50 uppercase tracking-wider mt-1 mb-1">Alam Bismo</p>
+                <a href="<?= BASE_URL ?>alam.php" class="block py-1.5 <?= $current_page == 'alam.php' ? 'text-[#E0BE45] font-bold' : 'text-white/80 hover:text-[#E0BE45]' ?> text-sm">🌿 Semua</a>
+                <a href="<?= BASE_URL ?>alam.php#flora" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🌱 Flora</a>
+                <a href="<?= BASE_URL ?>alam.php#fauna" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🐾 Fauna</a>
+            </div>
+            
+            <!-- Mobile Submenu Jejak Visual -->
+            <div class="pl-4 border-l-2 border-white/20 ml-2 mt-2">
+                <p class="text-xs text-white/50 uppercase tracking-wider mt-1 mb-1">Jejak Visual</p>
+                <a href="<?= BASE_URL ?>galeri.php" class="block py-1.5 <?= $current_page == 'galeri.php' ? 'text-[#E0BE45] font-bold' : 'text-white/80 hover:text-[#E0BE45]' ?> text-sm">📷 Semua</a>
+                <a href="<?= BASE_URL ?>galeri.php?filter=jalur" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🥾 Jalur</a>
+                <a href="<?= BASE_URL ?>galeri.php?filter=ekosistem" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🌱 Ekosistem</a>
+                <a href="<?= BASE_URL ?>galeri.php?filter=kegiatan" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🎯 Kegiatan</a>
+            </div>
+            
             <a href="<?= BASE_URL ?>berita.php" class="block py-2 <?= $current_page == 'berita.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Kabar Bismo</a>
             <a href="<?= BASE_URL ?>kontak.php" class="block py-2 <?= $current_page == 'kontak.php' ? 'text-[#E0BE45] font-bold' : 'text-white hover:text-[#E0BE45]' ?>">Temui Kami</a>
             <a href="https://wa.me/6281234567890" target="_blank" class="block py-2 text-[#E0BE45] font-bold">Hubungi via WA</a>
