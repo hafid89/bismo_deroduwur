@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 27, 2026 at 08:10 PM
+-- Generation Time: Jul 27, 2026 at 11:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -69,9 +69,9 @@ CREATE TABLE `berita` (
 --
 
 INSERT INTO `berita` (`id`, `judul`, `slug`, `isi`, `foto`, `tanggal`, `penulis`, `created_at`, `updated_at`) VALUES
-(1, 'Pendakian Gunung Bismo Dibuka Kembali', 'pendakian-gunung-bismo-dibuka-kembali', '<p>Setelah beberapa waktu ditutup akibat cuaca ekstrem, jalur pendakian Gunung Bismo via Deroduwur resmi dibuka kembali untuk umum. Pendaki diimbau untuk tetap memperhatikan kondisi cuaca dan membawa perlengkapan yang cukup.</p><p>Jalur pendakian melalui Deroduwur menawarkan pengalaman mendaki yang asri dengan pemandangan alam yang masih terjaga. Basecamp Deroduwur telah menyiapkan berbagai fasilitas untuk kenyamanan pendaki.</p>', '6a62e81f971b2.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-24 04:20:47'),
-(2, 'Penanaman Pohon di Jalur Pendakian', 'penanaman-pohon-di-jalur-pendakian', '<p>Dalam rangka menjaga kelestarian hutan, pengelola basecamp Deroduwur mengadakan kegiatan penanaman pohon di sepanjang jalur pendakian. Kegiatan ini diikuti oleh puluhan relawan dan komunitas pecinta alam.</p><p>Kegiatan ini merupakan bagian dari komitmen pengelola untuk menjaga kelestarian alam Gunung Bismo dan ekosistem di sekitarnya.</p>', 'berita2.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-23 16:06:05'),
-(3, 'Tips Mendaki Gunung Bismo untuk Pemula', 'tips-mendaki-gunung-bismo-untuk-pemula', '<p>Bagi Anda yang baru pertama kali mendaki Gunung Bismo, berikut tips penting yang perlu diperhatikan:</p><ul><li>Persiapan fisik yang matang</li><li>Perlengkapan yang tepat dan sesuai standar</li><li>Mengikuti aturan yang berlaku</li><li>Menjaga kebersihan lingkungan</li><li>Membawa cukup air dan makanan</li></ul>', 'berita3.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-23 16:06:05');
+(1, 'Pendakian Gunung Bismo Dibuka Kembali', 'pendakian-gunung-bismo-dibuka-kembali', '<p>Setelah beberapa waktu ditutup akibat cuaca ekstrem, jalur pendakian Gunung Bismo via Deroduwur resmi dibuka kembali untuk umum. Pendaki diimbau untuk tetap memperhatikan kondisi cuaca dan membawa perlengkapan yang cukup.</p><p>Jalur pendakian melalui Deroduwur menawarkan pengalaman mendaki yang asri dengan pemandangan alam yang masih terjaga. Basecamp Deroduwur telah menyiapkan berbagai fasilitas untuk kenyamanan pendaki.</p>', '6a67c82a8d088.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-27 21:05:46'),
+(2, 'Penanaman Pohon di Jalur Pendakian', 'penanaman-pohon-di-jalur-pendakian', '<p>Dalam rangka menjaga kelestarian hutan, pengelola basecamp Deroduwur mengadakan kegiatan penanaman pohon di sepanjang jalur pendakian. Kegiatan ini diikuti oleh puluhan relawan dan komunitas pecinta alam.</p><p>Kegiatan ini merupakan bagian dari komitmen pengelola untuk menjaga kelestarian alam Gunung Bismo dan ekosistem di sekitarnya.</p>', '6a67c83c20647.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-27 21:06:04'),
+(3, 'Tips Mendaki Gunung Bismo untuk Pemula', 'tips-mendaki-gunung-bismo-untuk-pemula', '<p>Bagi Anda yang baru pertama kali mendaki Gunung Bismo, berikut tips penting yang perlu diperhatikan:</p><ul><li>Persiapan fisik yang matang</li><li>Perlengkapan yang tepat dan sesuai standar</li><li>Mengikuti aturan yang berlaku</li><li>Menjaga kebersihan lingkungan</li><li>Membawa cukup air dan makanan</li></ul>', '6a67c86886aee.jpg', '2026-07-23', 'Admin', '2026-07-23 16:06:05', '2026-07-27 21:06:48');
 
 -- --------------------------------------------------------
 
@@ -164,12 +164,12 @@ CREATE TABLE `galeri` (
 --
 
 INSERT INTO `galeri` (`id`, `foto`, `judul`, `kategori`, `tag`, `deskripsi`, `created_at`) VALUES
-(1, 'galeri1.jpg', 'Pemandangan Puncak Indraprasta', 'jalur', 'puncak', 'Pemandangan indah dari puncak Gunung Bismo', '2026-07-23 16:06:06'),
-(2, 'galeri2.jpg', 'Kantong Semar Liar', 'ekosistem', 'flora', 'Tanaman kantong semar di dekat Pos I', '2026-07-23 16:06:06'),
-(3, 'galeri3.jpg', 'Kegiatan Basecamp', 'kegiatan', 'basecamp', 'Kegiatan pendaki di basecamp Deroduwur', '2026-07-23 16:06:06'),
-(4, 'galeri4.jpg', 'Hutan Pakis', 'jalur', 'spot', 'Kawasan hutan pakis sebelum Pos I', '2026-07-23 16:06:06'),
-(5, 'galeri5.jpg', 'Sunrise Camp', 'jalur', 'spot', 'Spot utama menikmati matahari terbit', '2026-07-23 16:06:06'),
-(6, 'galeri6.jpg', 'Burung Endemik', 'ekosistem', 'fauna', 'Burung khas Gunung Bismo', '2026-07-23 16:06:06');
+(1, '6a67c3f85d7e1.jpeg', 'Pemandangan Puncak Hastinapura', 'jalur', 'puncak', 'Pemandangan indah dari puncak Gunung Bismo Via Deroduwur', '2026-07-23 16:06:06'),
+(2, '6a67c31d3f361.png', 'Kantong Semar Liar', 'ekosistem', 'flora', 'Tanaman kantong semar di dekat Pos I', '2026-07-23 16:06:06'),
+(3, '6a67c887a3e4a.jpg', 'Kegiatan Basecamp', 'kegiatan', 'basecamp', 'Kegiatan pendaki di basecamp Deroduwur', '2026-07-23 16:06:06'),
+(4, '6a67c46febb20.jpg', 'Hutan Pakis', 'jalur', 'spot', 'Kawasan hutan pakis sebelum Pos I', '2026-07-23 16:06:06'),
+(5, '6a67c41426b19.jpeg', 'Sunrise Camp', 'jalur', 'spot', 'Spot utama menikmati matahari terbit', '2026-07-23 16:06:06'),
+(6, '6a67c4eb7a3e1.png', 'Burung Endemik', 'ekosistem', 'fauna', 'Burung khas Gunung Bismo', '2026-07-23 16:06:06');
 
 -- --------------------------------------------------------
 
@@ -262,16 +262,16 @@ CREATE TABLE `spot_jalur` (
 --
 
 INSERT INTO `spot_jalur` (`id`, `nama`, `posisi`, `ketinggian`, `estimasi_waktu`, `deskripsi`, `foto`, `jenis`, `urutan`, `created_at`) VALUES
-(1, 'Basecamp Deroduwur', 'basecamp', '', '0 (Start)', 'Basecamp pendakian Gunung Bismo via Deroduwur', '6a679dbd1bf44.jpg', 'wilayah', 0, '2026-07-23 17:05:02'),
-(2, 'Pos Ojek', 'pos_ojek', '', '', 'Titik akhir kendaraan bermotor', NULL, 'spot', 1, '2026-07-23 17:05:02'),
+(1, 'Basecamp Deroduwur', 'basecamp', '', '0 (Start)', 'Basecamp pendakian Gunung Bismo via Deroduwur', '6a67aeaa134d4.jpg', 'wilayah', 0, '2026-07-23 17:05:02'),
+(2, 'Pos Ojek', 'pos_ojek', '', '', 'Titik akhir kendaraan bermotor', '6a67aeca5102d.jpeg', 'spot', 1, '2026-07-23 17:05:02'),
 (3, 'Hutan Pakis', 'pos1', '', '75 menit', 'Kawasan hutan pakis yang rimbun', '6a679b6900782.jpg', 'wilayah', 2, '2026-07-23 17:05:02'),
-(4, 'Pos I', 'pos1', '1.555 MDPL', '75 menit', 'Area peristirahatan pertama', '6a679b95dd0a7.jpg', 'spot', 3, '2026-07-23 17:05:02'),
-(5, 'Banyu Bismo', 'pos1', '', '', 'Sumber air di jalur pendakian', '6a679becdb342.jpg', 'spot', 4, '2026-07-23 17:05:02'),
+(4, 'Pos I', 'pos1', '1.555 MDPL', '75 menit', 'Area peristirahatan pertama', '6a67aed6bc0dc.jpg', 'spot', 3, '2026-07-23 17:05:02'),
+(5, 'Banyu Bismo', 'pos1', '', '', 'Sumber air di jalur pendakian', '6a67af8ce6823.jpg', 'spot', 4, '2026-07-23 17:05:02'),
 (6, 'Kantong Semar', 'pos1', '', '', 'Spot tanaman kantong semar liar', '6a679c096b131.jpg', 'flora', 5, '2026-07-23 17:05:02'),
 (7, 'Pos II', 'pos2', '1.765 MDPL', '45 menit', 'Kumbang Alang-alang', '6a679c2187add.jpg', 'spot', 6, '2026-07-23 17:05:02'),
 (8, 'Pos III', 'pos3', '1.991 MDPL', '60 menit', 'Camp Area - Area perkemahan', '6a679c323fa19.jpeg', 'spot', 7, '2026-07-23 17:05:02'),
 (9, 'Tanjakan Jalak Wangi', 'pos3', '', '', 'Titik tanjakan menantang', '6a679c3d70c9c.jpeg', 'wilayah', 8, '2026-07-23 17:05:02'),
-(10, 'Pos IV', 'pos4', '2.204 MDPL', '60 menit', 'Camp Area - Area perkemahan terakhir', 'pos-4.jpg', 'spot', 9, '2026-07-23 17:05:02'),
+(10, 'Pos IV', 'pos4', '2.204 MDPL', '60 menit', 'Camp Area - Area perkemahan terakhir', '6a67afecdcca7.jpg', 'spot', 9, '2026-07-23 17:05:02'),
 (11, 'Sunrise Camp', 'sunrise', '', '', 'Spot utama menikmati matahari terbit', '6a679c4a99e2f.jpeg', 'spot', 10, '2026-07-23 17:05:02'),
 (12, 'Puncak Hastinapura', 'puncak', '2.338 MDPL', '20 menit', 'Puncak dengan panorama 360 derajat', '6a679c6dbe2e5.jpeg', 'spot', 11, '2026-07-23 17:05:02'),
 (13, 'Puncak Indraprasta', 'puncak', '2.365 MDPL', '20 menit', 'Puncak tertinggi Gunung Bismo', '6a679de126d74.jpeg', 'spot', 12, '2026-07-23 17:05:02');
