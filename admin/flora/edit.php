@@ -10,6 +10,8 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $flora = getFloraById($id);
 
 if (!$flora) {
+    $_SESSION['message'] = 'Data flora tidak ditemukan';
+    $_SESSION['message_type'] = 'danger';
     redirect(BASE_URL . 'admin/flora/index.php');
 }
 
@@ -23,31 +25,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lokasi = trim($_POST['lokasi']);
     $foto = $flora['foto'];
 
-    if (empty($nama)) {
-        $error = 'Nama flora wajib diisi';
-    } else {
+    $errors = [];
+
+    if (empty($nama)) $errors[] = 'Nama flora wajib diisi';
+    if (!empty($nama) && preg_match('/[0-9]/', $nama)) $errors[] = 'Nama flora tidak boleh mengandung angka';
+    if (!empty($nama) && !preg_match('/^[a-zA-Z\s\-\.]+$/', $nama)) $errors[] = 'Nama flora hanya boleh terdiri dari huruf dan spasi';
+    if (!empty($nama) && strlen($nama) > 100) $errors[] = 'Nama flora maksimal 100 karakter';
+    if (!empty($nama_ilmiah) && strlen($nama_ilmiah) > 100) $errors[] = 'Nama ilmiah maksimal 100 karakter';
+    if (!empty($lokasi) && strlen($lokasi) > 100) $errors[] = 'Lokasi maksimal 100 karakter';
+
+    // Cek duplikat
+    if (!empty($nama)) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM flora WHERE nama = ? AND id != ?");
+        $stmt->execute([$nama, $id]);
+        if ($stmt->fetchColumn() > 0) {
+            $errors[] = 'Nama flora "' . htmlspecialchars($nama) . '" sudah ada. Silakan gunakan nama lain.';
+        }
+    }
+
+    if (empty($errors)) {
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'flora/');
             if ($upload['success']) {
-                if ($foto && file_exists(UPLOAD_PATH . 'flora/' . $foto)) {
-                    unlink(UPLOAD_PATH . 'flora/' . $foto);
-                }
+                if ($foto && file_exists(UPLOAD_PATH . 'flora/' . $foto)) unlink(UPLOAD_PATH . 'flora/' . $foto);
                 $foto = $upload['filename'];
             } else {
-                $error = $upload['message'];
+                $errors[] = $upload['message'];
             }
         }
 
-        if (empty($error)) {
+        if (empty($errors)) {
             $stmt = $pdo->prepare("UPDATE flora SET nama = ?, nama_ilmiah = ?, deskripsi = ?, foto = ?, lokasi = ? WHERE id = ?");
             if ($stmt->execute([$nama, $nama_ilmiah, $deskripsi, $foto, $lokasi, $id])) {
-                $success = 'Data flora berhasil diupdate!';
-                $flora = getFloraById($id);
+                $_SESSION['message'] = 'Data flora "' . htmlspecialchars($nama) . '" berhasil diupdate!';
+                $_SESSION['message_type'] = 'success';
+                redirect(BASE_URL . 'admin/flora/index.php');
             } else {
-                $error = 'Gagal mengupdate data';
+                $errors[] = 'Gagal mengupdate data. Silakan coba lagi.';
             }
         }
     }
+
+    if (!empty($errors)) $error = implode('<br>', $errors);
 }
 ?>
 <!DOCTYPE html>
@@ -57,71 +76,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Flora - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        * { font-family: 'Inter', sans-serif; }
+        * { font-family: 'Inter', sans-serif; transition: all 0.2s ease; }
+        body { background: #f5f0eb; background-image: radial-gradient(circle at 10% 20%, rgba(74, 122, 78, 0.03) 0%, transparent 50%); }
+
+        .sidebar { background: linear-gradient(180deg, #1e3a2a 0%, #2a4a35 100%); box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
+        .sidebar .nav-link { padding: 10px 16px; border-radius: 10px; color: rgba(255,255,255,0.65); font-weight: 500; font-size: 14px; transition: all 0.25s ease; display: block; }
+        .sidebar .nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; transform: translateX(4px); }
+        .sidebar .nav-link.active { background: rgba(224, 190, 69, 0.15); color: #E0BE45; box-shadow: inset 3px 0 0 #E0BE45; }
+        .sidebar .nav-link .icon { margin-right: 10px; }
+
+        .form-input { transition: all 0.3s ease; }
+        .form-input:focus { border-color: #2F5233; box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1); outline: none; }
+
+        .btn-primary-custom { background: #2F5233; color: #fff; padding: 10px 28px; border-radius: 12px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+        .btn-primary-custom:hover { background: #1e3a2a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(47, 82, 51, 0.2); }
+        .btn-secondary-custom { background: #f0ebe6; color: #5c4e42; padding: 10px 28px; border-radius: 12px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+        .btn-secondary-custom:hover { background: #e0d8d0; }
+
+        .alert-error { background: #fce4ec; border-left: 4px solid #ef5350; color: #5c1a1a; padding: 12px 16px; border-radius: 10px; }
+        .error-list { list-style: none; padding: 0; margin: 0; }
+        .error-list li { padding: 4px 0; display: flex; align-items: flex-start; gap: 8px; }
+        .error-list li::before { content: '⚠️'; flex-shrink: 0; }
+
+        .card-form { background: #fff; border-radius: 16px; padding: 28px 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); }
+        .preview-image:hover { transform: scale(1.02); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f0ebe6; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: #d5cdc4; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8aaa0; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; } .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
     </style>
 </head>
-<body class="bg-[#FAF7F2]">
-<div class="flex h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-[#2F5233] text-white p-6">
-        <h2 class="text-2xl font-bold mb-8">Panel Admin</h2>
-        <nav class="space-y-2">
-            <a href="../dashboard.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Dashboard</a>
-            <a href="index.php" class="block py-2 px-4 bg-white/10 rounded-lg hover:bg-white/20 transition duration-300">Kelola Flora</a>
-            <a href="../fauna/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Fauna</a>
-            <a href="../peraturan/index.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300">Kelola Peraturan</a>
-            <a href="../logout.php" class="block py-2 px-4 hover:bg-white/20 rounded-lg transition duration-300 text-red-300">Logout</a>
+<body>
+<div class="flex h-screen overflow-hidden">
+
+    <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
+        <div class="flex items-center gap-3 px-2 py-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">🏔️</div>
+            <div><p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p><p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p></div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
+            <a href="../berita/index.php" class="nav-link"><span class="icon">📰</span> Berita</a>
+            <a href="../galeri/index.php" class="nav-link"><span class="icon">🖼️</span> Galeri</a>
+            <a href="index.php" class="nav-link active"><span class="icon">🌿</span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
+            <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
+            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
         </nav>
-    </div>
+        <div class="pt-4 border-t border-white/10 mt-auto">
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
+            <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
+        </div>
+    </aside>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto">
-        <div class="p-8">
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-3xl font-bold text-[#2F5233]">🌿 Edit Flora</h1>
-                <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300">← Kembali</a>
+    <main class="flex-1 overflow-y-auto p-6 md:p-8">
+        <div class="flex items-center justify-between mb-6 animate-in delay-1">
+            <div>
+                <p class="text-sm text-[#8a7e72] font-medium">🌿 Edit Tumbuhan</p>
+                <h1 class="text-2xl font-bold text-[#1e3a2a]">Edit Flora</h1>
+                <p class="text-sm text-[#8a7e72]">Perbarui data flora</p>
             </div>
+            <a href="index.php" class="text-[#4a7a4e] hover:text-[#2a4a35] font-medium flex items-center gap-1 transition duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Kembali
+            </a>
+        </div>
 
-            <?php if ($error): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
-            <?php if ($success): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4"><?= htmlspecialchars($success) ?></div>
-            <?php endif; ?>
+        <?php if ($error): ?>
+        <div class="alert-error mb-5 animate-in delay-2">
+            <div class="font-semibold mb-1">Terdapat kesalahan:</div>
+            <ul class="error-list text-sm"><?php foreach (explode('<br>', $error) as $err): ?><li><?= htmlspecialchars($err) ?></li><?php endforeach; ?></ul>
+        </div>
+        <?php endif; ?>
 
-            <form method="POST" action="" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg p-8">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Nama Flora <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama" value="<?= htmlspecialchars($flora['nama']) ?>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Nama Ilmiah</label>
-                    <input type="text" name="nama_ilmiah" value="<?= htmlspecialchars($flora['nama_ilmiah']) ?>" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Deskripsi</label>
-                    <textarea name="deskripsi" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]"><?= htmlspecialchars($flora['deskripsi']) ?></textarea>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold mb-2">Lokasi</label>
-                    <input type="text" name="lokasi" value="<?= htmlspecialchars($flora['lokasi']) ?>" placeholder="Contoh: Dekat Pos I" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2F5233] focus:outline-none focus:ring-2 focus:ring-[#2F5233]">
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Foto</label>
-                    <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
-                    <div class="mb-2">
-                        <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>" class="w-32 h-24 object-cover rounded">
+        <div class="card-form animate-in delay-2">
+            <form method="POST" action="" enctype="multipart/form-data">
+
+                <div class="mb-6 flex items-center gap-4 p-4 bg-[#faf7f2] rounded-xl border border-[#f0ebe6]">
+                    <div class="w-20 h-20 rounded-lg overflow-hidden border border-[#e0d8d0] flex-shrink-0">
+                        <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
+                        <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center text-2xl text-[#b8aaa0] bg-[#f0ebe6]">🌿</div>
+                        <?php endif; ?>
                     </div>
-                    <?php endif; ?>
-                    <input type="file" name="foto" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-[#2F5233] focus:outline-none">
-                    <p class="text-sm text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah foto</p>
+                    <div><p class="text-sm font-medium text-[#1e3a2a]">Foto saat ini</p><p class="text-xs text-[#8a7e72]">Upload foto baru untuk mengganti</p></div>
                 </div>
-                <button type="submit" class="bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300 transform hover:scale-105">Update</button>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Nama Flora <span class="text-red-500">*</span> <span class="text-xs text-gray-400 font-normal">(Tanpa angka)</span></label>
+                    <input type="text" name="nama" value="<?= htmlspecialchars($flora['nama']) ?>" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" required maxlength="100" oninput="this.value = this.value.replace(/[0-9]/g, '')">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Nama Ilmiah <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                    <input type="text" name="nama_ilmiah" value="<?= htmlspecialchars($flora['nama_ilmiah']) ?>" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" maxlength="100">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Deskripsi <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                    <textarea name="deskripsi" rows="4" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none"><?= htmlspecialchars($flora['deskripsi']) ?></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-semibold mb-2">Lokasi <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                    <input type="text" name="lokasi" value="<?= htmlspecialchars($flora['lokasi']) ?>" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" maxlength="100" placeholder="Contoh: Hutan Pos 3">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">Ganti Foto <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                    <input type="file" name="foto" accept="image/*" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah foto • Maks 5MB, JPG/PNG/GIF/WEBP</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="btn-primary-custom flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Update Flora</button>
+                    <a href="index.php" class="btn-secondary-custom">Batal</a>
+                </div>
             </form>
         </div>
-    </div>
+
+        <p class="text-center text-[10px] text-[#b8aaa0] mt-8 tracking-wider border-t border-[#f0ebe6] pt-4">© <?= date('Y') ?> Gunung Bismo via Deroduwur · KKN 84.384 UPNVYK</p>
+    </main>
 </div>
 </body>
 </html>

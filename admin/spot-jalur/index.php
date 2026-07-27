@@ -6,35 +6,35 @@ if (!isLoggedIn()) {
     redirect(BASE_URL . 'admin/login.php');
 }
 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 12;
-$offset = ($page - 1) * $limit;
-
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM galeri");
-$total = $stmt->fetch()['total'];
-$totalPages = ceil($total / $limit);
-
-$limit = intval($limit);
-$offset = intval($offset);
-$stmt = $pdo->query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
-$galeri_list = $stmt->fetchAll();
-
-// Pesan sukses/error dari session
+// Ambil pesan dari session
 $message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
 $message_type = isset($_SESSION['message_type']) ? $_SESSION['message_type'] : '';
 unset($_SESSION['message']);
 unset($_SESSION['message_type']);
 
-// Statistik per kategori
-$stmt = $pdo->query("SELECT kategori, COUNT(*) as jumlah FROM galeri GROUP BY kategori");
-$kategori_stats = $stmt->fetchAll();
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+// Hitung total data
+$stmt = $pdo->query("SELECT COUNT(*) as total FROM spot_jalur");
+$total = $stmt->fetch()['total'];
+$totalPages = ceil($total / $limit);
+
+// Ambil data
+$stmt = $pdo->query("SELECT * FROM spot_jalur ORDER BY urutan ASC, id ASC LIMIT $limit OFFSET $offset");
+$spots = $stmt->fetchAll();
+
+// Statistik per jenis
+$stmt = $pdo->query("SELECT jenis, COUNT(*) as jumlah FROM spot_jalur GROUP BY jenis");
+$jenis_stats = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Galeri - Admin</title>
+    <title>Kelola Spot Jalur - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -106,48 +106,41 @@ $kategori_stats = $stmt->fetchAll();
             letter-spacing: 0.3px;
         }
 
-        /* Gallery Card */
-        .gallery-card {
+        /* Badge Jenis */
+        .badge-spot { background: #e8f5e9; color: #2e7d32; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-flora { background: #e8f5e9; color: #2e7d32; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-fauna { background: #fff3e0; color: #e65100; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-wilayah { background: #f3e5f5; color: #6a1b9a; padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+        /* Table */
+        .table-wrap {
             background: #fff;
             border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 20px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             border: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .gallery-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 48px rgba(47, 82, 51, 0.08);
-            border-color: rgba(47, 82, 51, 0.08);
-        }
-        .gallery-card .image-wrap {
-            height: 200px;
-            overflow: hidden;
-            background: #f0ebe6;
-            position: relative;
-        }
-        .gallery-card .image-wrap img {
+        .table-wrap table {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+            border-collapse: collapse;
         }
-        .gallery-card:hover .image-wrap img {
-            transform: scale(1.05);
-        }
-        .gallery-card .body {
-            padding: 14px 16px 16px;
-        }
-        .gallery-card .badge-kategori {
-            font-size: 10px;
+        .table-wrap th {
+            text-align: left;
+            padding: 12px 8px 12px 0;
+            font-size: 11px;
             font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8a7e72;
+            border-bottom: 1px solid #f0ebe6;
         }
-        .badge-jalur { background: #e8f5e9; color: #2e7d32; }
-        .badge-ekosistem { background: #e3f2fd; color: #1565c0; }
-        .badge-kegiatan { background: #fff3e0; color: #e65100; }
+        .table-wrap td {
+            padding: 12px 8px 12px 0;
+            font-size: 14px;
+            color: #2d241c;
+            border-bottom: 1px solid #f6f2ed;
+        }
+        .table-wrap tr:last-child td { border-bottom: none; }
 
         .btn-edit {
             color: #4a7a4e;
@@ -224,10 +217,10 @@ $kategori_stats = $stmt->fetchAll();
 
         .empty-state {
             text-align: center;
-            padding: 48px 20px;
+            padding: 40px 20px;
             color: #8a7e72;
         }
-        .empty-state .icon { font-size: 56px; margin-bottom: 12px; display: block; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; display: block; }
 
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f0ebe6; border-radius: 8px; }
@@ -266,15 +259,15 @@ $kategori_stats = $stmt->fetchAll();
         <nav class="flex-1 space-y-1">
             <a href="../dashboard.php" class="nav-link"><span class="icon">📊</span> Dashboard</a>
             <a href="../berita/index.php" class="nav-link"><span class="icon">📰</span> Berita</a>
-            <a href="index.php" class="nav-link active"><span class="icon">🖼️</span> Galeri <span class="badge"><?= $total ?></span></a>
+            <a href="../galeri/index.php" class="nav-link"><span class="icon">🖼️</span> Galeri</a>
             <a href="../flora/index.php" class="nav-link"><span class="icon">🌿</span> Flora</a>
             <a href="../fauna/index.php" class="nav-link"><span class="icon">🐾</span> Fauna</a>
             <a href="../peraturan/index.php" class="nav-link"><span class="icon">📋</span> Peraturan</a>
-            <a href="../spot-jalur/index.php" class="nav-link"><span class="icon">📍</span> Spot Jalur</a>
+            <a href="index.php" class="nav-link active"><span class="icon">📍</span> Spot Jalur <span class="badge"><?= $total ?></span></a>
+            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">
-            <a href="../logout.php" class="nav-link text-red-300/70 hover:text-red-300"><span class="icon">🚪</span> Keluar</a>
             <p class="text-[10px] text-white/30 text-center mt-3 tracking-wider">v1.0 • KKN 84.384</p>
         </div>
     </aside>
@@ -285,12 +278,12 @@ $kategori_stats = $stmt->fetchAll();
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 animate-in delay-1">
             <div>
-                <p class="text-sm text-[#8a7e72] font-medium">🖼️ Manajemen Media</p>
-                <h1 class="text-2xl font-bold text-[#1e3a2a]">Kelola Galeri</h1>
-                <p class="text-sm text-[#8a7e72]">Kelola semua foto dan dokumentasi</p>
+                <p class="text-sm text-[#8a7e72] font-medium">📍 Manajemen Rute</p>
+                <h1 class="text-2xl font-bold text-[#1e3a2a]">Kelola Spot Jalur</h1>
+                <p class="text-sm text-[#8a7e72]">Kelola spot-spot di sepanjang jalur pendakian</p>
             </div>
             <a href="tambah.php" class="btn-primary-custom flex items-center gap-2">
-                <span>+</span> Tambah Foto
+                <span>+</span> Tambah Spot
             </a>
         </div>
 
@@ -304,7 +297,7 @@ $kategori_stats = $stmt->fetchAll();
         <!-- Statistik -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div class="stat-card animate-in delay-2">
-                <p class="label">Total Foto</p>
+                <p class="label">Total Spot</p>
                 <p class="num"><?= $total ?></p>
             </div>
             <div class="stat-card animate-in delay-3">
@@ -316,72 +309,93 @@ $kategori_stats = $stmt->fetchAll();
                 <p class="num"><?= $limit ?></p>
             </div>
             <div class="stat-card animate-in delay-5">
-                <p class="label">📂 Kategori</p>
+                <p class="label">🔢 Urutan</p>
                 <p class="num text-sm font-medium" style="font-size:14px; color:#4a7a4e;">
-                    <?= count($kategori_stats) ?> jenis
+                    <?= $total > 0 ? $total : 0 ?>
                 </p>
             </div>
         </div>
 
-        <!-- Kategori Stats -->
-        <?php if (!empty($kategori_stats)): ?>
+        <!-- Jenis Stats -->
+        <?php if (!empty($jenis_stats)): ?>
         <div class="flex flex-wrap gap-2 mb-6 animate-in delay-3">
             <?php 
-            $badgeClass = ['jalur' => 'badge-jalur', 'ekosistem' => 'badge-ekosistem', 'kegiatan' => 'badge-kegiatan'];
-            foreach ($kategori_stats as $k):
+            $badgeClass = [
+                'spot' => 'badge-spot', 
+                'flora' => 'badge-flora', 
+                'fauna' => 'badge-fauna', 
+                'wilayah' => 'badge-wilayah'
+            ];
+            $icons = ['spot' => '📍', 'flora' => '🌿', 'fauna' => '🐾', 'wilayah' => '🌄'];
+            foreach ($jenis_stats as $j):
             ?>
-            <span class="badge-kategori <?= $badgeClass[$k['kategori']] ?? 'badge-jalur' ?>">
-                <?= ucfirst($k['kategori']) ?>: <?= $k['jumlah'] ?>
+            <span class="<?= $badgeClass[$j['jenis']] ?? 'badge-spot' ?>">
+                <?= $icons[$j['jenis']] ?? '📍' ?> <?= ucfirst($j['jenis']) ?>: <?= $j['jumlah'] ?>
             </span>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
 
-        <!-- Grid Galeri -->
-        <?php if (empty($galeri_list)): ?>
-        <div class="bg-white rounded-xl shadow-lg p-12 text-center animate-in delay-3">
-            <div class="empty-state">
-                <span class="icon">🖼️</span>
-                <h3 class="text-lg font-bold text-[#2d241c] mb-1">Belum Ada Foto</h3>
-                <p class="text-sm text-[#8a7e72] mb-4">Mulai dengan menambahkan foto pertama ke galeri</p>
-                <a href="tambah.php" class="btn-primary-custom">+ Tambah Foto</a>
+        <!-- Tabel -->
+        <div class="table-wrap animate-in delay-4">
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:50px">#</th>
+                            <th>Nama</th>
+                            <th style="width:120px">Posisi</th>
+                            <th style="width:100px">Ketinggian</th>
+                            <th style="width:100px">Jenis</th>
+                            <th style="width:70px">Urutan</th>
+                            <th style="width:140px; text-align:right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($spots)): ?>
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <span class="icon">📍</span>
+                                    <p class="font-medium text-[#2d241c]">Belum ada spot jalur</p>
+                                    <p class="text-sm">Mulai dengan menambahkan spot pertama</p>
+                                    <a href="tambah.php" class="btn-primary-custom mt-3 text-sm inline-block">+ Tambah Spot</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($spots as $index => $spot): 
+                            $badgeClass = $spot['jenis'] == 'spot' ? 'badge-spot' : 
+                                         ($spot['jenis'] == 'flora' ? 'badge-flora' : 
+                                         ($spot['jenis'] == 'fauna' ? 'badge-fauna' : 'badge-wilayah'));
+                            $icon = $spot['jenis'] == 'spot' ? '📍' : 
+                                   ($spot['jenis'] == 'flora' ? '🌿' : 
+                                   ($spot['jenis'] == 'fauna' ? '🐾' : '🌄'));
+                        ?>
+                        <tr>
+                            <td class="text-[#8a7e72] text-sm"><?= $offset + $index + 1 ?></td>
+                            <td class="font-medium text-[#1e3a2a]"><?= htmlspecialchars($spot['nama']) ?></td>
+                            <td class="text-[#8a7e72] text-sm"><?= htmlspecialchars($spot['posisi']) ?></td>
+                            <td class="text-[#8a7e72] text-sm"><?= htmlspecialchars($spot['ketinggian'] ?: '—') ?></td>
+                            <td>
+                                <span class="<?= $badgeClass ?>"><?= $icon ?> <?= ucfirst(htmlspecialchars($spot['jenis'])) ?></span>
+                            </td>
+                            <td class="text-[#8a7e72] text-sm font-medium">#<?= $spot['urutan'] ?></td>
+                            <td style="text-align:right">
+                                <a href="edit.php?id=<?= $spot['id'] ?>" class="btn-edit">Edit</a>
+                                <a href="hapus.php?id=<?= $spot['id'] ?>" class="btn-delete" onclick="return confirm('Yakin ingin menghapus spot ini?')">Hapus</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-        </div>
-        <?php else: ?>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <?php foreach ($galeri_list as $index => $foto): 
-                $delay = 'delay-' . (min(($index % 6) + 1, 6));
-                $badgeClass = $foto['kategori'] == 'jalur' ? 'badge-jalur' : ($foto['kategori'] == 'ekosistem' ? 'badge-ekosistem' : 'badge-kegiatan');
-            ?>
-            <div class="gallery-card animate-in <?= $delay ?>">
-                <div class="image-wrap">
-                    <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
-                         alt="<?= htmlspecialchars($foto['judul']) ?>">
-                </div>
-                <div class="body">
-                    <div class="flex items-start justify-between gap-2">
-                        <h4 class="font-bold text-[#1e3a2a] text-sm leading-tight line-clamp-1"><?= htmlspecialchars($foto['judul'] ?: 'Tanpa Judul') ?></h4>
-                        <span class="badge-kategori <?= $badgeClass ?> text-xs whitespace-nowrap"><?= ucfirst($foto['kategori']) ?></span>
-                    </div>
-                    <?php if (!empty($foto['deskripsi'])): ?>
-                    <p class="text-xs text-[#8a7e72] mt-1 line-clamp-2"><?= htmlspecialchars($foto['deskripsi']) ?></p>
-                    <?php endif; ?>
-                    <?php if (!empty($foto['tag'])): ?>
-                    <p class="text-[10px] text-[#b8aaa0] mt-1">#<?= htmlspecialchars($foto['tag']) ?></p>
-                    <?php endif; ?>
-                    <div class="mt-3 pt-3 border-t border-[#f0ebe6] flex items-center gap-3">
-                        <a href="edit.php?id=<?= $foto['id'] ?>" class="btn-edit text-xs">Edit</a>
-                        <span class="text-[#e0d8d0]">|</span>
-                        <a href="hapus.php?id=<?= $foto['id'] ?>" class="btn-delete text-xs" onclick="return confirm('Yakin ingin menghapus foto ini?')">Hapus</a>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
         </div>
 
         <!-- Pagination -->
         <?php if ($totalPages > 1): ?>
-        <div class="flex flex-wrap items-center justify-center gap-2 mt-6 animate-in delay-6">
+        <div class="flex flex-wrap items-center justify-center gap-2 mt-6 animate-in delay-5">
             <?php if ($page > 1): ?>
             <a href="?page=<?= $page - 1 ?>" class="pagination-btn">‹</a>
             <?php endif; ?>
@@ -401,7 +415,6 @@ $kategori_stats = $stmt->fetchAll();
             <a href="?page=<?= $page + 1 ?>" class="pagination-btn">›</a>
             <?php endif; ?>
         </div>
-        <?php endif; ?>
         <?php endif; ?>
 
         <!-- Footer -->
