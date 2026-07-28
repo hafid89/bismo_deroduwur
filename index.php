@@ -21,14 +21,14 @@ $partner_logos = [
     <title>Gunung Bismo via Deroduwur - Basecamp Pendakian</title>
 
     <!-- ===== FAVICON / LOGO DI TAB (BULAT TRANSPARAN) ===== -->
-<!-- Favicon utama -->
-<link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/logo-bulat-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/logo-bulat-16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/logo-bulat.png">
-<link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/logo-bulat.ico">
+    <!-- Favicon utama -->
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/apple-touch-icon.png">
+    <link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/favicon.ico">
 
-<!-- Meta untuk theme color (agar background tab sesuai) -->
-<meta name="theme-color" content="#2F5233">
+    <!-- Meta untuk theme color (agar background tab sesuai) -->
+    <meta name="theme-color" content="#2F5233">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
