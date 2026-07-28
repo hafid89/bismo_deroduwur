@@ -20,6 +20,16 @@ $partner_logos = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gunung Bismo via Deroduwur - Basecamp Pendakian</title>
 
+    <!-- ===== FAVICON / LOGO DI TAB (BULAT TRANSPARAN) ===== -->
+<!-- Favicon utama -->
+<link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/logo-bulat-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/logo-bulat-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/logo-bulat.png">
+<link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/logo-bulat.ico">
+
+<!-- Meta untuk theme color (agar background tab sesuai) -->
+<meta name="theme-color" content="#2F5233">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 

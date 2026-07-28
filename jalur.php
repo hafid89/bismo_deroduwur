@@ -25,8 +25,16 @@ $spotCoordinates = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ===== FAVICON / LOGO DI TAB (BULAT TRANSPARAN) ===== -->
+    <!-- Favicon utama -->
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/apple-touch-icon.png">
+    <link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/favicon.ico">
+
+    <!-- Meta untuk theme color (agar background tab sesuai) -->
+    <meta name="theme-color" content="#2F5233">
     <title>Telusur Jalur - Gunung Bismo via Deroduwur</title>
-    
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" />
@@ -39,6 +47,26 @@ $spotCoordinates = [
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Outfit', sans-serif; }
 
+
+        /* Pastikan navbar di atas peta */
+        #navbar {
+            z-index: 9999 !important;
+        }
+
+        #map-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            z-index: 1; /* Pastikan peta di bawah navbar */
+        }
+
+        /* Atau tambahkan ini untuk memastikan */
+        .leaflet-control-container {
+            z-index: 1;
+        }
         .hero-jalur {
             height: 60vh;
             min-height: 400px;

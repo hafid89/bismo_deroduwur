@@ -13,6 +13,7 @@ define('BASE_PATH', dirname(__DIR__));
 define('UPLOAD_PATH', BASE_PATH . '/uploads/');
 define('BERITA_UPLOAD_PATH', UPLOAD_PATH . 'berita/');
 define('GALERI_UPLOAD_PATH', UPLOAD_PATH . 'galeri/');
+define('SPOT_UPLOAD_PATH', UPLOAD_PATH . 'spot/');
 
 // Session start
 if (session_status() === PHP_SESSION_NONE) {

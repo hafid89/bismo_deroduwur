@@ -4,6 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ===== FAVICON / LOGO DI TAB (BULAT TRANSPARAN) ===== -->
+    <!-- Favicon utama -->
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/apple-touch-icon.png">
+    <link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/favicon.ico">
+
+    <!-- Meta untuk theme color (agar background tab sesuai) -->
+    <meta name="theme-color" content="#2F5233">
     <title>Kisah Kami - Gunung Bismo via Deroduwur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
