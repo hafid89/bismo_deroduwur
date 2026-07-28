@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deskripsi = trim($_POST['deskripsi']);
     $lokasi = trim($_POST['lokasi']);
     
-    // Simpan nilai lama untuk ditampilkan kembali
+    // Simpan nilai lama
     $old_nama = $nama;
     $old_nama_ilmiah = $nama_ilmiah;
     $old_deskripsi = $deskripsi;
@@ -28,22 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ========== VALIDASI ==========
     $errors = [];
 
-    // 1. Cek apakah nama kosong
+    // 1. Cek nama kosong
     if (empty($nama)) {
         $errors[] = 'Nama flora wajib diisi';
     }
 
-    // 2. Cek apakah nama mengandung angka
+    // 2. Cek nama mengandung angka
     if (!empty($nama) && preg_match('/[0-9]/', $nama)) {
         $errors[] = 'Nama flora tidak boleh mengandung angka';
     }
 
-    // 3. Cek apakah nama hanya terdiri dari huruf dan spasi (opsional)
+    // 3. Cek nama hanya huruf dan spasi
     if (!empty($nama) && !preg_match('/^[a-zA-Z\s\-\.]+$/', $nama)) {
         $errors[] = 'Nama flora hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)';
     }
 
-    // 4. Cek apakah nama sudah ada di database (duplikat)
+    // 4. Cek duplikat nama
     if (!empty($nama)) {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM flora WHERE nama = ?");
         $stmt->execute([$nama]);
@@ -52,27 +52,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 5. Cek apakah nama ilmiah mengandung angka (opsional)
-    if (!empty($nama_ilmiah) && preg_match('/[0-9]/', $nama_ilmiah)) {
-        $errors[] = 'Nama ilmiah tidak boleh mengandung angka';
+    // ========== VALIDASI NAMA ILMIAH ==========
+    if (!empty($nama_ilmiah)) {
+        // Cek apakah mengandung angka
+        if (preg_match('/[0-9]/', $nama_ilmiah)) {
+            $errors[] = 'Nama ilmiah tidak boleh mengandung angka';
+        }
+        
+        // Cek format: minimal 2 kata (Genus + Spesies)
+        $parts = explode(' ', $nama_ilmiah);
+        $filtered = array_filter($parts, function($p) { return trim($p) !== ''; });
+        if (count($filtered) < 2) {
+            $errors[] = 'Nama ilmiah harus terdiri dari minimal 2 kata (Genus + Spesies)';
+        }
+        
+        // Cek apakah huruf pertama genus kapital
+        if (!empty($filtered[0]) && !ctype_upper(substr($filtered[0], 0, 1))) {
+            $errors[] = 'Genus (kata pertama) pada nama ilmiah harus dimulai dengan huruf kapital';
+        }
+        
+        // Cek apakah spesies (kata kedua dan seterusnya) lowercase semua
+        for ($i = 1; $i < count($filtered); $i++) {
+            if ($filtered[$i] !== strtolower($filtered[$i])) {
+                $errors[] = 'Spesies (kata setelah genus) harus menggunakan huruf kecil semua';
+                break;
+            }
+        }
     }
 
-    // 6. Cek panjang nama (maksimal 100 karakter)
+    // 5. Cek panjang nama (maksimal 100 karakter)
     if (!empty($nama) && strlen($nama) > 100) {
         $errors[] = 'Nama flora maksimal 100 karakter';
     }
 
-    // 7. Cek panjang nama ilmiah (maksimal 100 karakter)
+    // 6. Cek panjang nama ilmiah (maksimal 100 karakter)
     if (!empty($nama_ilmiah) && strlen($nama_ilmiah) > 100) {
         $errors[] = 'Nama ilmiah maksimal 100 karakter';
     }
 
-    // 8. Cek panjang lokasi (maksimal 100 karakter)
+    // 7. Cek panjang lokasi (maksimal 100 karakter)
     if (!empty($lokasi) && strlen($lokasi) > 100) {
         $errors[] = 'Lokasi maksimal 100 karakter';
     }
 
-    // 9. Cek file upload
+    // 8. Cek file upload
     $foto = '';
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $upload = uploadFile($_FILES['foto'], UPLOAD_PATH . 'flora/');
@@ -106,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Flora - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
@@ -115,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-input:focus {
             border-color: #2F5233;
             box-shadow: 0 0 0 3px rgba(47, 82, 51, 0.1);
+            outline: none;
         }
         .error-list {
             list-style: none;
@@ -128,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '<i class="bi bi-exclamation-triangle"></i>';
+            content: '⚠️';
             flex-shrink: 0;
         }
         .preview-image {
@@ -137,8 +162,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .preview-image:hover {
             transform: scale(1.02);
         }
+        .format-hint {
+            font-size: 12px;
+            padding: 8px 12px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 3px solid #22c55e;
+            margin-top: 4px;
+        }
+        .format-hint code {
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        .format-hint .example {
+            color: #16a34a;
+            font-weight: 500;
+        }
+        .format-hint .wrong {
+            color: #dc2626;
+            font-weight: 500;
+        }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body class="bg-[#FAF7F2]">
 <div class="flex h-screen">
@@ -159,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="p-8">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-[#2F5233]"><i class="bi bi-leaf"></i> Tambah Flora</h1>
+                    <h1 class="text-3xl font-bold text-[#2F5233]">🌿 Tambah Flora</h1>
                     <p class="text-[#5C5C50] text-sm mt-1">Tambahkan data flora baru ke database</p>
                 </div>
                 <a href="index.php" class="text-[#2F5233] hover:text-[#4A7A4E] transition duration-300 flex items-center gap-1">
@@ -193,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            placeholder="Contoh: Edelweiss Longifolia" 
                            required
                            oninput="this.value = this.value.replace(/[0-9]/g, '')">
-                    <p class="text-xs text-gray-400 mt-1"><i class="bi bi-exclamation-triangle"></i> Nama tidak boleh mengandung angka</p>
+                    <p class="text-xs text-gray-400 mt-1">⚠️ Nama tidak boleh mengandung angka</p>
                 </div>
 
                 <!-- Nama Ilmiah -->
@@ -202,9 +249,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Nama Ilmiah
                         <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
-                    <input type="text" name="nama_ilmiah" value="<?= htmlspecialchars($old_nama_ilmiah) ?>" 
+                    <input type="text" name="nama_ilmiah" id="nama_ilmiah" 
+                           value="<?= htmlspecialchars($old_nama_ilmiah) ?>" 
                            class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
-                           placeholder="Contoh: Anaphalis Longifolia">
+                           placeholder="Contoh: Anaphalis longifolia">
+                    
+                    <div class="format-hint">
+                        <p class="text-sm text-gray-600">
+                            <i class="bi bi-info-circle text-green-600"></i> 
+                            Format: <span class="example">Genus huruf kapital</span> + <span class="example">spesies huruf kecil</span>
+                        </p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Contoh: <code>Anaphalis longifolia</code> ✓ | <code>anaphalis Longifolia</code> ✗
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Deskripsi -->
@@ -291,19 +349,56 @@ function previewImage(input) {
 // Validasi form sebelum submit
 document.getElementById('floraForm').addEventListener('submit', function(e) {
     const nama = document.querySelector('input[name="nama"]').value.trim();
+    const namaIlmiah = document.querySelector('input[name="nama_ilmiah"]').value.trim();
     
-    // Cek apakah ada angka di nama
+    // Cek nama ada angka
     if (/\d/.test(nama)) {
         e.preventDefault();
         alert('❌ Nama flora tidak boleh mengandung angka!');
         return false;
     }
     
-    // Cek apakah nama hanya huruf dan spasi
+    // Cek nama hanya huruf dan spasi
     if (!/^[a-zA-Z\s\-\.]+$/.test(nama)) {
         e.preventDefault();
         alert('❌ Nama flora hanya boleh terdiri dari huruf, spasi, tanda pisah (-), dan titik (.)!');
         return false;
+    }
+    
+    // Validasi nama ilmiah jika diisi
+    if (namaIlmiah !== '') {
+        // Cek apakah mengandung angka
+        if (/\d/.test(namaIlmiah)) {
+            e.preventDefault();
+            alert('❌ Nama ilmiah tidak boleh mengandung angka!');
+            return false;
+        }
+        
+        const parts = namaIlmiah.split(' ');
+        const filtered = parts.filter(p => p !== '');
+        
+        // Minimal 2 kata
+        if (filtered.length < 2) {
+            e.preventDefault();
+            alert('❌ Nama ilmiah harus terdiri dari minimal 2 kata (Genus + Spesies)!');
+            return false;
+        }
+        
+        // Cek huruf pertama genus kapital
+        if (filtered[0].charAt(0) !== filtered[0].charAt(0).toUpperCase()) {
+            e.preventDefault();
+            alert('❌ Genus (kata pertama) pada nama ilmiah harus dimulai dengan huruf kapital!');
+            return false;
+        }
+        
+        // Cek spesies lowercase semua
+        for (let i = 1; i < filtered.length; i++) {
+            if (filtered[i] !== filtered[i].toLowerCase()) {
+                e.preventDefault();
+                alert('❌ Spesies (kata setelah genus) harus menggunakan huruf kecil semua!');
+                return false;
+            }
+        }
     }
     
     return true;
