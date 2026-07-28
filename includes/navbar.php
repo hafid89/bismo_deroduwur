@@ -1,3 +1,4 @@
+
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
@@ -64,7 +65,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </a>
                         <div class="navbar-dropdown-menu absolute left-0 mt-0 w-48 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:bg-forest transition-all duration-300 z-50 border border-white/20 overflow-hidden">
                             <a href="<?= BASE_URL ?>alam.php#flora" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200 border-b border-white/10">Flora</a>
-                            <a href="<?= BASE_URL ?>alam.php#fauna" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200">🐾Fauna</a>
+                            <a href="<?= BASE_URL ?>alam.php#fauna" class="block px-4 py-2.5 text-white hover:bg-white/10 transition duration-200">Fauna</a>
                         </div>
                     </div>
 
@@ -117,8 +118,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="pl-4 border-l-2 border-white/20 ml-2">
                 <p class="text-xs text-white/50 uppercase tracking-wider mt-1 mb-1">Alam Bismo</p>
                 <a href="<?= BASE_URL ?>alam.php" class="block py-1.5 <?= $current_page == 'alam.php' ? 'text-[#E0BE45] font-bold' : 'text-white/80 hover:text-[#E0BE45]' ?> text-sm">🌿 Semua</a>
-                <a href="<?= BASE_URL ?>alam.php#flora" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🌱 Flora</a>
-                <a href="<?= BASE_URL ?>alam.php#fauna" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">🐾 Fauna</a>
+                <a href="<?= BASE_URL ?>alam.php#flora" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">Flora</a>
+                <a href="<?= BASE_URL ?>alam.php#fauna" class="block py-1.5 text-white/80 hover:text-[#E0BE45] text-sm">Fauna</a>
             </div>
             
             <!-- Mobile Submenu Jejak Visual -->

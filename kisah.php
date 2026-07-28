@@ -1,3 +1,4 @@
+
 <?php require_once __DIR__ . '/includes/config.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -24,7 +25,7 @@
         .hero-kisah {
             height: 100vh;
             min-height: 600px;
-            max-height: 800px;
+            max-height: 1000px;
             background-size: cover;
             background-position: center;
             position: relative;

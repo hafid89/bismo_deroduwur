@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -52,7 +53,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         .hero-alam {
             height: 100vh;
             min-height: 600px;
-            max-height: 800px;
+            max-height: 1000px;
             background-size: cover;
             background-position: center;
             position: relative;
