@@ -209,7 +209,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         .btn-read-more {
             display: inline-block;
             margin-top: 10px;
-            color: #2F5233;
+            color: #E0BE45;
             font-weight: 600;
             font-size: 0.85rem;
             cursor: pointer;
@@ -220,7 +220,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         }
 
         .btn-read-more:hover {
-            color: #4A7A4E;
+            color: #A9784B;
         }
 
         .btn-read-more::after {
@@ -527,7 +527,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
                 <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-bold text-white hero-fade delay-1 mb-10">
                     <span class="text-[#E0BE45]">Alam</span> Bismo
                 </h1>
-                <p class="hero-subtitle text-base md:text-lg lg:text-2xl text-white/90 leading-relaxed hero-fade delay-2 max-w-3xl mx-auto">
+                <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
                     Keanekaragaman flora dan fauna di jalur pendakian Gunung Bismo via Deroduwur.
                     Setiap langkah menyimpan keajaiban alam yang menunggu untuk dijelajahi.
                 </p>
@@ -536,17 +536,15 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
     </section>
 
     <!-- Intro Ekosistem -->
-    <section class="section-alam bg-[#FAF7F2]">
+    <section class="py-10 bg-[#FAF7F2]">
         <div class="container mx-auto px-4 max-w-4xl">
-            <div class="bg-white p-8 md:p-12 rounded-2xl text-center border border-gray-100 shadow-sm">
-                <h2 class="text-xl md:text-2xl font-bold text-[#2F5233] mb-4"> Ekosistem Istimewa Deroduwur</h2>
-                <p class="text-[#5C5C50] leading-relaxed text-base md:text-lg">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6"> Ekosistem Istimewa Deroduwur</h2>
+                <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
                     Jalur pendakian Gunung Bismo via Deroduwur memiliki keanekaragaman hayati yang luar biasa.
                     Dari flora endemik hingga fauna langka, setiap langkah di jalur ini menawarkan kesempatan
                     untuk menyaksikan keindahan alam yang masih terjaga. Keistimewaan ekosistem ini menjadi
                     salah satu daya tarik utama bagi para pendaki dan pecinta alam.
                 </p>
-            </div>
         </div>
     </section>
 
@@ -554,8 +552,8 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
     <section id="flora" class="section-alam bg-[#FAF7F2]">
         <div class="container mx-auto px-4 max-w-6xl">
             <div class="text-center mb-10">
-                <h2 class="section-title">Flora</h2>
-                <p class="section-subtitle mx-auto">Keindahan tumbuhan endemik di sepanjang jalur pendakian Gunung Bismo</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Flora</h2>
+                <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Keindahan tumbuhan endemik di sepanjang jalur pendakian Gunung Bismo</p>
             </div>
 
             <?php if (empty($flora_list)): ?>
@@ -587,7 +585,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
                                 <?php endif; ?>
                                 <p class="deskripsi"><?= htmlspecialchars($flora['deskripsi'] ?? 'Keindahan flora di jalur Gunung Bismo.') ?></p>
                                 <?php if (!empty($flora['lokasi'])): ?>
-                                    <p class="lokasi">📍 <?= htmlspecialchars($flora['lokasi']) ?></p>
+                                    <p class="lokasi">Lokasi: <?= htmlspecialchars($flora['lokasi']) ?></p>
                                 <?php endif; ?>
                                 <a href="<?= BASE_URL ?>alam-detail.php?type=flora&id=<?= $flora['id'] ?>" class="btn-read-more">
                                     Baca Selengkapnya
@@ -605,8 +603,8 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
     <section id="fauna" class="section-alam bg-[#FAF7F2]">
         <div class="container mx-auto px-4 max-w-6xl">
             <div class="text-center mb-10">
-                <h2 class="section-title">Fauna</h2>
-                <p class="section-subtitle mx-auto">Satwa liar yang menghuni kawasan hutan Gunung Bismo</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Fauna</h2>
+                <p  class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Satwa liar yang menghuni kawasan hutan Gunung Bismo</p>
             </div>
 
             <?php if (empty($fauna_list)): ?>
@@ -638,7 +636,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
                                 <?php endif; ?>
                                 <p class="deskripsi"><?= htmlspecialchars($fauna['deskripsi'] ?? 'Satwa liar di ekosistem Gunung Bismo.') ?></p>
                                 <?php if (!empty($fauna['lokasi'])): ?>
-                                    <p class="lokasi">📍 <?= htmlspecialchars($fauna['lokasi']) ?></p>
+                                    <p class="lokasi">Lokasi: <?= htmlspecialchars($fauna['lokasi']) ?></p>
                                 <?php endif; ?>
                                 <a href="<?= BASE_URL ?>alam-detail.php?type=fauna&id=<?= $fauna['id'] ?>" class="btn-read-more">
                                     Baca Selengkapnya
@@ -690,10 +688,10 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
 
         <div class="container mx-auto px-4 max-w-4xl text-center relative z-10 mt-8">
             <div class="mb-6 text-6xl"></div>
-            <h2 class="text-3xl md:text-5xl font-bold mb-6">Jaga Kelestarian Alam</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-6">Jaga Kelestarian Alam</h2>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/10 mb-8">
-                <blockquote class="text-2xl md:text-3xl font-medium text-[#E0BE45] mb-4">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/10 mb-6">
+                <blockquote class="text-xl md:text-2xl font-medium text-[#E0BE45] mb-4">
                     "Bawa Turun Kembali Sampah Anda"
                 </blockquote>
                 <p class="text-white/90 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">

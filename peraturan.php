@@ -258,7 +258,7 @@
             <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-bold text-white hero-fade delay-1 mb-10">
                 Peraturan & <span class="text-[#E0BE45]">Tiket Pendakian</span>
             </h1>
-            <p class="hero-subtitle text-base md:text-lg lg:text-2xl text-white/90 leading-relaxed hero-fade delay-2 max-w-3xl mx-auto">
+            <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
                 Ketentuan, tata tertib, dan informasi penting sebelum melakukan pendakian 
                 Gunung Bismo via Deroduwur untuk keamanan dan kenyamanan bersama.
             </p>
@@ -269,8 +269,8 @@
 <!-- Alur Registrasi - Timeline -->
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-4">Alur Registrasi Pendakian</h2>
-        <p class="text-center text-[#5C5C50] mb-12 max-w-4xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Alur Registrasi Pendakian</h2>
+        <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
             Ikuti langkah-langkah berikut untuk melakukan registrasi pendakian Gunung Bismo via Deroduwur
         </p>
 
@@ -332,7 +332,7 @@
             <div class="mt-8 max-w-md mx-auto">
                 <div class="fee-card rounded-3xl p-8 text-center border border-white/15">
                     <p class="text-sm uppercase tracking-[0.35em] text-white/70 mb-4">Biaya Registrasi</p>
-                    <p class="text-5xl font-bold text-white">Rp 35.000</p>
+                    <p class="text-5xl font-bold text-white">Rp 20.000</p>
                     <p class="text-white/80 mt-3">Sudah termasuk biaya administrasi dan tiket registrasi pendakian</p>
                 </div>
             </div>
@@ -343,8 +343,8 @@
 <!-- Peraturan - Kewajiban & Larangan -->
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-5xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-4">Peraturan Pendakian</h2>
-        <p class="text-center text-[#5C5C50] mb-12 max-w-2xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Peraturan Pendakian</h2>
+        <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
             Kewajiban dan larangan yang harus dipatuhi selama berada di kawasan Gunung Bismo via Deroduwur
         </p>
 
@@ -403,16 +403,10 @@
 </section>
 
 <!-- Informasi Porter, Rental, Ojek -->
-<section class="py-10 bg-[#FAF7F2]">
-                  </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Informasi Porter, Rental, Ojek -->
 <section class="py-20 bg-[#FAF7F2]">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Layanan Pendukung</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Porter -->
             <div class="service-card bg-white rounded-2xl p-8 text-center shadow-lg">
                 <div class="icon-wrapper text-5xl mb-4">🎒</div>
@@ -470,8 +464,8 @@
     <div class="container mx-auto px-4 text-center max-w-3xl">
         <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
             <div class="text-5xl mb-4">⚠️</div>
-            <h2 class="text-3xl font-bold mb-4">Patuhi Peraturan untuk Keselamatan Bersama</h2>
-            <p class="text-white/90 mb-6 text-lg">
+            <h2 class="text-xl md:text-2xl lg:text-3xl font-bold mb-6">Patuhi Peraturan untuk Keselamatan Bersama</h2>
+            <p class="text-base md:text-lg lg:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl mx-auto text-center">
                 Setiap pelanggaran akan dikenakan <strong class="text-[#E0BE45]">denda maksimal Rp 1.025.000</strong> 
                 sesuai dengan peraturan yang berlaku.
             </p>

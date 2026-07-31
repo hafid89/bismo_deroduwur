@@ -201,7 +201,7 @@ $related = $stmt->fetchAll();
                      class="w-full h-[400px] object-cover main-image"
                      onclick="openLightbox('<?= $imagePath ?>')">
                 <div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full">
-                    🔍 Klik gambar untuk memperbesar
+                    Klik gambar untuk memperbesar
                 </div>
             </div>
 
@@ -220,7 +220,7 @@ $related = $stmt->fetchAll();
                 <div class="flex flex-wrap items-center gap-4 mb-4">
                     <?php if (!empty($item['lokasi'])): ?>
                     <span class="text-sm text-[#A9784B]">
-                        📍 <?= htmlspecialchars($item['lokasi']) ?>
+                        Lokasi <?= htmlspecialchars($item['lokasi']) ?>
                     </span>
                     <?php endif; ?>
                 </div>
@@ -269,9 +269,9 @@ $related = $stmt->fetchAll();
                     <p class="text-sm text-[#A9784B] italic mb-2"><?= htmlspecialchars($item['nama_ilmiah']) ?></p>
                     <?php endif; ?>
                     <?php if (!empty($item['lokasi'])): ?>
-                    <p class="text-xs text-[#A9784B] mb-3">📍 <?= htmlspecialchars($item['lokasi']) ?></p>
+                    <p class="text-xs text-[#A9784B] mb-3">Lokasi : <?= htmlspecialchars($item['lokasi']) ?></p>
                     <?php endif; ?>
-                    <a href="<?= BASE_URL ?>alam-detail.php?type=<?= $type ?>&id=<?= $item['id'] ?>" class="text-[#2F5233] font-semibold hover:text-[#4A7A4E] transition duration-300">
+                    <a href="<?= BASE_URL ?>alam-detail.php?type=<?= $type ?>&id=<?= $item['id'] ?>" class="text-[#E0BE45] font-semibold hover:text-[#A9784B] transition duration-300">
                         Baca Selengkapnya →
                     </a>
                 </div>

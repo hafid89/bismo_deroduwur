@@ -48,11 +48,6 @@ $spotCoordinates = [
         * { font-family: 'Outfit', sans-serif; }
 
 
-        /* Pastikan navbar di atas peta */
-        #navbar {
-            z-index: 9999 !important;
-        }
-
         #map-container {
             position: relative;
             width: 100%;
@@ -68,9 +63,9 @@ $spotCoordinates = [
             z-index: 1;
         }
         .hero-jalur {
-            height: 60vh;
-            min-height: 400px;
-            max-height: 500px;
+            height: 100vh;
+            min-height: 600px;
+            max-height: 1000px;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -456,10 +451,10 @@ $spotCoordinates = [
 <section class="hero-jalur" style="background-image: url('<?= BASE_URL ?>assets/images/telusurjalur/hero-jalur.png');">
     <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
         <div class="max-w-7xl mx-auto">
-            <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-bold text-white hero-fade delay-1 mb-10">
+            <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
                 Telusur <span class="text-[#E0BE45]">Jalur Pendakian</span>
             </h1>
-            <p class="hero-subtitle text-base md:text-lg lg:text-2xl text-white/90 leading-relaxed hero-fade delay-2 max-w-3xl mx-auto">
+            <p class="hero-subtitle text-lg md:text-lx lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
                 Jelajahi setiap pos dan spot menarik di sepanjang jalur pendakian Gunung Bismo via Deroduwur.
             </p>
         </div>
@@ -470,8 +465,8 @@ $spotCoordinates = [
 <section class="py-12 bg-white">
     <div class="container mx-auto px-4 max-w-6xl">
         <div class="text-center mb-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233]">Peta Interaktif Jalur Pendakian</h2>
-            <p class="text-[#5C5C50] mt-2">Zoom, geser, dan klik marker untuk melihat detail spot</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Peta Interaktif Jalur Pendakian</h2>
+            <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Zoom, geser, dan klik marker untuk melihat detail spot</p>
         </div>
 
         <!-- Toggle Button -->
@@ -540,7 +535,7 @@ $spotCoordinates = [
                 </div>
                 
                 <div class="text-center py-4 text-sm font-medium text-[#2F5233] border-t border-gray-200 mt-4">
-                    🏕️ Basecamp Deroduwur — 🏔️ Puncak Indraprasta (2.365 MDPL) — Total <?= count($spots) ?> Spot
+                    Basecamp Deroduwur — Puncak Indraprasta (2.365 MDPL) — Total <?= count($spots) ?> Spot
                 </div>
             </div>
         </div>
@@ -560,10 +555,6 @@ $spotCoordinates = [
                 </div>
                 
                 <div class="flex flex-wrap justify-center gap-4 mt-6">
-                    <button onclick="openLightbox('<?= BASE_URL ?>assets/images/peta-jalur-bismo.jpg')" 
-                            class="inline-flex items-center gap-2 bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md hover:shadow-lg">
-                       Lihat Peta Full
-                    </button>
                     <a href="<?= BASE_URL ?>assets/images/peta-jalur-bismo.jpg" download="Peta-Jalur-Gunung-Bismo-Deroduwur.jpg" 
                        class="inline-flex items-center gap-2 bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-md hover:shadow-lg">
                     Download Peta
@@ -587,6 +578,9 @@ $spotCoordinates = [
 <script src="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.js"></script>
 
 <script>
+
+
+
 // Data koordinat spot dari PHP
 const spotData = <?php 
     $data = [];

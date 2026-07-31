@@ -36,15 +36,97 @@ $related = $stmt->fetchAll();
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        .card-hover {
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Outfit', sans-serif; }
+
+        /* Card Styling - Konsisten dengan berita.php */
+        .card-berita {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: block;
         }
-        .card-hover:hover {
+
+        .card-berita:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
+
+        .card-berita .img-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-berita .img-wrapper img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-berita:hover .img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .card-berita .card-body {
+            padding: 20px 22px;
+        }
+
+        .card-berita .card-body .tanggal {
+            font-size: 0.8rem;
+            color: #A9784B;
+            margin-bottom: 6px;
+        }
+
+        .card-berita .card-body h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-berita .card-body .deskripsi {
+            font-size: 0.875rem;
+            color: #5C5C50;
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .card-berita .card-body .btn-read {
+            color: #E0BE45;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-berita .card-body .btn-read:hover {
+            color: #A9784B;
+        }
+
+        .card-berita .card-body .btn-read::after {
+            content: ' →';
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .card-berita .card-body .btn-read:hover::after {
+            transform: translateX(4px);
+        }
+
         .content img {
             max-width: 100%;
             height: auto;
@@ -77,22 +159,22 @@ $related = $stmt->fetchAll();
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
 <!-- Detail Berita -->
-<section class="pt-32 pb-16 bg-[#FAF7F2]">
+<section class="py-12 bg-[#FAF7F2]" style="padding-top: 6rem;">
     <div class="container mx-auto px-4 max-w-4xl">
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             <?php if ($berita['foto']): ?>
             <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($berita['foto']) ?>" 
                  alt="<?= htmlspecialchars($berita['judul']) ?>" 
-                 class="w-full h-96 object-cover">
+                 class="w-full h-72 md:h-96 object-cover">
             <?php endif; ?>
-            <div class="p-8 md:p-12">
+            <div class="p-6 md:p-10">
                 <p class="text-sm text-[#A9784B] mb-3"><?= formatTanggal($berita['tanggal']) ?></p>
-                <h1 class="text-3xl md:text-4xl font-bold text-[#2F5233] mb-6"><?= htmlspecialchars($berita['judul']) ?></h1>
+                <h1 class="text-2xl md:text-4xl font-bold text-[#2F5233] mb-6"><?= htmlspecialchars($berita['judul']) ?></h1>
                 <div class="content">
                     <?= $berita['isi'] ?>
                 </div>
                 <div class="mt-8 pt-8 border-t border-gray-200">
-                    <a href="<?= BASE_URL ?>berita.php" class="inline-block bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-2 rounded-full transition duration-300">
+                    <a href="<?= BASE_URL ?>berita.php" class="inline-flex items-center gap-2 bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-6 py-3 rounded-full font-semibold transition duration-300">
                         ← Kembali ke Kabar Bismo
                     </a>
                 </div>
@@ -103,25 +185,30 @@ $related = $stmt->fetchAll();
 
 <!-- Related Berita -->
 <?php if ($related): ?>
-<section class="py-16 bg-white">
-    <div class="container mx-auto px-4">
+<section class="py-12 bg-[#FAF7F2]">
+    <div class="container mx-auto px-4 max-w-6xl">
         <h2 class="text-2xl md:text-3xl font-bold text-[#2F5233] text-center mb-10">Kabar Bismo Lainnya</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <?php foreach ($related as $item): ?>
-            <div class="bg-[#FAF7F2] rounded-2xl overflow-hidden shadow-lg card-hover">
-                <?php if ($item['foto']): ?>
-                <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($item['foto']) ?>" 
-                     alt="<?= htmlspecialchars($item['judul']) ?>" 
-                     class="w-full h-48 object-cover">
-                <?php endif; ?>
-                <div class="p-6">
-                    <p class="text-sm text-[#A9784B] mb-2"><?= formatTanggal($item['tanggal']) ?></p>
-                    <h3 class="text-lg font-bold text-[#2F5233] mb-2"><?= htmlspecialchars($item['judul']) ?></h3>
-                    <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $item['id'] ?>" class="text-[#2F5233] font-semibold hover:text-[#4A7A4E] transition duration-300">
-                        Baca Selengkapnya →
-                    </a>
+            <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $item['id'] ?>" class="card-berita">
+                <div class="img-wrapper">
+                    <?php if ($item['foto']): ?>
+                    <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($item['foto']) ?>" 
+                         alt="<?= htmlspecialchars($item['judul']) ?>"
+                         loading="lazy">
+                    <?php else: ?>
+                    <img src="<?= BASE_URL ?>assets/images/default-news.jpg" 
+                         alt="Default Berita"
+                         loading="lazy">
+                    <?php endif; ?>
                 </div>
-            </div>
+                <div class="card-body">
+                    <p class="tanggal"><?= formatTanggal($item['tanggal']) ?></p>
+                    <h3><?= htmlspecialchars($item['judul']) ?></h3>
+                    <p class="deskripsi"><?= truncateText(strip_tags($item['isi']), 120) ?></p>
+                    <span class="btn-read">Baca Selengkapnya</span>
+                </div>
+            </a>
             <?php endforeach; ?>
         </div>
     </div>
@@ -131,5 +218,16 @@ $related = $stmt->fetchAll();
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script src="assets/js/main.js"></script>
+
+<!-- Force navbar solid karena tidak ada hero section -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbar = document.getElementById('navbar');
+        if (navbar) {
+            navbar.classList.remove('bg-transparent');
+            navbar.classList.add('bg-forest');
+        }
+    });
+</script>
 </body>
 </html>

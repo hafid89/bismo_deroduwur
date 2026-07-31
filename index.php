@@ -6,7 +6,7 @@ $berita_terbaru = getBeritaTerbaru(3);
 $galeri_preview = getGaleri(6);
 $partner_logos = [
     ['nama' => 'wonosobo', 'file' => 'logo-wonosobo.png'],
-    ['nama' => 'wonosobo', 'file' => 'logo-wonosobo.png'],
+    ['nama' => 'derodusur', 'file' => 'logo-desa.png'],
     ['nama' => 'Perhutani', 'file' => 'logo-perhutani.png'],
     ['nama' => 'oemah-alam', 'file' => 'logo-oemah-alam.png'],
     ['nama' => 'kkn-upnyk-384', 'file' => 'logo-kkn.png'],
@@ -377,13 +377,13 @@ $partner_logos = [
                     <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
                         <div class="max-w-7xl mx-auto">
                             <h1 class="hero-fade text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8">
-                                Basecamp Bismo <span class="text-[#E0BE45]">Via Deroduwur</span>
+                                Basecamp Gunung Bismo <span class="text-[#E0BE45]">Via Deroduwur</span>
                             </h1>
-                            <p class="hero-fade text-xl md:text-2xl lg:text-3xl text-[#E0BE45] font-semibold mb-6 tagline-bounce whitespace-nowrap">
+                            <p class="hero-fade text-2xl md:text-3xl lg:text-4xl text-[#E0BE45] font-semibold mb-6 tagline-bounce whitespace-nowrap">
                                 Gerbang Pendakian Sisi Selatan
                             </p>
-                            <p class="hero-fade text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto">
-                                Mari berbincang dalam satu tawa dan kata. Bersama kami membentuk memori hangat yang membekas di hati.
+                            <p class="hero-fade text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
+                                Mari berbincang dalam satu tawa dan kata dibawah atap yang sama. Menambah keluarga ceria dalam satu jiwa. Bersama kami membentuk jiwa alami untuk mewujudkan impian bersama.
                             </p>
                             <div class="hero-fade cta-group mt-8">
                                 <a href="<?= BASE_URL ?>jalur.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
@@ -410,8 +410,8 @@ $partner_logos = [
                             <h1 class="hero-fade text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">
                                 Jalur Asri, <span class="text-[#E0BE45]">Berhati Vegetasi</span>
                             </h1>
-                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto">
-                                Pesona alam hutan asri dengan keberagaman ekosistem yang tidak pernah gagal menarik perhatian tiap manik yang hadir.
+                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
+                                Pesona alam hutan asri dengan keberagaman ekosistem yang tidak pernah gagal menarik perhatian tiap mata. Kehadirannya berperan penting dalam kelestarian hutan dan mata air Gunung Bismo.
                             </p>
                             <div class="hero-fade flex flex-wrap gap-4 justify-center mt-8">
                                 <a href="<?= BASE_URL ?>kisah.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
@@ -432,8 +432,8 @@ $partner_logos = [
                             <h1 class="hero-fade text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">
                                 Kekayaan <span class="text-[#E0BE45]">Flora & Fauna</span> Hutan Bismo
                             </h1>
-                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto">
-                                Persiapkan diri untuk kekayaan flora dan fauna hutan Bismo yang tidak ada duanya. Temukan primata Lutung Jawa dan Anggrek langka yang memukau mata.
+                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
+                                Persiapkan diri untuk memanjakan mata melihat kekayaan flora dan fauna hutan Bismo yang tidak ada duanya. Temukan primata dan tumbuhan langka yang memberi pemandangan tak biasa.
                             </p>
                             <div class="hero-fade flex flex-wrap gap-4 justify-center mt-8">
                                 <a href="<?= BASE_URL ?>alam.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
@@ -454,8 +454,8 @@ $partner_logos = [
                             <h1 class="hero-fade text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">
                                 Spot <span class="text-[#E0BE45]">Ikonik & Panorama</span> Puncak
                             </h1>
-                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto">
-                                Keindahan view puncak Hastinapura dan Indraprasta sudah menunggu. Hamparan pemandangan siap diabadikan dalam lensamu.
+                            <p class="hero-fade text-lg md:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
+                                Keindahan view puncak Hastinapura dan Indraprasta sudah menunggu. Hamparan pemandangan 360° siap diabadikan dalam lensamu dan menjadi bagian dari cerita perjalananmu.
                             </p>
                             <div class="hero-fade flex flex-wrap gap-4 justify-center mt-8">
                                 <a href="<?= BASE_URL ?>galeri.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
@@ -493,9 +493,9 @@ $partner_logos = [
     <section class="py-20 bg-[#FAF7F2]">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] mb-6">Secarik Perkenalan</h2>
-                <p class="text-lg text-[#5C5C50] mb-8 leading-relaxed">
-                    Basecamp Deroduwur telah menjadi rumah bagi para pengelola dan pendaki via Deroduwur sejak beberapa tahun berlalu. Selayaknya rumah, basecamp kami menjadi tempat naungan yang memberikan kehangatan layaknya keluarga bagi para pendaki. Perkenalan lebih jauh akan membangun arti kedekatan di antara kita
+                <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] mb-6">Secarik Perkenalan</h2>
+                <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
+                    Basecamp Deroduwur telah menjadi rumah dan edukasi bagi para pengelola dan pendaki via Deroduwur sejak beberapa tahun berlalu. Selayaknya rumah, basecamp kami menjadi tempat naungan yang memberikan kehangatan layaknya keluarga bagi para pendaki. Perkenalan lebih jauh akan membangun arti kedekatan di antara kita
                 </p>
                 <a href="<?= BASE_URL ?>kisah.php" class="inline-block bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300">
                     Selengkapnya →
@@ -505,45 +505,53 @@ $partner_logos = [
     </section>
 
     <!-- Highlight Nilai Plus -->
-    <section class="py-20 bg-cream">
+    <section class="py-15 bg-cream mx-8">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Keunggulan Basecamp Deroduwur</h2>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">Keunggulan Basecamp Deroduwur</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
                     <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
+                            <path d="M9 12v.01" />
+                            <path d="M6 13v.01" />
+                            <path d="M17 15l-4 -4" />
+                            <path d="M13 15l4 -4" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[#2F5233] mb-2">Jalur Rimbun</h3>
-                    <p class="text-[#5C5C50]">Jalur pendakian yang asri dengan pepohonan rindang dan udara segar</p>
+                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Jalur pendakian yang asri dengan pepohonan rindang dan udara segar</p>
                 </div>
                 <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
                     <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                            <path d="M3 20h18l-6.921 -14.612a2.3 2.3 0 0 0 -4.158 0l-6.921 14.612" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 11l2 2.5l2.5 -2.5l2 3l2.5 -2" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[#2F5233] mb-2">Ekosistem Terjaga</h3>
-                    <p class="text-[#5C5C50]">Keanekaragaman hayati yang masih terjaga dengan baik</p>
+                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Keanekaragaman hayati yang masih terjaga dengan baik</p>
                 </div>
                 <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
                     <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 15q -3.5 0 -4.5 -6a8.4 8.4 0 0 1 3.438 .402a12 12 0 0 1 -.052 -.793c0 -3.606 3.204 -5.609 3.204 -5.609s2.003 1.252 2.842 3.557q 2.568 -1.557 6.568 -1.557q .396 3.775 -1.557 6.568c2.305 .839 3.557 2.842 3.557 2.842s-3 2.59 -7 2.59c0 1 0 1 .5 3q -6 0 -7 -5" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[#2F5233] mb-2">Flora & Fauna</h3>
-                    <p class="text-[#5C5C50]">Beragam jenis tumbuhan dan satwa liar yang unik</p>
+                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Beragam jenis tumbuhan dan satwa liar yang unik</p>
                 </div>
                 <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
                     <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M13.5 5.49a1.764 1.764 0 0 1 -2.5 -2.49" />
+                            <path d="M12 6v3" />
+                            <path d="M19 21a8.9 8.9 0 0 0 1 -3.67c0 -2 -.92 -3.25 -3.24 -4.51a17.4 17.4 0 0 1 -4.76 -3.82a17.4 17.4 0 0 1 -4.76 3.82c-2.32 1.26 -3.24 2.55 -3.24 4.51a8.9 8.9 0 0 0 1 3.67h14" />
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-[#2F5233] mb-2">Budaya & Religi</h3>
-                    <p class="text-[#5C5C50]">Nilai budaya dan religi yang kental di sekitar basecamp</p>
+                    <p class=text-sm md:text-base lg:text-base text-[#5C5C50] justify-align]">Nilai budaya dan religi yang kental di sekitar basecamp</p>
                 </div>
             </div>
         </div>
@@ -552,7 +560,7 @@ $partner_logos = [
     <!-- Didukung Oleh (Infinite Logo Carousel - Warna Asli, Gerakan Cepat) -->
     <section class="py-20 bg-[#FAF7F2] overflow-hidden">
         <div class="container mx-auto px-4 mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233]">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">
                 Didukung Oleh
             </h2>
         </div>
@@ -574,9 +582,9 @@ $partner_logos = [
     </section>
 
     <!-- Preview Galeri dengan Modal & Efek Zoom -->
-    <section class="py-20 bg-[#FAF7F2]">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Jejak Visual</h2>
+    <section class="py-15 bg-[#FAF7F2] mx-8">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-12">Jejak Visual</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($galeri_preview as $foto): ?>
                     <div class="zoom-card rounded-2xl shadow-lg bg-white cursor-pointer reveal-bottom"
@@ -608,9 +616,9 @@ $partner_logos = [
     </section>
 
     <!-- Berita Terbaru dengan Efek Zoom -->
-    <section class="py-20 bg-cream">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#2F5233] mb-12">Kabar Bismo</h2>
+    <section class="py-20 bg-cream mx-8">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-12">Kabar Bismo</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <?php foreach ($berita_terbaru as $berita): ?>
                     <div class="zoom-card bg-[#FAF7F2] rounded-2xl shadow-lg reveal-bottom">
@@ -623,7 +631,7 @@ $partner_logos = [
                             <p class="text-sm text-[#A9784B] mb-2"><?= formatTanggal($berita['tanggal']) ?></p>
                             <h3 class="text-xl font-bold text-[#2F5233] mb-2"><?= htmlspecialchars($berita['judul']) ?></h3>
                             <p class="text-[#5C5C50] text-sm mb-4"><?= truncateText(strip_tags($berita['isi']), 100) ?></p>
-                            <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $berita['id'] ?>" class="text-[#2F5233] font-semibold hover:text-[#4A7A4E] transition duration-300">
+                            <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $berita['id'] ?>" class="text-[#E0BE45] font-semibold hover:text-[#A9784B] transition duration-300">
                                 Baca Selengkapnya →
                             </a>
                         </div>
@@ -639,10 +647,10 @@ $partner_logos = [
     </section>
 
     <!-- CTA & Kontak Cepat -->
-    <section class="py-20 bg-[#2F5233] text-white">
+    <section class="pt-20 pb-15 bg-[#2F5233] text-white">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">Siap Mendaki Gunung Bismo?</h2>
-            <p class="text-xl mb-8 text-white/90">Hubungi kami untuk informasi lebih lanjut tentang jalur pendakian</p>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">Siap Mendaki Gunung Bismo?</h2>
+            <p class="text-base md:text-lg lg:text-xl mb-8 text-white/90">Hubungi kami untuk informasi lebih lanjut tentang jalur pendakian</p>
             <div class="flex flex-wrap justify-center gap-6">
                 <a href="https://wa.me/6281390195488" target="_blank" class="bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

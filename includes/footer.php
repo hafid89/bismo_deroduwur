@@ -107,8 +107,8 @@
             </p>
             <p class="text-xs text-gray-500 mt-1">
                 <span class="text-[#E0BE45]">✦</span> 
-                Website ini merupakan hasil karya buatan kami 
-                <span class="text-[#E0BE45] font-medium">Kelompok KKN 84.384 UPNVYK</span>
+               Website ini dibentuk sebagai karya pengabdian 
+                <span class="text-[#E0BE45] font-medium">kelompok KKN AA.84.384 UPN "Veteran" Yogyakarta Tahun 2026</span>
                 <span class="text-[#E0BE45]">✦</span>
             </p>
         </div>
