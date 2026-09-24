@@ -62,7 +62,7 @@ $related = $stmt->fetchAll();
 
         .card-berita .img-wrapper img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -72,7 +72,7 @@ $related = $stmt->fetchAll();
         }
 
         .card-berita .card-body {
-            padding: 20px 22px;
+            padding: 14px 16px;
         }
 
         .card-berita .card-body .tanggal {
@@ -82,7 +82,7 @@ $related = $stmt->fetchAll();
         }
 
         .card-berita .card-body h3 {
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #2F5233;
             margin-bottom: 8px;
@@ -93,7 +93,7 @@ $related = $stmt->fetchAll();
         }
 
         .card-berita .card-body .deskripsi {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #5C5C50;
             line-height: 1.7;
             display: -webkit-box;
@@ -125,6 +125,34 @@ $related = $stmt->fetchAll();
 
         .card-berita .card-body .btn-read:hover::after {
             transform: translateX(4px);
+        }
+
+        @media (max-width: 768px) {
+            .card-berita .img-wrapper img {
+                height: 160px;
+            }
+
+            .card-berita .card-body {
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-berita .img-wrapper img {
+                height: 130px;
+            }
+
+            .card-berita .card-body {
+                padding: 10px 12px;
+            }
+
+            .card-berita .card-body h3 {
+                font-size: 0.85rem;
+            }
+
+            .card-berita .card-body .deskripsi {
+                font-size: 0.7rem;
+            }
         }
 
         .content img {
@@ -188,7 +216,7 @@ $related = $stmt->fetchAll();
 <section class="py-12 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-6xl">
         <h2 class="text-2xl md:text-3xl font-bold text-[#2F5233] text-center mb-10">Kabar Bismo Lainnya</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
             <?php foreach ($related as $item): ?>
             <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $item['id'] ?>" class="card-berita">
                 <div class="img-wrapper">

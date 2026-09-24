@@ -2,8 +2,8 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$berita_terbaru = getBeritaTerbaru(3);
-$galeri_preview = getGaleri(6);
+$berita_terbaru = getBeritaTerbaru(4);
+$galeri_preview = getGaleri(4);
 $partner_logos = [
     ['nama' => 'wonosobo', 'file' => 'logo-wonosobo.png'],
     ['nama' => 'derodusur', 'file' => 'logo-desa.png'],
@@ -196,6 +196,402 @@ $partner_logos = [
             transform: scale(1.15);
         }
 
+        /* Gallery Card */
+        .gallery-item {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .gallery-item .img-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item .img-wrapper img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .gallery-item .card-body {
+            padding: 14px 16px;
+        }
+
+        .gallery-item .card-body h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 2px;
+        }
+
+        .gallery-item .card-body .kategori {
+            font-size: 0.75rem;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .kategori-jalur {
+            color: #2F5233;
+            background: #E8F5E9;
+        }
+
+        .kategori-ekosistem {
+            color: #1565C0;
+            background: #E3F2FD;
+        }
+
+        .kategori-kegiatan {
+            color: #E65100;
+            background: #FFF3E0;
+        }
+
+        .gallery-item .card-body .deskripsi {
+            font-size: 0.8rem;
+            color: #5C5C50;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item .img-wrapper img {
+                height: 160px;
+            }
+
+            .gallery-item .card-body {
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-item .img-wrapper img {
+                height: 130px;
+            }
+
+            .gallery-item .card-body {
+                padding: 10px 12px;
+            }
+
+            .gallery-item .card-body h4 {
+                font-size: 0.85rem;
+            }
+
+            .gallery-item .card-body .deskripsi {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* News Card */
+        .card-berita {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card-berita:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        .card-berita .img-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-berita .img-wrapper img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card-berita:hover .img-wrapper img {
+            transform: scale(1.06);
+        }
+
+        .card-berita .card-body {
+            padding: 14px 16px;
+        }
+
+        .card-berita .card-body .tanggal {
+            font-size: 0.8rem;
+            color: #A9784B;
+            margin-bottom: 6px;
+        }
+
+        .card-berita .card-body h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-berita .card-body .deskripsi {
+            font-size: 0.8rem;
+            color: #5C5C50;
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .card-berita .card-body .btn-read {
+            color: #E0BE45;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-berita .card-body .btn-read:hover {
+            color: #A9784B;
+        }
+
+        .card-berita .card-body .btn-read::after {
+            content: ' →';
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .card-berita .card-body .btn-read:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* Modal / Lightbox */
+        .gallery-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gallery-modal.active {
+            display: flex;
+        }
+
+        .gallery-modal .modal-box {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .gallery-modal .modal-img-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-modal .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .gallery-modal .modal-close:hover {
+            background: rgba(0,0,0,0.8);
+            transform: rotate(90deg);
+        }
+
+        .gallery-modal .modal-img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            cursor: pointer;
+            display: block;
+        }
+
+        .gallery-modal .modal-img-hint {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.85);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .gallery-modal .modal-body {
+            padding: 24px 30px 30px;
+        }
+
+        .gallery-modal .modal-body h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 4px;
+        }
+
+        .gallery-modal .modal-body .modal-kategori {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #FAF7F2;
+            color: #A9784B;
+            margin-bottom: 12px;
+        }
+
+        .gallery-modal .modal-body .modal-deskripsi {
+            color: #5C5C50;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .gallery-modal .modal-body .modal-tanggal {
+            color: #A9784B;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0, 0, 0, 0.92);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-modal img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 100000;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-box::-webkit-scrollbar { width: 6px; }
+        .modal-box::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .modal-box::-webkit-scrollbar-thumb { background: #2F5233; border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            .gallery-modal .modal-box {
+                max-width: 95%;
+                margin: 10px;
+            }
+
+            .gallery-modal .modal-img {
+                max-height: 300px;
+            }
+
+            .gallery-modal .modal-body {
+                padding: 16px 18px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-modal .modal-box {
+                max-width: 98%;
+                margin: 5px;
+            }
+
+            .gallery-modal .modal-img {
+                max-height: 200px;
+            }
+
+            .gallery-modal .modal-body {
+                padding: 12px 14px 16px;
+            }
+
+            .gallery-modal .modal-body h3 {
+                font-size: 1.2rem;
+            }
+
+            .lightbox-close {
+                top: 15px;
+                right: 20px;
+                font-size: 30px;
+            }
+        }
+
         /* Swiper Custom Styles */
         .hero-swiper {
             height: 100vh;
@@ -376,14 +772,17 @@ $partner_logos = [
                 <div class="swiper-slide" style="background-image: url('<?= BASE_URL ?>assets/images/spots/slide1-basecamp.png');">
                     <div class="slide-content container mx-auto px-6 md:px-12 lg:px-24">
                         <div class="max-w-7xl mx-auto">
-                            <h1 class="hero-fade text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8">
-                                Basecamp Gunung Bismo <span class="text-[#E0BE45]">Via Deroduwur</span>
+                            <h1 class="hero-fade text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                                Basecamp Gunung Bismo
                             </h1>
-                            <p class="hero-fade text-2xl md:text-3xl lg:text-4xl text-[#E0BE45] font-semibold mb-6 tagline-bounce whitespace-nowrap">
-                                Gerbang Pendakian Sisi Selatan
+                            <h1 class="hero-fade text-4xl md:text-5xl lg:text-6xl font-bold text-[#E0BE45] mb-8">
+                                Via Deroduwur
+                            </h1>
+                            <p class="hero-fade text-2xl md:text-3xl lg:text-4xl text-white font-semibold mb-6 tagline-bounce whitespace-nowrap">
+                                Gerbang Pendakian <span class="text-[#E0BE45]"> Sisi Selatan</span>
                             </p>
                             <p class="hero-fade text-lg md:text-xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
-                                Mari berbincang dalam satu tawa dan kata dibawah atap yang sama. Menambah keluarga ceria dalam satu jiwa. Bersama kami membentuk jiwa alami untuk mewujudkan impian bersama.
+                                Mari berbincang dalam satu tawa dibawah atap yang sama. Menambah keluarga ceria dalam satu jiwa. Bersama kami membentuk jiwa alami untuk mewujudkan impian bersama.
                             </p>
                             <div class="hero-fade cta-group mt-8">
                                 <a href="<?= BASE_URL ?>jalur.php" class="group bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
@@ -495,7 +894,9 @@ $partner_logos = [
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] mb-6">Secarik Perkenalan</h2>
                 <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-                    Basecamp Deroduwur telah menjadi rumah dan edukasi bagi para pengelola dan pendaki via Deroduwur sejak beberapa tahun berlalu. Selayaknya rumah, basecamp kami menjadi tempat naungan yang memberikan kehangatan layaknya keluarga bagi para pendaki. Perkenalan lebih jauh akan membangun arti kedekatan di antara kita
+                    Basecamp Deroduwur telah menjadi rumah bagi para pengelola dan pendaki Gunung Bismo sejak beberapa waktu silam. Selayaknya tempat pulang, basecamp kami menjadi tempat naungan yang memberikan kehangatan layaknya keluarga.
+                    Pembelajaran alam yang terselip di antara obrolan membuat diri kembali sadar akan kecilnya angan-angan yang dipunya.
+                    Perkenalan lebih jauh akan membangun arti kedekatan di antara kita.
                 </p>
                 <a href="<?= BASE_URL ?>kisah.php" class="inline-block bg-[#2F5233] hover:bg-[#4A7A4E] text-white px-8 py-3 rounded-full font-semibold transition duration-300">
                     Selengkapnya →
@@ -505,13 +906,13 @@ $partner_logos = [
     </section>
 
     <!-- Highlight Nilai Plus -->
-    <section class="py-15 bg-cream mx-8">
+    <section class="py-15 bg-cream">
         <div class="container mx-auto px-4">
             <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">Keunggulan Basecamp Deroduwur</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
-                    <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-2 md:gap-6 lg:gap-8">
+                <div class="bg-[#FAF7F2] p-4 md:p-6 lg:p-8 rounded-2xl card-hover text-center reveal-bottom">
+                    <div class="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
                             <path d="M9 12v.01" />
                             <path d="M6 13v.01" />
@@ -519,39 +920,30 @@ $partner_logos = [
                             <path d="M13 15l4 -4" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[#2F5233] mb-2">Jalur Rimbun</h3>
-                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Jalur pendakian yang asri dengan pepohonan rindang dan udara segar</p>
+                    <h3 class="text-base md:text-lg lg:text-xl font-bold text-[#2F5233] mb-2">Jalur Rimbun</h3>
+                    <p class="text-xs md:text-sm lg:text-base text-[#5C5C50] justify-align">Menyusuri kanopi pepohonan nan asri, meresapi segarnya udara di sepanjang derap kaki.</p>
                 </div>
-                <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
-                    <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-[#FAF7F2] p-4 md:p-6 lg:p-8 rounded-2xl card-hover text-center reveal-bottom">
+                    <div class="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M3 20h18l-6.921 -14.612a2.3 2.3 0 0 0 -4.158 0l-6.921 14.612" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 11l2 2.5l2.5 -2.5l2 3l2.5 -2" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[#2F5233] mb-2">Ekosistem Terjaga</h3>
-                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Keanekaragaman hayati yang masih terjaga dengan baik</p>
+                    <h3 class="text-base md:text-lg lg:text-xl font-bold text-[#2F5233] mb-2">Ekosistem Terjaga</h3>
+                    <p class="text-xs md:text-sm lg:text-base text-[#5C5C50] justify-align">Menyaksikan indahnya keragamanhayati yang terjaga dan tumbuh selaras dengan masyarakat.</p>
                 </div>
-                <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
-                    <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 15q -3.5 0 -4.5 -6a8.4 8.4 0 0 1 3.438 .402a12 12 0 0 1 -.052 -.793c0 -3.606 3.204 -5.609 3.204 -5.609s2.003 1.252 2.842 3.557q 2.568 -1.557 6.568 -1.557q .396 3.775 -1.557 6.568c2.305 .839 3.557 2.842 3.557 2.842s-3 2.59 -7 2.59c0 1 0 1 .5 3q -6 0 -7 -5" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-[#2F5233] mb-2">Flora & Fauna</h3>
-                    <p class="text-sm md:text-base lg:text-base text-[#5C5C50] justify-align">Beragam jenis tumbuhan dan satwa liar yang unik</p>
-                </div>
-                <div class="bg-[#FAF7F2] p-8 rounded-2xl card-hover text-center reveal-bottom">
-                    <div class="w-20 h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-[#FAF7F2] p-4 md:p-6 lg:p-8 rounded-2xl card-hover text-center reveal-bottom">
+                    <div class="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-[#2F5233] rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M13.5 5.49a1.764 1.764 0 0 1 -2.5 -2.49" />
                             <path d="M12 6v3" />
                             <path d="M19 21a8.9 8.9 0 0 0 1 -3.67c0 -2 -.92 -3.25 -3.24 -4.51a17.4 17.4 0 0 1 -4.76 -3.82a17.4 17.4 0 0 1 -4.76 3.82c-2.32 1.26 -3.24 2.55 -3.24 4.51a8.9 8.9 0 0 0 1 3.67h14" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-[#2F5233] mb-2">Budaya & Religi</h3>
-                    <p class=text-sm md:text-base lg:text-base text-[#5C5C50] justify-align]">Nilai budaya dan religi yang kental di sekitar basecamp</p>
+                    <h3 class="text-base md:text-lg lg:text-xl font-bold text-[#2F5233] mb-2">Budaya & Religi</h3>
+                    <p class="text-xs md:text-sm lg:text-base text-[#5C5C50] justify-align">Memeluk hangatnya nilai tradisi lokal dan nilai spiritual yang mengelilingi sekitar.</p>
                 </div>
             </div>
         </div>
@@ -582,28 +974,35 @@ $partner_logos = [
     </section>
 
     <!-- Preview Galeri dengan Modal & Efek Zoom -->
-    <section class="py-15 bg-[#FAF7F2] mx-8">
-        <div class="container mx-auto px-4 max-w-6xl">
+    <section class="py-15 bg-[#FAF7F2]">
+        <div class="container mx-auto px-4 max-w-8xl">
             <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-12">Jejak Visual</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php foreach ($galeri_preview as $foto): ?>
-                    <div class="zoom-card rounded-2xl shadow-lg bg-white cursor-pointer reveal-bottom"
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+                <?php foreach ($galeri_preview as $foto):
+                    $kat = htmlspecialchars($foto['kategori']);
+                    $katClass = 'kategori-' . $kat;
+                ?>
+                    <div class="gallery-item reveal-bottom"
                         onclick="openModal(
                     '<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>',
                     '<?= htmlspecialchars($foto['judul']) ?>',
-                    '<?= ucfirst(htmlspecialchars($foto['kategori'])) ?>',
+                    '<?= ucfirst($kat) ?>',
                     '<?= htmlspecialchars($foto['deskripsi']) ?>',
                     '<?= isset($foto['created_at']) ? formatTanggal($foto['created_at']) : '' ?>'
                 )">
-                        <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>"
-                            alt="<?= htmlspecialchars($foto['judul']) ?>"
-                            class="w-full h-64 object-cover">
-                        <?php if ($foto['judul']): ?>
-                            <div class="p-4">
-                                <p class="text-[#2F5233] font-semibold"><?= htmlspecialchars($foto['judul']) ?></p>
-                                <p class="text-xs text-[#A9784B]">#<?= htmlspecialchars($foto['kategori']) ?></p>
-                            </div>
-                        <?php endif; ?>
+                        <div class="img-wrapper">
+                            <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>"
+                                alt="<?= htmlspecialchars($foto['judul']) ?>"
+                                loading="lazy">
+                        </div>
+                        <div class="card-body">
+                            <h4><?= htmlspecialchars($foto['judul']) ?></h4>
+                            <span class="kategori <?= $katClass ?>"><?= ucfirst($kat) ?></span>
+                            <?php if ($foto['deskripsi']): ?>
+                                <p class="deskripsi"><?= htmlspecialchars($foto['deskripsi']) ?></p>
+                            <?php endif; ?>
+                            <p class="text-xs text-gray-400 mt-2">Klik untuk detail</p>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -615,24 +1014,30 @@ $partner_logos = [
         </div>
     </section>
 
-    <!-- Berita Terbaru dengan Efek Zoom -->
-    <section class="py-20 bg-cream mx-8">
-        <div class="container mx-auto px-4 max-w-6xl">
+    <!-- Berita Terbaru -->
+    <section class="py-20 bg-cream">
+        <div class="container mx-auto px-4 max-w-8xl">
             <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-12">Kabar Bismo</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-8">
                 <?php foreach ($berita_terbaru as $berita): ?>
-                    <div class="zoom-card bg-[#FAF7F2] rounded-2xl shadow-lg reveal-bottom">
-                        <?php if ($berita['foto']): ?>
+                    <div class="card-berita reveal-bottom">
+                        <div class="img-wrapper">
+                            <?php if ($berita['foto']): ?>
                             <img src="<?= BASE_URL ?>uploads/berita/<?= htmlspecialchars($berita['foto']) ?>"
                                 alt="<?= htmlspecialchars($berita['judul']) ?>"
-                                class="w-full h-48 object-cover">
-                        <?php endif; ?>
-                        <div class="p-6">
-                            <p class="text-sm text-[#A9784B] mb-2"><?= formatTanggal($berita['tanggal']) ?></p>
-                            <h3 class="text-xl font-bold text-[#2F5233] mb-2"><?= htmlspecialchars($berita['judul']) ?></h3>
-                            <p class="text-[#5C5C50] text-sm mb-4"><?= truncateText(strip_tags($berita['isi']), 100) ?></p>
-                            <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $berita['id'] ?>" class="text-[#E0BE45] font-semibold hover:text-[#A9784B] transition duration-300">
-                                Baca Selengkapnya →
+                                loading="lazy">
+                            <?php else: ?>
+                            <img src="<?= BASE_URL ?>assets/images/default-news.jpg"
+                                alt="Default Berita"
+                                loading="lazy">
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-body">
+                            <p class="tanggal"><?= formatTanggal($berita['tanggal']) ?></p>
+                            <h3><?= htmlspecialchars($berita['judul']) ?></h3>
+                            <p class="deskripsi"><?= truncateText(strip_tags($berita['isi']), 120) ?></p>
+                            <a href="<?= BASE_URL ?>berita-detail.php?id=<?= $berita['id'] ?>" class="btn-read">
+                                Baca Selengkapnya
                             </a>
                         </div>
                     </div>
@@ -649,8 +1054,8 @@ $partner_logos = [
     <!-- CTA & Kontak Cepat -->
     <section class="pt-20 pb-15 bg-[#2F5233] text-white">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">Siap Mendaki Gunung Bismo?</h2>
-            <p class="text-base md:text-lg lg:text-xl mb-8 text-white/90">Hubungi kami untuk informasi lebih lanjut tentang jalur pendakian</p>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">Memiliki Pertanyaan?</h2>
+            <p class="text-base md:text-lg lg:text-xl mb-8 text-white/90">Hubungi kami untuk informasi lebih lanjut</p>
             <div class="flex flex-wrap justify-center gap-6">
                 <a href="https://wa.me/6281390195488" target="_blank" class="bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-8 py-4 rounded-full font-semibold transition duration-300 transform hover:scale-105 inline-flex items-center gap-2">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -658,18 +1063,34 @@ $partner_logos = [
                     </svg>
                     Hubungi via WhatsApp
                 </a>
-                <a href="<?= BASE_URL ?>kontak.php" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-full font-semibold transition duration-300 border-2 border-white inline-flex items-center gap-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Temui Kami
-                </a>
             </div>
         </div>
     </section>
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
+
+    <!-- Gallery Modal -->
+    <div id="galleryModal" class="gallery-modal" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-img-wrapper">
+                <img id="modalImage" class="modal-img" src="" alt="" onclick="openLightbox(document.getElementById('modalImage').src)">
+                <button class="modal-close" onclick="closeModal()">✕</button>
+                <span class="modal-img-hint">Klik gambar untuk ukuran penuh</span>
+            </div>
+            <div class="modal-body">
+                <h3 id="modalTitle"></h3>
+                <span class="modal-kategori" id="modalKategori"></span>
+                <p class="modal-deskripsi" id="modalDeskripsi"></p>
+                <p class="modal-tanggal" id="modalTanggal"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <img id="lightboxImage" src="" alt="Full Size Image">
+    </div>
 
     <!-- Swiper JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -679,8 +1100,51 @@ $partner_logos = [
 
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
-    <!-- Modal Popup -->
-    <script src="assets/js/modal.js"></script>
+
+    <script>
+        // Gallery Modal Functions
+        function openModal(imageSrc, title, kategori, deskripsi, tanggal) {
+            const modal = document.getElementById('galleryModal');
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('modalTitle').textContent = title || 'Tanpa Judul';
+            document.getElementById('modalKategori').textContent = kategori || 'Umum';
+            document.getElementById('modalDeskripsi').textContent = deskripsi || 'Deskripsi belum tersedia.';
+            document.getElementById('modalTanggal').textContent = tanggal ? tanggal : '';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('galleryModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openLightbox(imageSrc) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImage');
+            if (modal && img) {
+                img.src = imageSrc;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeLightbox();
+            }
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -750,17 +1214,7 @@ $partner_logos = [
                 });
             }
 
-            // 3. Mobile Menu Toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
-
-            if (mobileMenuBtn && mobileMenu) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            }
-
-            // 4. Smooth Scroll untuk Anchor Links
+            // 3. Smooth Scroll untuk Anchor Links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     const targetId = this.getAttribute('href');

@@ -1,4 +1,3 @@
-
 <?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -7,23 +6,46 @@ require_once __DIR__ . '/includes/functions.php';
 $limit = 8;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 
-$total_flora = getTotalFlora();
-$total_fauna = getTotalFauna();
-$flora_total_pages = max(1, (int) ceil($total_flora / $limit));
-$fauna_total_pages = max(1, (int) ceil($total_fauna / $limit));
-$pagination_total_pages = max($flora_total_pages, $fauna_total_pages);
+// Search query
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$is_searching = !empty($search);
 
-$page = min($page, $pagination_total_pages);
+// Ambil data
+if ($is_searching) {
+    // Ambil hasil flora & fauna, lalu tandai tipenya
+    $flora_results = getFloraPaginated(1, 999, $search);
+    $fauna_results = getFaunaPaginated(1, 999, $search);
 
-$flora_page = min($page, $flora_total_pages);
-$fauna_page = min($page, $fauna_total_pages);
+    // Tambahkan penanda _tipe pada setiap item
+    foreach ($flora_results as &$f) {
+        $f['_tipe'] = 'flora';
+    }
+    foreach ($fauna_results as &$f) {
+        $f['_tipe'] = 'fauna';
+    }
+    unset($f);
 
-$flora_list = getFloraPaginated($flora_page, $limit);
-$fauna_list = getFaunaPaginated($fauna_page, $limit);
+    $all_results = array_merge($flora_results, $fauna_results);
+
+    $total_results = count($all_results);
+    $pagination_total_pages = max(1, (int) ceil($total_results / $limit));
+    $page = min($page, $pagination_total_pages);
+    $offset = ($page - 1) * $limit;
+    $search_results = array_slice($all_results, $offset, $limit);
+} else {
+    // Mode normal: pagination terpisah flora & fauna
+    $total_flora = getTotalFlora();
+    $total_fauna = getTotalFauna();
+    $flora_total_pages = max(1, (int) ceil($total_flora / $limit));
+    $fauna_total_pages = max(1, (int) ceil($total_fauna / $limit));
+    $pagination_total_pages = max($flora_total_pages, $fauna_total_pages);
+    $page = min($page, $pagination_total_pages);
+    $flora_page = min($page, $flora_total_pages);
+    $fauna_page = min($page, $fauna_total_pages);
+    $flora_list = getFloraPaginated($flora_page, $limit);
+    $fauna_list = getFaunaPaginated($fauna_page, $limit);
+}
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 
@@ -31,13 +53,11 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- ===== FAVICON / LOGO DI TAB (BULAT TRANSPARAN) ===== -->
-    <!-- Favicon utama -->
     <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>assets/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>assets/images/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>assets/images/apple-touch-icon.png">
     <link rel="shortcut icon" href="<?= BASE_URL ?>assets/images/favicon.ico">
 
-    <!-- Meta untuk theme color (agar background tab sesuai) -->
     <meta name="theme-color" content="#2F5233">
     <title>Alam Bismo - Gunung Bismo via Deroduwur</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +69,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             font-family: 'Outfit', sans-serif;
         }
 
-        /* Hero Section - Sama seperti halaman lainnya */
+        /* Hero Section */
         .hero-alam {
             height: 100vh;
             min-height: 600px;
@@ -120,7 +140,156 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             }
         }
 
-        /* Card Styling - Konsisten dengan halaman lain */
+        /* Search Section */
+        .search-section {
+            background: #FAF7F2;
+            padding: 24px 0;
+        }
+
+        .search-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border-radius: 999px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            font-size: 1rem;
+            color: #2F5233;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-input:focus {
+            border-color: #E0BE45;
+            box-shadow: 0 0 0 4px rgba(219, 209, 76, 0.23);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #2F5233;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #4A7A4E;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 56px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: color 0.3s ease, background 0.3s ease;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        .search-clear:hover {
+            color: #2F5233;
+            background: #f1f5f9;
+        }
+
+        .search-info {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #5C5C50;
+        }
+
+        .search-info strong {
+            color: #2F5233;
+        }
+
+        .search-info .reset-link {
+            color: #E0BE45;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .search-info .reset-link:hover {
+            color: #A9784B;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 1rem;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2F5233;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #5C5C50;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .empty-state .btn-reset {
+            display: inline-block;
+            margin-top: 16px;
+            background: #2F5233;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .empty-state .btn-reset:hover {
+            background: #4A7A4E;
+            transform: translateY(-2px);
+        }
+
+        /* Card Styling */
         .card-alam {
             background: white;
             border-radius: 1rem;
@@ -141,7 +310,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
 
         .card-alam .img-wrapper img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -173,25 +342,33 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         }
 
         .card-alam .card-body {
-            padding: 16px 18px;
+            padding: 14px 16px;
         }
 
         .card-alam .card-body h4 {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #2F5233;
             margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .card-alam .card-body .nama-ilmiah {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #A9784B;
             font-style: italic;
             margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .card-alam .card-body .deskripsi {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #5C5C50;
             line-height: 1.6;
             display: -webkit-box;
@@ -201,9 +378,13 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         }
 
         .card-alam .card-body .lokasi {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #A9784B;
             margin-top: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .btn-read-more {
@@ -211,7 +392,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             margin-top: 10px;
             color: #E0BE45;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: color 0.3s ease;
             background: none;
@@ -233,6 +414,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             transform: translateX(4px);
         }
 
+        /* Pagination */
         .pagination {
             display: flex;
             flex-wrap: wrap;
@@ -276,112 +458,7 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             pointer-events: none;
         }
 
-        /* Modal Detail */
-        .detail-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .detail-modal.active {
-            display: flex;
-        }
-
-        .detail-modal .modal-box {
-            background: white;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-            position: relative;
-            animation: modalIn 0.3s ease;
-        }
-
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .detail-modal .modal-close {
-            position: sticky;
-            top: 0;
-            float: right;
-            background: #f1f5f9;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-modal .modal-close:hover {
-            background: #e2e8f0;
-        }
-
-        .detail-modal .modal-img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            margin-bottom: 16px;
-        }
-
-        .detail-modal .modal-img:hover {
-            transform: scale(1.02);
-        }
-
-        .detail-modal .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2F5233;
-            margin-bottom: 2px;
-        }
-
-        .detail-modal .modal-ilmiah {
-            color: #A9784B;
-            font-style: italic;
-            font-size: 0.95rem;
-            margin-bottom: 12px;
-        }
-
-        .detail-modal .modal-desc {
-            color: #5C5C50;
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        .detail-modal .modal-lokasi {
-            color: #A9784B;
-            font-size: 0.85rem;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        /* Lightbox untuk full gambar */
+        /* Lightbox */
         .lightbox-modal {
             display: none;
             position: fixed;
@@ -423,94 +500,145 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             transform: scale(1.2);
         }
 
-        /* Section styling konsisten */
+        /* Section styling */
         .section-alam {
             padding: 20px 0;
         }
 
-        .section-alam .section-title {
-            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-            font-weight: 700;
-            color: #2F5233;
-            margin-bottom: 6px;
-        }
-
-        .section-alam .section-subtitle {
-            color: #5C5C50;
-            margin-bottom: 40px;
-            max-width: 600px;
-        }
-
-        /* Scroll untuk modal detail */
-        .detail-modal .modal-box::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .detail-modal .modal-box::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-
-        .detail-modal .modal-box::-webkit-scrollbar-thumb {
-            background: #2F5233;
-            border-radius: 4px;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
             .hero-alam {
-                height: 85vh;
+                height: 100vh;
                 min-height: 450px;
             }
 
             .card-alam .img-wrapper img {
-                height: 180px;
+                height: 160px;
             }
 
-            .detail-modal .modal-box {
-                padding: 20px;
-                margin: 10px;
+            .card-alam .card-body {
+                padding: 12px 14px;
             }
 
-            .detail-modal .modal-img {
-                height: 200px;
+            .card-alam .card-body h4 {
+                font-size: 0.95rem;
+            }
+
+            .card-alam .card-body .deskripsi {
+                font-size: 0.75rem;
+                -webkit-line-clamp: 2;
             }
 
             .section-alam {
                 padding: 20px 0;
             }
+
+            .search-section {
+                padding: 20px 0;
+            }
+
+            .search-input {
+                padding: 12px 46px 12px 18px;
+                font-size: 0.95rem;
+            }
+
+            .search-btn {
+                width: 36px;
+                height: 36px;
+                right: 5px;
+            }
+
+            .search-clear {
+                right: 50px;
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
         }
 
         @media (max-width: 480px) {
             .hero-alam {
-                height: 80vh;
+                height: 100vh;
                 min-height: 400px;
             }
 
             .hero-title {
-                font-size: clamp(1.8rem, 7vw, 2.2rem);
+                font-size: clamp(2rem, 8vw, 2.5rem);
             }
 
             .hero-subtitle {
-                font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+                font-size: clamp(0.85rem, 3vw, 1rem);
                 padding: 0 15px;
             }
 
             .card-alam .img-wrapper img {
-                height: 150px;
+                height: 130px;
             }
 
-            .detail-modal .modal-box {
-                padding: 16px;
+            .card-alam .card-body {
+                padding: 10px 12px;
             }
 
-            .detail-modal .modal-img {
-                height: 160px;
+            .card-alam .card-body h4 {
+                font-size: 0.85rem;
+            }
+
+            .card-alam .card-body .nama-ilmiah {
+                font-size: 0.7rem;
+            }
+
+            .card-alam .card-body .deskripsi {
+                font-size: 0.7rem;
+                -webkit-line-clamp: 2;
+            }
+
+            .card-alam .card-body .lokasi {
+                font-size: 0.65rem;
+            }
+
+            .btn-read-more {
+                font-size: 0.75rem;
             }
 
             .lightbox-close {
                 top: 15px;
                 right: 20px;
                 font-size: 30px;
+            }
+
+            .search-input {
+                padding: 10px 42px 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            .search-btn {
+                width: 32px;
+                height: 32px;
+                right: 4px;
+            }
+
+            .search-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            .search-clear {
+                right: 44px;
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            .empty-state {
+                padding: 40px 16px;
+            }
+
+            .empty-state .icon {
+                font-size: 3rem;
+            }
+
+            .empty-state h4 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -520,175 +648,299 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
 
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-    <!-- Hero Section - Style sama seperti halaman lainnya -->
+    <!-- Hero Section -->
     <section class="hero-alam" style="background-image: url('<?= BASE_URL ?>assets/images/alam/hero-alam.png');">
         <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
             <div class="max-w-7xl mx-auto">
-                <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-bold text-white hero-fade delay-1 mb-10">
+                <h1 class="hero-title text-5xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
                     <span class="text-[#E0BE45]">Alam</span> Bismo
                 </h1>
                 <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
-                    Keanekaragaman flora dan fauna di jalur pendakian Gunung Bismo via Deroduwur.
-                    Setiap langkah menyimpan keajaiban alam yang menunggu untuk dijelajahi.
+                    Menyusuri rumah bagi flora dan fauna Bismo yang elok, dimana setiap pijakan langkah menyimpan keajaiban yang menanti untuk disapa.
                 </p>
             </div>
         </div>
     </section>
 
     <!-- Intro Ekosistem -->
-    <section class="py-10 bg-[#FAF7F2]">
+    <section class="pt-10 bg-[#FAF7F2]">
         <div class="container mx-auto px-4 max-w-4xl">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6"> Ekosistem Istimewa Deroduwur</h2>
-                <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-                    Jalur pendakian Gunung Bismo via Deroduwur memiliki keanekaragaman hayati yang luar biasa.
-                    Dari flora endemik hingga fauna langka, setiap langkah di jalur ini menawarkan kesempatan
-                    untuk menyaksikan keindahan alam yang masih terjaga. Keistimewaan ekosistem ini menjadi
-                    salah satu daya tarik utama bagi para pendaki dan pecinta alam.
-                </p>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Ekosistem Istimewa Deroduwur</h2>
+            <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
+                Perjalanan di jalur ini memberikan kesempatan bagi kita untuk menyaksikan keindahan alam yang masih terjaga. 
+                Keistimewaan ekosistem Bismo, mulai dari flora endemik hingga fauna langka, menjadi panggilan bagi para pendaki untuk melihat keajaiban yang berlangsung di balik hutan rimba.
+            </p>
         </div>
     </section>
 
-    <!-- Flora Section -->
-    <section id="flora" class="section-alam bg-[#FAF7F2]">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Flora</h2>
-                <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Keindahan tumbuhan endemik di sepanjang jalur pendakian Gunung Bismo</p>
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container mx-auto px-4">
+            <div class="search-wrapper">
+                <form method="GET" action="" id="searchForm">
+                    <input
+                        type="text"
+                        name="search"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Cari flora atau fauna..."
+                        value="<?= htmlspecialchars($search) ?>"
+                        autocomplete="off">
+                    <?php if ($is_searching): ?>
+                        <a href="<?= BASE_URL ?>alam.php" class="search-clear" title="Hapus pencarian">✕</a>
+                    <?php endif; ?>
+                    <button type="submit" class="search-btn" title="Cari">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                </form>
             </div>
-
-            <?php if (empty($flora_list)): ?>
-                <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
-                    <div class="text-5xl mb-4"></div>
-                    <p class="text-lg text-[#5C5C50]">Belum ada data flora</p>
-                    <p class="text-sm text-gray-400 mt-1">Silakan tambahkan melalui admin panel</p>
+            <?php if ($is_searching): ?>
+                <div class="search-info">
+                    Menampilkan hasil untuk: <strong>"<?= htmlspecialchars($search) ?>"</strong>
+                    (<?= $total_results ?> hasil ditemukan)
+                    <br>
+                    <a href="<?= BASE_URL ?>alam.php" class="reset-link">Tampilkan semua</a>
                 </div>
-            <?php else: ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <?php foreach ($flora_list as $flora): ?>
-                        <div class="card-alam">
-                            <div class="img-wrapper">
-                                <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
-                                    <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>"
-                                        alt="<?= htmlspecialchars($flora['nama']) ?>"
-                                        loading="lazy">
-                                <?php else: ?>
-                                    <img src="<?= BASE_URL ?>assets/images/default-flora.jpg"
-                                        alt="Default Flora"
-                                        loading="lazy">
-                                <?php endif; ?>
-                                <span class="badge-category flora">Flora</span>
-                            </div>
-                            <div class="card-body">
-                                <h4><?= htmlspecialchars($flora['nama']) ?></h4>
-                                <?php if (!empty($flora['nama_ilmiah'])): ?>
-                                    <p class="nama-ilmiah"><?= htmlspecialchars($flora['nama_ilmiah']) ?></p>
-                                <?php endif; ?>
-                                <p class="deskripsi"><?= htmlspecialchars($flora['deskripsi'] ?? 'Keindahan flora di jalur Gunung Bismo.') ?></p>
-                                <?php if (!empty($flora['lokasi'])): ?>
-                                    <p class="lokasi">Lokasi: <?= htmlspecialchars($flora['lokasi']) ?></p>
-                                <?php endif; ?>
-                                <a href="<?= BASE_URL ?>alam-detail.php?type=flora&id=<?= $flora['id'] ?>" class="btn-read-more">
-                                    Baca Selengkapnya
-                                </a>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
             <?php endif; ?>
         </div>
     </section>
 
-    <!-- Fauna Section -->
-    <section id="fauna" class="section-alam bg-[#FAF7F2]">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Fauna</h2>
-                <p  class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Satwa liar yang menghuni kawasan hutan Gunung Bismo</p>
-            </div>
+    <?php if ($is_searching): ?>
 
-            <?php if (empty($fauna_list)): ?>
-                <div class="bg-[#FAF7F2] rounded-2xl shadow-lg p-12 text-center">
-                    <div class="text-5xl mb-4">🐾</div>
-                    <p class="text-lg text-[#5C5C50]">Belum ada data fauna</p>
-                    <p class="text-sm text-gray-400 mt-1">Silakan tambahkan melalui admin panel</p>
-                </div>
-            <?php else: ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <?php foreach ($fauna_list as $fauna): ?>
-                        <div class="card-alam">
-                            <div class="img-wrapper">
-                                <?php if (!empty($fauna['foto']) && file_exists(UPLOAD_PATH . 'fauna/' . $fauna['foto'])): ?>
-                                    <img src="<?= BASE_URL ?>uploads/fauna/<?= htmlspecialchars($fauna['foto']) ?>"
-                                        alt="<?= htmlspecialchars($fauna['nama']) ?>"
-                                        loading="lazy">
-                                <?php else: ?>
-                                    <img src="<?= BASE_URL ?>assets/images/default-fauna.jpg"
-                                        alt="Default Fauna"
-                                        loading="lazy">
-                                <?php endif; ?>
-                                <span class="badge-category fauna">Fauna</span>
-                            </div>
-                            <div class="card-body">
-                                <h4><?= htmlspecialchars($fauna['nama']) ?></h4>
-                                <?php if (!empty($fauna['nama_ilmiah'])): ?>
-                                    <p class="nama-ilmiah"><?= htmlspecialchars($fauna['nama_ilmiah']) ?></p>
-                                <?php endif; ?>
-                                <p class="deskripsi"><?= htmlspecialchars($fauna['deskripsi'] ?? 'Satwa liar di ekosistem Gunung Bismo.') ?></p>
-                                <?php if (!empty($fauna['lokasi'])): ?>
-                                    <p class="lokasi">Lokasi: <?= htmlspecialchars($fauna['lokasi']) ?></p>
-                                <?php endif; ?>
-                                <a href="<?= BASE_URL ?>alam-detail.php?type=fauna&id=<?= $fauna['id'] ?>" class="btn-read-more">
-                                    Baca Selengkapnya
-                                </a>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
-            <?php endif; ?>
-        </div>
-    </section>
-
-    <?php if ($pagination_total_pages > 1 && (!empty($flora_list) || !empty($fauna_list))): ?>
-        <section id="pagination" class="section-alam bg-[#FAF7F2]">
+        <!-- ===================== HASIL PENCARIAN (GABUNGAN) ===================== -->
+        <section class="section-alam bg-[#FAF7F2]">
             <div class="container mx-auto px-4 max-w-6xl">
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?>#pagination">Prev</a>
-                    <?php else: ?>
-                        <span class="disabled">Prev</span>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $pagination_total_pages; $i++): ?>
-                        <?php if ($i === $page): ?>
-                            <span class="active-page"><?= $i ?></span>
-                        <?php else: ?>
-                            <a href="?page=<?= $i ?>#pagination"><?= $i ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $pagination_total_pages): ?>
-                        <a href="?page=<?= $page + 1 ?>#pagination">Next</a>
-                    <?php else: ?>
-                        <span class="disabled">Next</span>
-                    <?php endif; ?>
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Hasil Pencarian</h2>
+                    <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
+                        Menampilkan flora &amp; fauna yang cocok dengan kata kunci pencarian Anda.
+                    </p>
                 </div>
+
+                <?php if (empty($search_results)): ?>
+                    <!-- Satu empty state saja untuk kedua kategori -->
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h4>Tidak Ada Hasil Ditemukan</h4>
+                        <p>Maaf, tidak ada flora maupun fauna yang cocok dengan pencarian "<strong><?= htmlspecialchars($search) ?></strong>".</p>
+                        <p>Coba gunakan kata kunci lain atau tampilkan semua data.</p>
+                        <a href="<?= BASE_URL ?>alam.php" class="btn-reset">Tampilkan Semua</a>
+                    </div>
+                <?php else: ?>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                        <?php foreach ($search_results as $item): ?>
+                            <?php
+                            $tipe = $item['_tipe']; // sudah pasti terisi dari tahap penggabungan
+                            $badgeClass = $tipe === 'flora' ? 'flora' : 'fauna';
+                            $badgeLabel = $tipe === 'flora' ? 'Flora' : 'Fauna';
+                            $detailUrl  = BASE_URL . 'alam-detail.php?type=' . $tipe . '&id=' . $item['id'];
+                            ?>
+                            <div class="card-alam">
+                                <div class="img-wrapper">
+                                    <?php if (!empty($item['foto']) && file_exists(UPLOAD_PATH . $tipe . '/' . $item['foto'])): ?>
+                                        <img src="<?= BASE_URL ?>uploads/<?= $tipe ?>/<?= htmlspecialchars($item['foto']) ?>"
+                                            alt="<?= htmlspecialchars($item['nama']) ?>"
+                                            loading="lazy">
+                                    <?php else: ?>
+                                        <img src="<?= BASE_URL ?>assets/images/default-<?= $tipe ?>.jpg"
+                                            alt="Default <?= ucfirst($tipe) ?>"
+                                            loading="lazy">
+                                    <?php endif; ?>
+                                    <span class="badge-category <?= $badgeClass ?>"><?= $badgeLabel ?></span>
+                                </div>
+                                <div class="card-body">
+                                    <h4><?= htmlspecialchars($item['nama']) ?></h4>
+                                    <?php if (!empty($item['nama_ilmiah'])): ?>
+                                        <p class="nama-ilmiah"><?= htmlspecialchars($item['nama_ilmiah']) ?></p>
+                                    <?php endif; ?>
+                                    <p class="deskripsi"><?= htmlspecialchars($item['deskripsi'] ?? 'Deskripsi belum tersedia.') ?></p>
+                                    <?php if (!empty($item['lokasi'])): ?>
+                                        <p class="lokasi">Lokasi: <?= htmlspecialchars($item['lokasi']) ?></p>
+                                    <?php endif; ?>
+                                    <a href="<?= $detailUrl ?>" class="btn-read-more">
+                                        Baca Selengkapnya
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Pagination untuk hasil pencarian -->
+                    <?php if ($pagination_total_pages > 1): ?>
+                        <div class="pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>#pagination">Prev</a>
+                            <?php else: ?>
+                                <span class="disabled">Prev</span>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $pagination_total_pages; $i++): ?>
+                                <?php if ($i === $page): ?>
+                                    <span class="active-page"><?= $i ?></span>
+                                <?php else: ?>
+                                    <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>#pagination"><?= $i ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $pagination_total_pages): ?>
+                                <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>#pagination">Next</a>
+                            <?php else: ?>
+                                <span class="disabled">Next</span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
             </div>
         </section>
+
+    <?php else: ?>
+
+        <!-- ===================== TAMPILAN NORMAL (FLORA & FAUNA TERPISAH) ===================== -->
+
+        <!-- Flora Section -->
+        <section id="flora" class="section-alam bg-[#FAF7F2]">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Puspa Anggun Bismo</h2>
+                    <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Menyapa cantiknya tumbuhan langka yang mekar anggun di sepanjang perjalanan.</p>
+                </div>
+
+                <?php if (empty($flora_list)): ?>
+                    <div class="empty-state">
+                        <div class="icon">🌿</div>
+                        <h4>Belum Ada Data Flora</h4>
+                        <p>Data flora belum tersedia saat ini.</p>
+                        <p>Silakan tambahkan melalui admin panel.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                        <?php foreach ($flora_list as $flora): ?>
+                            <div class="card-alam">
+                                <div class="img-wrapper">
+                                    <?php if (!empty($flora['foto']) && file_exists(UPLOAD_PATH . 'flora/' . $flora['foto'])): ?>
+                                        <img src="<?= BASE_URL ?>uploads/flora/<?= htmlspecialchars($flora['foto']) ?>"
+                                            alt="<?= htmlspecialchars($flora['nama']) ?>"
+                                            loading="lazy">
+                                    <?php else: ?>
+                                        <img src="<?= BASE_URL ?>assets/images/default-flora.jpg"
+                                            alt="Default Flora"
+                                            loading="lazy">
+                                    <?php endif; ?>
+                                    <span class="badge-category flora">Flora</span>
+                                </div>
+                                <div class="card-body">
+                                    <h4><?= htmlspecialchars($flora['nama']) ?></h4>
+                                    <?php if (!empty($flora['nama_ilmiah'])): ?>
+                                        <p class="nama-ilmiah"><?= htmlspecialchars($flora['nama_ilmiah']) ?></p>
+                                    <?php endif; ?>
+                                    <p class="deskripsi"><?= htmlspecialchars($flora['deskripsi'] ?? 'Keindahan flora di jalur Gunung Bismo.') ?></p>
+                                    <?php if (!empty($flora['lokasi'])): ?>
+                                        <p class="lokasi">Lokasi: <?= htmlspecialchars($flora['lokasi']) ?></p>
+                                    <?php endif; ?>
+                                    <a href="<?= BASE_URL ?>alam-detail.php?type=flora&id=<?= $flora['id'] ?>" class="btn-read-more">
+                                        Baca Selengkapnya
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <!-- Fauna Section -->
+        <section id="fauna" class="section-alam bg-[#FAF7F2]">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Satwa Penjaga Bismo</h2>
+                    <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Menyusuri jejak para penghuni alam yang merawat harmoni dalam keheningan hutan.</p>
+                </div>
+
+                <?php if (empty($fauna_list)): ?>
+                    <div class="empty-state">
+                        <div class="icon">🐾</div>
+                        <h4>Belum Ada Data Fauna</h4>
+                        <p>Data fauna belum tersedia saat ini.</p>
+                        <p>Silakan tambahkan melalui admin panel.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                        <?php foreach ($fauna_list as $fauna): ?>
+                            <div class="card-alam">
+                                <div class="img-wrapper">
+                                    <?php if (!empty($fauna['foto']) && file_exists(UPLOAD_PATH . 'fauna/' . $fauna['foto'])): ?>
+                                        <img src="<?= BASE_URL ?>uploads/fauna/<?= htmlspecialchars($fauna['foto']) ?>"
+                                            alt="<?= htmlspecialchars($fauna['nama']) ?>"
+                                            loading="lazy">
+                                    <?php else: ?>
+                                        <img src="<?= BASE_URL ?>assets/images/default-fauna.jpg"
+                                            alt="Default Fauna"
+                                            loading="lazy">
+                                    <?php endif; ?>
+                                    <span class="badge-category fauna">Fauna</span>
+                                </div>
+                                <div class="card-body">
+                                    <h4><?= htmlspecialchars($fauna['nama']) ?></h4>
+                                    <?php if (!empty($fauna['nama_ilmiah'])): ?>
+                                        <p class="nama-ilmiah"><?= htmlspecialchars($fauna['nama_ilmiah']) ?></p>
+                                    <?php endif; ?>
+                                    <p class="deskripsi"><?= htmlspecialchars($fauna['deskripsi'] ?? 'Satwa liar di ekosistem Gunung Bismo.') ?></p>
+                                    <?php if (!empty($fauna['lokasi'])): ?>
+                                        <p class="lokasi">Lokasi: <?= htmlspecialchars($fauna['lokasi']) ?></p>
+                                    <?php endif; ?>
+                                    <a href="<?= BASE_URL ?>alam-detail.php?type=fauna&id=<?= $fauna['id'] ?>" class="btn-read-more">
+                                        Baca Selengkapnya
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <!-- Pagination normal -->
+        <?php if ($pagination_total_pages > 1 && (!empty($flora_list) || !empty($fauna_list))): ?>
+            <section id="pagination" class="section-alam bg-[#FAF7F2]">
+                <div class="container mx-auto px-4 max-w-6xl">
+                    <div class="pagination">
+                        <?php if ($page > 1): ?>
+                            <a href="?page=<?= $page - 1 ?>#pagination">Prev</a>
+                        <?php else: ?>
+                            <span class="disabled">Prev</span>
+                        <?php endif; ?>
+
+                        <?php for ($i = 1; $i <= $pagination_total_pages; $i++): ?>
+                            <?php if ($i === $page): ?>
+                                <span class="active-page"><?= $i ?></span>
+                            <?php else: ?>
+                                <a href="?page=<?= $i ?>#pagination"><?= $i ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if ($page < $pagination_total_pages): ?>
+                            <a href="?page=<?= $page + 1 ?>#pagination">Next</a>
+                        <?php else: ?>
+                            <span class="disabled">Next</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+        <?php endif; ?>
+
     <?php endif; ?>
 
-    <!-- Pesan Kelestarian Alam - Diperbesar dan Diperbagus -->
+    <!-- Pesan Kelestarian Alam -->
     <section class="py-15 bg-[#2F5233] text-white relative overflow-hidden">
-        <!-- Dekorasi Background -->
         <div class="absolute inset-0 opacity-10">
             <div class="absolute top-0 left-0 w-64 h-64 bg-[#E0BE45] rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
             <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#4A7A4E] rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
         </div>
 
         <div class="container mx-auto px-4 max-w-4xl text-center relative z-10 mt-8">
-            <div class="mb-6 text-6xl"></div>
-            <h2 class="text-2xl md:text-3xl font-bold mb-6">Jaga Kelestarian Alam</h2>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">Jaga Kelestarian Alam</h2>
 
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-white/10 mb-6">
                 <blockquote class="text-xl md:text-2xl font-medium text-[#E0BE45] mb-4">
@@ -723,16 +975,6 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
         </div>
     </section>
 
-    <!-- Detail Modal -->
-    <div id="detailModal" class="detail-modal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeDetailModal()">✕</button>
-            <div id="modalContent">
-                <!-- Akan diisi dengan JavaScript -->
-            </div>
-        </div>
-    </div>
-
     <!-- Lightbox Modal -->
     <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
         <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
@@ -743,51 +985,6 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
     <script src="assets/js/main.js"></script>
 
     <script>
-        // Detail Modal Functions
-        function openDetailModal(type, id) {
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('modalContent');
-
-            // Fetch data via AJAX
-            fetch(`<?= BASE_URL ?>api/get-alam-detail.php?type=${type}&id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const item = data.data;
-                        const imagePath = item.foto ? `<?= BASE_URL ?>uploads/${type}/${item.foto}` : `<?= BASE_URL ?>assets/images/default-${type}.jpg`;
-                        const categoryLabel = type === 'flora' ? '🌿 Flora' : '🐾 Fauna';
-
-                        content.innerHTML = `
-                    <img src="${imagePath}" alt="${item.nama}" class="modal-img" onclick="openLightbox('${imagePath}')">
-                    <h3 class="modal-title">${item.nama}</h3>
-                    ${item.nama_ilmiah ? `<p class="modal-ilmiah">${item.nama_ilmiah}</p>` : ''}
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="text-xs bg-[#FAF7F2] px-3 py-1 rounded-full text-[#5C5C50]">${categoryLabel}</span>
-                    </div>
-                    <p class="modal-desc">${item.deskripsi || 'Deskripsi belum tersedia.'}</p>
-                    ${item.lokasi ? `<p class="modal-lokasi">📍 ${item.lokasi}</p>` : ''}
-                    <p class="text-xs text-gray-400 mt-4">💡 Klik gambar untuk melihat ukuran penuh</p>
-                `;
-
-                        modal.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        alert('Data tidak ditemukan');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Gagal memuat data');
-                });
-        }
-
-        function closeDetailModal() {
-            const modal = document.getElementById('detailModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Lightbox functions
         function openLightbox(imageSrc) {
             const modal = document.getElementById('lightboxModal');
             const img = document.getElementById('lightboxImage');
@@ -806,18 +1003,9 @@ $fauna_list = getFaunaPaginated($fauna_page, $limit);
             }
         }
 
-        // Close modals with ESC key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeDetailModal();
                 closeLightbox();
-            }
-        });
-
-        // Close detail modal when clicking outside
-        document.getElementById('detailModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDetailModal();
             }
         });
     </script>

@@ -58,6 +58,64 @@ $related = $stmt->fetchAll();
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
 
+        .related-item {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .related-item > img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .related-item .related-body {
+            padding: 14px 16px;
+        }
+
+        .related-item h3 {
+            font-size: 1rem;
+        }
+
+        .related-item p {
+            font-size: 0.8rem;
+        }
+
+        .related-item a {
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .related-item > img {
+                height: 160px;
+            }
+
+            .related-item .related-body {
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .related-item > img {
+                height: 130px;
+            }
+
+            .related-item .related-body {
+                padding: 10px 12px;
+            }
+
+            .related-item h3 {
+                font-size: 0.85rem;
+            }
+
+            .related-item p,
+            .related-item a {
+                font-size: 0.7rem;
+            }
+        }
+
         /* Content Styling */
         .content-text {
             line-height: 1.8;
@@ -185,7 +243,7 @@ $related = $stmt->fetchAll();
 <?php include __DIR__ . '/includes/navbar.php'; ?>
 
 <!-- Detail Content -->
-<section class="pt-12 pb-16 bg-[#FAF7F2]">
+<section class="pt-24 md:pt-28 pb-16 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
             
@@ -249,12 +307,12 @@ $related = $stmt->fetchAll();
 <?php if ($related): ?>
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-6xl">
-        <h2 class="text-2xl md:text-3xl font-bold text-[#2F5233] text-center mb-10">
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">
         <?= ucfirst($type) ?> Lainnya
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 gap-3 md:gap-6">
             <?php foreach ($related as $item): ?>
-            <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+            <div class="related-item card-hover">
                 <?php 
                 $relImagePath = !empty($item['foto']) && file_exists(UPLOAD_PATH . $type . '/' . $item['foto']) 
                     ? BASE_URL . 'uploads/' . $type . '/' . $item['foto'] 
@@ -262,8 +320,8 @@ $related = $stmt->fetchAll();
                 ?>
                 <img src="<?= $relImagePath ?>" 
                      alt="<?= htmlspecialchars($item['nama']) ?>" 
-                     class="w-full h-48 object-cover">
-                <div class="p-6">
+                     class="w-full object-cover">
+                 <div class="related-body">
                     <h3 class="text-lg font-bold text-[#2F5233] mb-1"><?= htmlspecialchars($item['nama']) ?></h3>
                     <?php if (!empty($item['nama_ilmiah'])): ?>
                     <p class="text-sm text-[#A9784B] italic mb-2"><?= htmlspecialchars($item['nama_ilmiah']) ?></p>
@@ -286,7 +344,7 @@ $related = $stmt->fetchAll();
 <section class="py-10 bg-[#2F5233] text-white">
     <div class="container mx-auto px-4 text-center max-w-3xl">
         <div class="text-4xl mb-4">🌳</div>
-        <h2 class="text-2xl md:text-3xl font-bold mb-4">Jaga Kelestarian Alam</h2>
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">Jaga Kelestarian Alam</h2>
         <p class="text-white/90 text-lg mb-6">
             "Bawa Turun Kembali Sampah Anda" — Lindungi flora dan fauna Gunung Bismo untuk generasi mendatang.
         </p>
@@ -297,12 +355,24 @@ $related = $stmt->fetchAll();
 </section>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
+<script src="assets/js/main.js"></script>
 
 <!-- Lightbox Modal -->
 <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
     <img id="lightboxImage" src="" alt="Full Size Image">
 </div>
+
+<!-- Force navbar solid karena tidak ada hero section -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbar = document.getElementById('navbar');
+        if (navbar) {
+            navbar.classList.remove('bg-transparent');
+            navbar.classList.add('bg-forest');
+        }
+    });
+</script>
 
 <script>
 // Lightbox functions

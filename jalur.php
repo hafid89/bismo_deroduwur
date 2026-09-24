@@ -91,7 +91,7 @@ $spotCoordinates = [
         .hero-title {
             font-size: clamp(2.5rem, 6vw, 5rem);
             line-height: 1.1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .hero-subtitle {
@@ -409,8 +409,8 @@ $spotCoordinates = [
                 height: 500px;
             }
             .hero-jalur {
-                height: 40vh;
-                min-height: 300px;
+                height: 100vh;
+                min-height: 450px;
             }
             .map-controls {
                 bottom: 10px;
@@ -433,11 +433,15 @@ $spotCoordinates = [
             #map-container {
                 height: 400px;
             }
+            .hero-jalur {
+                height: 100vh;
+                min-height: 400px;
+            }
             .hero-title {
-                font-size: clamp(1.8rem, 7vw, 2.2rem);
+                font-size: clamp(2rem, 8vw, 2.5rem);
             }
             .hero-subtitle {
-                font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+                font-size: clamp(0.85rem, 3vw, 1rem);
                 padding: 0 15px;
             }
         }
@@ -446,6 +450,7 @@ $spotCoordinates = [
 <body class="bg-[#FAF7F2]">
 
 <?php include __DIR__ . '/includes/navbar.php'; ?>
+<script src="assets/js/main.js"></script>
 
 <!-- Hero Section -->
 <section class="hero-jalur" style="background-image: url('<?= BASE_URL ?>assets/images/telusurjalur/hero-jalur.png');">
@@ -462,10 +467,10 @@ $spotCoordinates = [
 </section>
 
 <!-- Visualisasi Jalur -->
-<section class="py-12 bg-white">
+<section class="py-12 bg-cream">
     <div class="container mx-auto px-4 max-w-6xl">
         <div class="text-center mb-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Peta Interaktif Jalur Pendakian</h2>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Peta Interaktif Jalur Pendakian</h2>
             <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Zoom, geser, dan klik marker untuk melihat detail spot</p>
         </div>
 
@@ -483,7 +488,7 @@ $spotCoordinates = [
 
         <!-- View Interaktif -->
         <div id="viewInteraktif" class="view-container active">
-            <div class="bg-[#FAF7F2] rounded-2xl shadow-xl p-4 md:p-6 border border-gray-200">
+            <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6 border border-gray-200">
                 
                 <div id="map-container">
                     <div id="map"></div>
@@ -542,7 +547,7 @@ $spotCoordinates = [
 
         <!-- View Poster -->
         <div id="viewPoster" class="view-container">
-            <div class="bg-[#FAF7F2] rounded-2xl shadow-xl p-4 md:p-6 border border-gray-200">
+            <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6 border border-gray-200">
                 <div class="poster-container">
                     <img src="<?= BASE_URL ?>assets/images/peta-jalur-bismo.jpg" 
                          alt="Peta Jalur Pendakian Gunung Bismo" 

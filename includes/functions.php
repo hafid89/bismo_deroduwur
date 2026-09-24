@@ -187,21 +187,45 @@ function getFloraById($id) {
     return $stmt->fetch();
 }
 
-function getTotalFlora() {
+function getTotalFlora($search = '') {
     global $pdo;
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM flora");
+    if (!empty($search)) {
+        $stmt = $pdo->prepare(
+            "SELECT COUNT(*) as total FROM flora 
+             WHERE nama LIKE ? OR nama_ilmiah LIKE ? OR deskripsi LIKE ? OR lokasi LIKE ?"
+        );
+        $term = "%$search%";
+        $stmt->execute([$term, $term, $term, $term]);
+    } else {
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM flora");
+    }
     $result = $stmt->fetch();
     return $result ? (int)$result['total'] : 0;
 }
 
-function getFloraPaginated($page = 1, $limit = 10) {
+
+function getFloraPaginated($page = 1, $limit = 10, $search = '') {
     global $pdo;
-    $page = intval($page);
-    $limit = intval($limit);
+    $page   = intval($page);
+    $limit  = intval($limit);
     $offset = ($page - 1) * $limit;
-    $stmt = $pdo->query("SELECT * FROM flora ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+
+    if (!empty($search)) {
+        $sql = "SELECT * FROM flora 
+                WHERE nama LIKE ? OR nama_ilmiah LIKE ? OR deskripsi LIKE ? OR lokasi LIKE ?
+                ORDER BY created_at DESC 
+                LIMIT $limit OFFSET $offset";
+        $stmt = $pdo->prepare($sql);
+        $term = "%$search%";
+        $stmt->execute([$term, $term, $term, $term]);
+    } else {
+        $stmt = $pdo->query(
+            "SELECT * FROM flora ORDER BY created_at DESC LIMIT $limit OFFSET $offset"
+        );
+    }
     return $stmt->fetchAll();
 }
+
 
 // ============ FUNGSI FAUNA ============
 function getFauna() {
@@ -217,19 +241,41 @@ function getFaunaById($id) {
     return $stmt->fetch();
 }
 
-function getTotalFauna() {
+function getTotalFauna($search = '') {
     global $pdo;
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM fauna");
+    if (!empty($search)) {
+        $stmt = $pdo->prepare(
+            "SELECT COUNT(*) as total FROM fauna 
+             WHERE nama LIKE ? OR nama_ilmiah LIKE ? OR deskripsi LIKE ? OR lokasi LIKE ?"
+        );
+        $term = "%$search%";
+        $stmt->execute([$term, $term, $term, $term]);
+    } else {
+        $stmt = $pdo->query("SELECT COUNT(*) as total FROM fauna");
+    }
     $result = $stmt->fetch();
     return $result ? (int)$result['total'] : 0;
 }
 
-function getFaunaPaginated($page = 1, $limit = 10) {
+function getFaunaPaginated($page = 1, $limit = 10, $search = '') {
     global $pdo;
-    $page = intval($page);
-    $limit = intval($limit);
+    $page   = intval($page);
+    $limit  = intval($limit);
     $offset = ($page - 1) * $limit;
-    $stmt = $pdo->query("SELECT * FROM fauna ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
+
+    if (!empty($search)) {
+        $sql = "SELECT * FROM fauna 
+                WHERE nama LIKE ? OR nama_ilmiah LIKE ? OR deskripsi LIKE ? OR lokasi LIKE ?
+                ORDER BY created_at DESC 
+                LIMIT $limit OFFSET $offset";
+        $stmt = $pdo->prepare($sql);
+        $term = "%$search%";
+        $stmt->execute([$term, $term, $term, $term]);
+    } else {
+        $stmt = $pdo->query(
+            "SELECT * FROM fauna ORDER BY created_at DESC LIMIT $limit OFFSET $offset"
+        );
+    }
     return $stmt->fetchAll();
 }
 

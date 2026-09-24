@@ -91,7 +91,7 @@ $galeri = $stmt->fetchAll();
         .hero-title {
             font-size: clamp(2.5rem, 6vw, 5rem);
             line-height: 1.1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .hero-subtitle {
@@ -139,7 +139,7 @@ $galeri = $stmt->fetchAll();
 
         .gallery-item .img-wrapper img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -149,11 +149,11 @@ $galeri = $stmt->fetchAll();
         }
 
         .gallery-item .card-body {
-            padding: 16px 18px;
+            padding: 14px 16px;
         }
 
         .gallery-item .card-body h4 {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #2F5233;
             margin-bottom: 2px;
@@ -180,7 +180,7 @@ $galeri = $stmt->fetchAll();
         }
 
         .gallery-item .card-body .deskripsi {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #5C5C50;
             line-height: 1.6;
             display: -webkit-box;
@@ -188,6 +188,44 @@ $galeri = $stmt->fetchAll();
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-top: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item .card-body h4 {
+                font-size: 1rem;
+            }
+
+            .gallery-item .card-body .deskripsi {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item .img-wrapper img {
+                height: 160px;
+            }
+
+            .gallery-item .card-body {
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-item .img-wrapper img {
+                height: 130px;
+            }
+
+            .gallery-item .card-body {
+                padding: 10px 12px;
+            }
+
+            .gallery-item .card-body h4 {
+                font-size: 0.85rem;
+            }
+
+            .gallery-item .card-body .deskripsi {
+                font-size: 0.7rem;
+            }
         }
 
         /* Filter Button */
@@ -433,7 +471,7 @@ $galeri = $stmt->fetchAll();
 
         @media (max-width: 768px) {
             .hero-galeri {
-                height: 85vh;
+                height: 100vh;
                 min-height: 450px;
             }
             .gallery-item .img-wrapper img {
@@ -457,11 +495,11 @@ $galeri = $stmt->fetchAll();
 
         @media (max-width: 480px) {
             .hero-galeri {
-                height: 80vh;
+                height: 100vh;
                 min-height: 400px;
             }
             .hero-title {
-                font-size: clamp(1.8rem, 7vw, 2.2rem);
+                font-size: clamp(2rem, 8vw, 2.5rem);
             }
             .hero-subtitle {
                 font-size: clamp(0.8rem, 2.5vw, 0.95rem);
@@ -499,11 +537,11 @@ $galeri = $stmt->fetchAll();
 <section class="hero-galeri" style="background-image: url('<?= BASE_URL ?>assets/images/galeri/hero-galeri.jpeg');">
     <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
         <div class="max-w-7xl mx-auto">
-            <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white hero-fade mb-8 delay-1">
+             <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
                 Jejak <span class="text-[#E0BE45]">Visual</span>
             </h1>
             <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
-                Dokumentasi keindahan Gunung Bismo dan Basecamp Deroduwur dalam setiap frame.
+                Merekam syahdunya Gunung Bismo bersama hangatnya kebersamaan Basecamp Deroduwur. Sebuah perjalanan yang bernapas dalam setiap jepretan kamera.
             </p>
         </div>
     </div>
@@ -514,15 +552,15 @@ $galeri = $stmt->fetchAll();
     <div class="container mx-auto px-4">
         <div class="flex flex-wrap justify-center gap-2 md:gap-3">
             <button class="filter-btn <?= $filter === 'all' ? 'active' : '' ?>" data-filter="all">Semua</button>
-            <button class="filter-btn <?= $filter === 'jalur' ? 'active' : '' ?>" data-filter="jalur">Jalur</button>
-            <button class="filter-btn <?= $filter === 'ekosistem' ? 'active' : '' ?>" data-filter="ekosistem">Ekosistem</button>
-            <button class="filter-btn <?= $filter === 'kegiatan' ? 'active' : '' ?>" data-filter="kegiatan"> Kegiatan</button>
+            <button class="filter-btn <?= $filter === 'jalur' ? 'active' : '' ?>" data-filter="jalur">Track Pendakian</button>
+            <button class="filter-btn <?= $filter === 'ekosistem' ? 'active' : '' ?>" data-filter="ekosistem">Ragam Hayati</button>
+            <button class="filter-btn <?= $filter === 'kegiatan' ? 'active' : '' ?>" data-filter="kegiatan"> Potret Kebersamaan</button>
         </div>
     </div>
 </section>
 
 <!-- Gallery Grid -->
-<section class="py-16 bg-[#FAF7F2] mx-8">
+<section class="py-16 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-6xl">
         <?php if (empty($galeri)): ?>
         <div class="bg-white rounded-2xl shadow-lg p-16 text-center">
@@ -531,7 +569,7 @@ $galeri = $stmt->fetchAll();
             <p class="text-sm text-gray-400 mt-1">Silakan periksa kategori lain atau tambahkan foto</p>
         </div>
         <?php else: ?>
-       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="galleryGrid">
+    <div class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6" id="galleryGrid">
             <?php foreach ($galeri as $foto): 
                 $kat = htmlspecialchars($foto['kategori']);
                 $katClass = 'kategori-' . $kat;

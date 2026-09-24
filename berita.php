@@ -120,7 +120,7 @@ $berita_list = $stmt->fetchAll();
 
         .card-berita .img-wrapper img {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -130,7 +130,7 @@ $berita_list = $stmt->fetchAll();
         }
 
         .card-berita .card-body {
-            padding: 20px 22px;
+            padding: 14px 16px;
         }
 
         .card-berita .card-body .tanggal {
@@ -140,7 +140,7 @@ $berita_list = $stmt->fetchAll();
         }
 
         .card-berita .card-body h3 {
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #2F5233;
             margin-bottom: 8px;
@@ -151,7 +151,7 @@ $berita_list = $stmt->fetchAll();
         }
 
         .card-berita .card-body .deskripsi {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #5C5C50;
             line-height: 1.7;
             display: -webkit-box;
@@ -159,6 +159,44 @@ $berita_list = $stmt->fetchAll();
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-bottom: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .card-berita .card-body h3 {
+                font-size: 1rem;
+            }
+
+            .card-berita .card-body .deskripsi {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-berita .img-wrapper img {
+                height: 160px;
+            }
+
+            .card-berita .card-body {
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-berita .img-wrapper img {
+                height: 130px;
+            }
+
+            .card-berita .card-body {
+                padding: 10px 12px;
+            }
+
+            .card-berita .card-body h3 {
+                font-size: 0.85rem;
+            }
+
+            .card-berita .card-body .deskripsi {
+                font-size: 0.7rem;
+            }
         }
 
         .card-berita .card-body .btn-read {
@@ -231,14 +269,14 @@ $berita_list = $stmt->fetchAll();
 
         @media (max-width: 768px) {
             .hero-berita {
-                height: 85vh;
+                height: 100vh;
                 min-height: 450px;
             }
             .card-berita .img-wrapper img {
-                height: 180px;
+                height: 160px;
             }
             .card-berita .card-body {
-                padding: 16px 18px;
+                padding: 12px 14px;
             }
             .card-berita .card-body h3 {
                 font-size: 1rem;
@@ -247,7 +285,7 @@ $berita_list = $stmt->fetchAll();
 
         @media (max-width: 480px) {
             .hero-berita {
-                height: 80vh;
+                height: 100vh;
                 min-height: 400px;
             }
             .hero-title {
@@ -274,11 +312,11 @@ $berita_list = $stmt->fetchAll();
 <section class="hero-berita" style="background-image: url('<?= BASE_URL ?>assets/images/berita/hero_berita.jpg');">
     <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
         <div class="max-w-7xl mx-auto">
-            <h1 class="hero-title text-5xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
+            <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
                 <span class="text-[#E0BE45]">Kabar</span> Bismo
             </h1>
             <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
-                Informasi terbaru seputar Gunung Bismo, Basecamp Deroduwur, dan kegiatan pendakian.
+                Tiap jejak peristiwa menjadi coretan histori yang patut diabadikan. Ikuti perkembangan kami dalam menghidupkan kolaborasi bersama di Gunung Bismo.
             </p>
         </div>
     </div>
@@ -288,8 +326,8 @@ $berita_list = $stmt->fetchAll();
 <section class="py-16 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-6xl">
         <div class="text-center mb-10">
-            <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233]">Berita & Kegiatan Terbaru</h2>
-            <p class="text-[#5C5C50] mt-2">Informasi terkini seputar Gunung Bismo via Deroduwur</p>
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] mb-6">Kabar Rimbun Dari Balik Kabut</h2>
+            <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">Cerita Bismo Via Deroduwur yang terus berlanjut</p>
         </div>
 
         <?php if (empty($berita_list)): ?>
@@ -299,7 +337,7 @@ $berita_list = $stmt->fetchAll();
             <p class="text-sm text-gray-400 mt-1">Silakan periksa kembali nanti</p>
         </div>
         <?php else: ?>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 lg:gap-6">
             <?php foreach ($berita_list as $berita): ?>
             <div class="card-berita">
                 <div class="img-wrapper">

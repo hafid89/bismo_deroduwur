@@ -160,15 +160,26 @@
         }
 
         .timeline-year {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 700;
             color: #2F5233;
         }
 
         .timeline-desc {
+            font-size: 0.875rem;
             color: #5C5C50;
             margin-top: 4px;
             line-height: 1.6;
+        }
+
+        @media (min-width: 768px) {
+            .timeline-year {
+                font-size: 1.25rem;
+            }
+
+            .timeline-desc {
+                font-size: 1rem;
+            }
         }
 
         /* Lightbox Modal */
@@ -215,7 +226,7 @@
 
         @media (max-width: 768px) {
             .hero-kisah {
-                height: 85vh;
+                height: 100vh;
                 min-height: 450px;
             }
 
@@ -232,7 +243,7 @@
 
         @media (max-width: 480px) {
             .hero-kisah {
-                height: 80vh;
+                height: 100vh;
                 min-height: 400px;
             }
 
@@ -263,11 +274,12 @@
 <section class="hero-kisah" style="background-image: url('<?= BASE_URL ?>assets/images/kisah/pengelola.jpg');">
     <div class="hero-content container mx-auto px-6 md:px-12 lg:px-24">
         <div class="max-w-7xl mx-auto">
-            <h1 class="hero-title text-5xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
+            <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white hero-fade delay-1 mb-10">
                 Kisah <span class="text-[#E0BE45]">Basecamp Deroduwur</span>
             </h1>
             <p class="hero-subtitle text-lg md:text-lg lg:text-2xl text-white/90 mb-8 leading-relaxed hero-fade delay-2 max-w-4xl mx-auto">
-                Angan-angan tinggi melumpuhkan rasa lelah. Semangat tinggi berharap hasil yang indah. Kekompakan dan kebersamaan menjadi pondasi keberhasilan organisasi.
+                Dalam padunya langkah, teranyam pondasi kuat penuh berkah. 
+                Rasakan lebih dalam kehangatan cerita kebersamaan Basecamp Deroduwur dari awal perjalanan hingga titik sekarang.
             </p>
         </div>
     </div>
@@ -276,73 +288,42 @@
 <!-- Sejarah Basecamp dengan Timeline -->
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Sejarah Basecamp</h2>
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">Sejarah Basecamp</h2>
         <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-            Perjalanan panjang Basecamp Deroduwur dalam melayani para pendaki dan menjaga kelestarian alam Gunung Bismo.
+            Kisah panjang Basecamp Deroduwur dalam melayani pendakian dan menjaga kelestarian alam Gunung Bismo.
         </p>
 
         <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <div class="space-y-0">
                 <!-- Timeline Item 1 -->
                 <div class="timeline-item">
-                    <div class="timeline-year">2018 — Awal Mula Pendirian Basecamp</div>
-                    <p class="timeline-desc">Berawal dari kepedulian pemuda Dusun Buntu dan masyarakat sekitar yang bekerja sama dengan pemerintah Desa Deroduwur terhadap potensi wisata alam di Gunung Bismo. Mereka mulai membersihkan jalur pendakian tradisional yang selama ini digunakan oleh warga lokal.</p>
+                    <div class="timeline-year">2018 — Awal Mula</div>
+                    <p class="timeline-desc">Berawal dari kepedulian pemuda Dusun Buntu bersama masyarakat sekitar, bekerja sama dengan pemerintah Desa Deroduwur, terhadap potensi wisata alam di Gunung Bismo. 
+                    Perjalanan dibuka dengan pembersihan jalur pendakian tradisional yang selama ini digunakan oleh warga lokal.</p>
                 </div>
 
                 <!-- Timeline Item 2 -->
                 <div class="timeline-item">
-                    <div class="timeline-year">2020 — Penutupan Sementara Basecamp</div>
-                    <p class="timeline-desc">Penutupan sementara akibat COVID-19 mengharuskan seluruh jalur pendakian Gunung Bismo ditutup sementara.</p>
+                    <div class="timeline-year">2020 — Jeda Rehat</div>
+                    <p class="timeline-desc">Perjalanan basecamp Deroduwur perlu berhenti sejenak sebagai upaya pencegahan penularan COVID-19. 
+                    Seluruh jalur pendakian Gunung Bismo dihimbau untuk melakukan penutupan sementara.</p>
                 </div>
 
                 <!-- Timeline Item 3 -->
                 <div class="timeline-item">
-                    <div class="timeline-year">2022 — Pembukaan Kembali Basecamp</div>
-                    <p class="timeline-desc">Setelah vakum 2 tahun, pendakian Gunung Bismo Via Deroduwur dibuka kembali karena banyaknya peminat dan masukan dari Dinas Pariwisata dan para pecinta pendakian didukung oleh pemerintahan Desa Deroduwur dan dukungan dari rekan-rekan Basecamp lainnya.</p>
+                    <div class="timeline-year">2022 — Kembali Dimulai</div>
+                    <p class="timeline-desc">Basecamp Deroduwur kembali membuka diri bagi para pendaki setelah rehat selama 2 tahun. 
+                        Tiap untaian masukan dari Dinas Pariwisata dan Para Pecinta Pendakian serta dukungan dari Pemerintah Desa Deroduwur dan rekan-rekan basecamp lain menjadi pemantik semangat teman-teman basecamp untuk kembali menjalankan Basecamp Deroduwur.</p>
                 </div>
 
                 <!-- Timeline Item 4 -->
                 <div class="timeline-item">
-                    <div class="timeline-year">2026 — Pemindahan Basecamp</div>
-                    <p class="timeline-desc">Berawal dari numpang rumah warga, kemudian kontrak. Berkat kegigihan pengelola dan kerja sama dengan pemerintah Desa Deroduwur sehingga terwujud peningkatan fasilitas yang tersedia melalui pengadaan lahan dan gedung milik basecamp. </p>
+                    <div class="timeline-year">2026 — Rumah Menetap</div>
+                    <p class="timeline-desc">
+                   Dalam perjalanan akan memerlukan titik singgah sebagai peristirahatan. 
+                   Basecamp Deroduwur turut dibangun dengan uluran tangan warga sekitar hingga akhirnya jalinan kerja sama bersama Pemerintah Desa Deroduwur membawa basecamp ke rumah tetap pertamanya.</p>
                 </div>
 
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Profil Pengelola -->
-<section class="py-10 bg-[#FAF7F2]">
-    <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Profil Pengelola</h2>
-        <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-            Dua sosok di balik pengelolaan Basecamp Deroduwur yang membawa pengalaman lapangan dan komitmen pelestarian.
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-[#FAF7F2] rounded-2xl shadow-lg p-8 text-center border border-emerald-900/10 hover:shadow-xl transition duration-300">
-                <div class="w-32 h-32 bg-gradient-to-br from-[#2F5233] to-[#4A7A4E] rounded-full mx-auto mb-4 flex items-center justify-center text-5xl text-white shadow-lg">
-                    👤
-                </div>
-                <h3 class="text-2xl font-bold text-[#2F5233]">Mas Taufik</h3>
-                <p class="text-[#A9784B] font-medium">Ketua Pengelola</p>
-                <div class="mt-4 text-[#5C5C50] text-sm space-y-1">
-                    <p>✓ Berpengalaman lebih dari 15 tahun</p>
-                    <p>✓ Ahli konservasi hutan</p>
-                    <p>✓ Penggiat budaya lokal</p>
-                </div>
-            </div>
-            <div class="bg-[#FAF7F2] rounded-2xl shadow-lg p-8 text-center border border-emerald-900/10 hover:shadow-xl transition duration-300">
-                <div class="w-32 h-32 bg-gradient-to-br from-[#2F5233] to-[#4A7A4E] rounded-full mx-auto mb-4 flex items-center justify-center text-5xl text-white shadow-lg">
-                    👤
-                </div>
-                <h3 class="text-2xl font-bold text-[#2F5233]">Mas Wahyu</h3>
-                <p class="text-[#A9784B] font-medium">Koordinator Lapangan</p>
-                <div class="mt-4 text-[#5C5C50] text-sm space-y-1">
-                    <p>✓ Berpengalaman lebih dari 10 tahun</p>
-                    <p>✓ Ahli navigasi & keselamatan</p>
-                    <p>✓ Pemandu profesional</p>
-                </div>
             </div>
         </div>
     </div>
@@ -351,9 +332,9 @@
 <!-- Suasana Basecamp - Grid 4 Foto -->
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-6xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Suasana Basecamp</h2>
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">Lentera Kebersamaan</h2>
         <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-            Menyaksikan momen hangat dan rapi yang menjadi wajah sehari-hari Basecamp Deroduwur.
+            Menyalakan kehangatan di ruang persinggahan dan merekam kebersamaan sebelum pengembaraan. 
         </p>
 
         <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6">
@@ -382,9 +363,9 @@
 <!-- Lokasi -->
 <section class="py-10 bg-[#FAF7F2]">
     <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-3xl md:text-4xl font-bold text-[#2F5233] text-center mb-6">Lokasi Basecamp</h2>
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-[#2F5233] mb-6">Lokasi Basecamp</h2>
         <p class="text-base md:text-xl lg:text-lg text-[#5C5C50] mb-8 text-center leading-relaxed">
-            Temukan titik Basecamp Deroduwur lengkap dengan akses Google Maps dan petunjuk koordinat resmi.
+            Ketuk akses di bawah ini untuk melihat petunjuk koordinat resmi Basecamp Deroduwur.
         </p>
         <div class="flex justify-center mb-6">
             <a href="https://www.google.com/maps/search/?api=1&query=-7.27725,109.8824445" 
@@ -416,22 +397,28 @@
 <!-- Nilai Plus -->
 <section class="py-10 bg-[#2F5233] text-white">
     <div class="container mx-auto px-4 max-w-4xl">
-        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6">Keunikan Bismo Via Deroduwur</h2>
-        <p class="text-base md:text-lg lg:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl mx-auto text-center">
-            Nilai plus Basecamp Deroduwur yang membuatnya berbeda: alam terjaga, budaya lokal, dan pengelolaan berbasis masyarakat.
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-6">Keistimewaan Bismo Via Deroduwur</h2>
+        <p class="text-base md:text-lg lg:text-xl text-white/90 leading-relaxed mb-8 max-w-6xl mx-auto text-center">
+            Menghadirkan alam yang tetap murni, kearifan lokal yang abadi, serta kehangatan gotong royong warga yang mengelola sepenuh hati. 
         </p>
         <div class="space-y-6">
             <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:bg-white/15 transition duration-300">
-                <h3 class="text-xl font-bold text-[#E0BE45] mb-2">Jalur Nyaman bagi Pendaki</h3>
-                <p class="text-gray-200 leading-relaxed">Jalur via Deroduwur memberikan track dengan pemandangan hutan pakis dan lumut yang sangat istimewa. Keberadaan 2 (dua) titik mata air di dua pos pertama juga menjadi keuntungan tersendiri bagi pendaki. Hal ini menjadikan Deroduwur sebagai lokasi pendakian yang cocok bagi para pendaki yang ingin merasakan suasana asri Gunung Bismo tanpa melalui jalur yang berat.</p>
+                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-[#E0BE45] mb-2">Jalur Nyaman bagi Pendaki</h3>
+                <p class="text-sm md:text-base lg:text-lg text-gray-200 leading-relaxed">Jalur via Deroduwur memberikan track dengan pemandangan hutan pakis dan lumut yang sangat istimewa. 
+                    Keberadaan 2 (dua) titik mata air di dua pos pertama juga menjadi keuntungan tersendiri bagi pendaki. 
+                    Hal ini menjadikan Deroduwur sebagai lokasi pendakian yang cocok bagi para pendaki yang ingin merasakan suasana asri Gunung Bismo tanpa melalui jalur yang berat.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:bg-white/15 transition duration-300">
-                <h3 class="text-xl font-bold text-[#E0BE45] mb-2">Habitat Flora dan Fauna Unik</h3>
-                <p class="text-gray-200 leading-relaxed">Keasrian alam via Deroduwur menjadikannya sebagai habitat bagi fauna langka seperti Lutung Jawa dan beberapa spesies burung, serta flora lainnya seperti Kantong Semar dan Anggrek Gunung. Keberagaman ini menjadikan Gunung Bismo Via Deroduwur sebagai lokasi strategis untuk penelitian dan konservasi alam.</p>
+                <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-[#E0BE45] mb-2">Habitat Flora dan Fauna Eksotis</h3>
+                <p class="text-sm md:text-base lg:text-lg text-gray-200 leading-relaxed">Keasrian alam via Deroduwur menjadikannya sebagai habitat bagi fauna langka seperti Lutung Jawa dan beberapa spesies burung, 
+                    serta flora lainnya seperti Kantong Semar dan Anggrek Gunung. 
+                    Keberagaman ini menjadikan Gunung Bismo Via Deroduwur sebagai lokasi strategis untuk penelitian dan konservasi alam.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:bg-white/15 transition duration-300">
-                <h3 class="text-xl font-bold text-[#E0BE45] mb-2">Komunitas Derpala, Deroduwur Pecinta Alam</h3>
-                <p class="text-gray-200 leading-relaxed">Basecamp Gunung Bismo Via Deroduwur bergerak tidak semata-mata hanya untuk menghidupkan semangat menjaga alam. Namun juga menumbuhkan hubungan kekeluargaan kolektif melalui nama Derpala atau Deroduwur Pecinta Alam. Terbentuknya Derpala diharapkan tidak hanya sebagai wadah namun juga sebagai upaya menyejahterakan warga melalui pemanfaatan alam sekitar.</p>
+                <h3 class="text-xl font-bold text-[#E0BE45] mb-2">Pemuda Dusun Peduli Potensi Bismo</h3>
+                <p class="text-sm md:text-base lg:text-lg text-gray-200 leading-relaxed">Basecamp Gunung Bismo Via Deroduwur bergerak tidak semata-mata hanya untuk menghidupkan semangat menjaga alam. 
+                    Namun juga menumbuhkan hubungan kekeluargaan kolektif melalui Basecamp Deroduwur. 
+                    Terbentuknya basecamp pendakian ini diharapkan tidak hanya sebagai wadah namun juga sebagai upaya menyejahterakan warga melalui pemanfaatan alam sekitar.</p>
             </div>
         </div>
     </div>
