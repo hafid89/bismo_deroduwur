@@ -20,6 +20,10 @@ function uploadFile($file, $targetDir, $allowedTypes = ['jpg', 'jpeg', 'png', 'g
     $fileTmp = $file['tmp_name'];
     $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
+    if (in_array($fileExt, ['heic', 'heif'], true)) {
+        return ['success' => false, 'message' => 'Format HEIC/HEIF belum didukung. Konversi foto ke JPG, PNG, atau WEBP lalu unggah kembali.'];
+    }
+
     if (!in_array($fileExt, $allowedTypes)) {
         return ['success' => false, 'message' => 'Tipe file tidak diizinkan'];
     }
@@ -173,6 +177,42 @@ function getGaleriPaginated($page = 1, $limit = 12) {
     return $stmt->fetchAll();
 }
 
+// Ubah $_FILES (input multiple) jadi daftar per file, slot kosong diabaikan
+function normalizeUploadedFiles($input) {
+    $result = [];
+    if (!$input || !isset($input['name'])) return $result;
+    if (!is_array($input['name'])) {
+        if ($input['error'] !== UPLOAD_ERR_NO_FILE) $result[] = $input;
+        return $result;
+    }
+    foreach ($input['name'] as $i => $name) {
+        if ($input['error'][$i] === UPLOAD_ERR_NO_FILE) continue;
+        $result[] = [
+            'name' => $name, 'type' => $input['type'][$i], 'tmp_name' => $input['tmp_name'][$i],
+            'error' => $input['error'][$i], 'size' => $input['size'][$i],
+        ];
+    }
+    return $result;
+}
+
+// Validasi satu foto. Mengembalikan pesan error, atau '' kalau valid
+function validateImageFile($file) {
+    $name = htmlspecialchars($file['name']);
+    if ($file['error'] !== UPLOAD_ERR_OK) return "$name: gagal diupload (kode {$file['error']})";
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (in_array($ext, ['heic', 'heif'], true)) {
+        return "$name: format HEIC/HEIF belum didukung. Konversi ke JPG, PNG, atau WEBP.";
+    }
+    if ($file['size'] > 5 * 1024 * 1024) return "$name: ukuran maksimal 5MB";
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    if (!in_array($mime, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], true)) {
+        return "$name: tipe file tidak diizinkan (gunakan JPG, PNG, GIF, atau WEBP)";
+    }
+    return '';
+}
+
 // ============ FUNGSI FLORA ============
 function getFlora() {
     global $pdo;
@@ -203,7 +243,6 @@ function getTotalFlora($search = '') {
     return $result ? (int)$result['total'] : 0;
 }
 
-
 function getFloraPaginated($page = 1, $limit = 10, $search = '') {
     global $pdo;
     $page   = intval($page);
@@ -225,7 +264,6 @@ function getFloraPaginated($page = 1, $limit = 10, $search = '') {
     }
     return $stmt->fetchAll();
 }
-
 
 // ============ FUNGSI FAUNA ============
 function getFauna() {
@@ -340,4 +378,204 @@ function getTotalData($table) {
 // Fungsi untuk sanitasi input
 function sanitizeInput($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+}
+
+function sanitizeRichText($html) {
+    if (!class_exists('DOMDocument')) {
+        return nl2br(htmlspecialchars(strip_tags($html), ENT_QUOTES, 'UTF-8'));
+    }
+
+    $rootId = 'article-root-' . bin2hex(random_bytes(8));
+    $document = new DOMDocument('1.0', 'UTF-8');
+    $previousErrors = libxml_use_internal_errors(true);
+    $document->loadHTML('<?xml encoding="UTF-8"><div id="' . $rootId . '">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    libxml_clear_errors();
+    libxml_use_internal_errors($previousErrors);
+
+    $xpath = new DOMXPath($document);
+    $root = $xpath->query('//*[@id="' . $rootId . '"]')->item(0);
+    if (!$root) {
+        return '';
+    }
+
+    $allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'h2', 'h3', 'h4', 'blockquote', 'a', 'font'];
+    $sanitizeChildren = function ($parent) use (&$sanitizeChildren, $allowedTags) {
+        foreach (iterator_to_array($parent->childNodes) as $child) {
+            if ($child->nodeType !== XML_ELEMENT_NODE) {
+                continue;
+            }
+
+            $tag = strtolower($child->nodeName);
+            if (in_array($tag, ['script', 'style', 'iframe', 'object', 'svg', 'math'], true)) {
+                $parent->removeChild($child);
+                continue;
+            }
+
+            if (!in_array($tag, $allowedTags, true)) {
+                $sanitizeChildren($child);
+                while ($child->firstChild) {
+                    $parent->insertBefore($child->firstChild, $child);
+                }
+                $parent->removeChild($child);
+                continue;
+            }
+
+            foreach (iterator_to_array($child->attributes) as $attribute) {
+                $name = strtolower($attribute->name);
+                $value = trim($attribute->value);
+                $keep = false;
+
+                if ($tag === 'a' && $name === 'href') {
+                    $value = preg_replace('/[\x00-\x20]+/', '', $value);
+                    $scheme = parse_url($value, PHP_URL_SCHEME);
+                    $keep = ($scheme === null && strpos($value, '//') !== 0)
+                        || in_array(strtolower((string)$scheme), ['http', 'https', 'mailto'], true);
+                } elseif ($tag === 'font' && $name === 'face') {
+                    $keep = in_array(strtolower($value), ['arial', 'georgia', 'times new roman', 'verdana', 'trebuchet ms'], true);
+                } elseif ($tag === 'font' && $name === 'size') {
+                    $keep = in_array($value, ['1', '2', '3', '4', '5', '6', '7'], true);
+                }
+
+                if (!$keep) {
+                    $child->removeAttribute($attribute->name);
+                } elseif ($name === 'href') {
+                    $child->setAttribute('href', $value);
+                }
+            }
+
+            $sanitizeChildren($child);
+        }
+    };
+    $sanitizeChildren($root);
+
+    $cleanHtml = '';
+    foreach ($root->childNodes as $child) {
+        $cleanHtml .= $document->saveHTML($child);
+    }
+    return $cleanHtml;
+}
+
+// ============ FUNGSI KOMENTAR (RICH TEXT) ============
+
+/**
+ * Sanitasi HTML komentar user.
+ * Hanya izinkan tag & atribut tertentu untuk mencegah XSS.
+ * Output HTML aman untuk langsung di-echo.
+ */
+function sanitizeCommentHtml(string $html): string {
+    $html = trim($html);
+    if ($html === '') return '';
+
+    // Fallback kalau DOMDocument tidak tersedia
+    if (!class_exists('DOMDocument')) {
+        $allowed = '<p><br><strong><b><em><i><u><s><strike><del><sup><sub>'
+                 . '<a><ul><ol><li><blockquote><code><pre><h1><h2><h3><h4>'
+                 . '<table><thead><tbody><tr><th><td><span><div>';
+        return strip_tags($html, $allowed);
+    }
+
+    $rootId = 'comment-root-' . bin2hex(random_bytes(8));
+    $document = new DOMDocument('1.0', 'UTF-8');
+    $previousErrors = libxml_use_internal_errors(true);
+    $document->loadHTML(
+        '<?xml encoding="UTF-8"><div id="' . $rootId . '">' . $html . '</div>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+    );
+    libxml_clear_errors();
+    libxml_use_internal_errors($previousErrors);
+
+    $xpath = new DOMXPath($document);
+    $root = $xpath->query('//*[@id="' . $rootId . '"]')->item(0);
+    if (!$root) return '';
+
+    // Tag yang diizinkan (lebih luas dari artikel, cocok dengan toolbar Quill)
+    $allowedTags = [
+        'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'strike', 'del',
+        'sup', 'sub', 'a', 'ul', 'ol', 'li', 'blockquote',
+        'code', 'pre', 'h1', 'h2', 'h3', 'h4',
+        'table', 'thead', 'tbody', 'tr', 'th', 'td',
+        'span', 'div'
+    ];
+
+    // Atribut yang diizinkan per tag
+    $allowedAttrs = [
+        'a'    => ['href'],
+        'span' => ['class'],
+        'div'  => ['class'],
+        'code' => ['class'],
+        'pre'  => ['class'],
+    ];
+
+    $sanitizeChildren = function ($parent) use (&$sanitizeChildren, $allowedTags, $allowedAttrs) {
+        foreach (iterator_to_array($parent->childNodes) as $child) {
+            if ($child->nodeType !== XML_ELEMENT_NODE) continue;
+
+            $tag = strtolower($child->nodeName);
+
+            // Blokir total tag berbahaya
+            if (in_array($tag, ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'math', 'form', 'input', 'button'], true)) {
+                $parent->removeChild($child);
+                continue;
+            }
+
+            // Tag tidak diizinkan → hapus tag, angkat anaknya ke parent
+            if (!in_array($tag, $allowedTags, true)) {
+                $sanitizeChildren($child);
+                while ($child->firstChild) {
+                    $parent->insertBefore($child->firstChild, $child);
+                }
+                $parent->removeChild($child);
+                continue;
+            }
+
+            // Filter atribut
+            $attrsAllowed = $allowedAttrs[$tag] ?? [];
+            foreach (iterator_to_array($child->attributes) as $attribute) {
+                $name = strtolower($attribute->name);
+                $value = trim($attribute->value);
+                $keep = in_array($name, $attrsAllowed, true);
+
+                // Validasi khusus href
+                if ($tag === 'a' && $name === 'href' && $keep) {
+                    $value = preg_replace('/[\x00-\x20]+/', '', $value);
+                    $scheme = parse_url($value, PHP_URL_SCHEME);
+                    $validScheme = ($scheme === null && strpos($value, '//') !== 0)
+                        || in_array(strtolower((string)$scheme), ['http', 'https', 'mailto'], true);
+                    if (!$validScheme) {
+                        $keep = false;
+                    } else {
+                        $child->setAttribute('href', $value);
+                        $child->setAttribute('rel', 'nofollow noopener');
+                        $child->setAttribute('target', '_blank');
+                    }
+                }
+
+                if (!$keep) {
+                    $child->removeAttribute($attribute->name);
+                }
+            }
+
+            $sanitizeChildren($child);
+        }
+    };
+    $sanitizeChildren($root);
+
+    $cleanHtml = '';
+    foreach ($root->childNodes as $child) {
+        $cleanHtml .= $document->saveHTML($child);
+    }
+    return $cleanHtml;
+}
+
+/**
+ * Konversi HTML jadi plain text.
+ * Dipakai untuk: hitung panjang karakter, preview, SEO, dll.
+ */
+function htmlToPlainText(string $html): string {
+    $text = preg_replace('/<br\s*\/?>/i', "\n", $html);
+    $text = preg_replace('/<\/(p|div|h[1-6]|li|blockquote)>/i', "\n", $text);
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = preg_replace('/\n{3,}/', "\n\n", $text);
+    return trim($text);
 }

@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="">-- Pilih Kategori --</option>
                         <option value="kewajiban" <?= $old_kategori == 'kewajiban' ? 'selected' : '' ?>>Kewajiban</option>
                         <option value="larangan" <?= $old_kategori == 'larangan' ? 'selected' : '' ?>>Larangan</option>
-                        <option value="fasilitas" <?= $old_kategori == 'fasilitas' ? 'selected' : '' ?>>Fasilitas</option>
+                       
                     </select>
                     <p class="text-xs text-gray-400 mt-1">Pilih jenis peraturan</p>
                 </div>

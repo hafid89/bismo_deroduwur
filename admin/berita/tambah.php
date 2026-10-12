@@ -14,7 +14,8 @@ $old_tanggal = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = trim($_POST['judul']);
-    $isi = trim($_POST['isi']);
+    $isi = sanitizeRichText(trim($_POST['isi'] ?? ''));
+    $isiPlainText = trim(html_entity_decode(strip_tags($isi), ENT_QUOTES, 'UTF-8'));
     $tanggal = $_POST['tanggal'];
     
     // Simpan nilai lama untuk ditampilkan kembali
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // 6. Cek panjang isi (minimal 10 karakter)
-    if (!empty($isi) && strlen($isi) < 10) {
+    if (strlen($isiPlainText) < 10) {
         $errors[] = 'Isi berita minimal 10 karakter';
     }
 
@@ -125,6 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Berita - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
@@ -155,6 +157,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .preview-image:hover {
             transform: scale(1.02);
+        }
+        #articleEditorContainer .ql-toolbar.ql-snow {
+            border: 1px solid #d1d5db;
+            border-radius: 8px 8px 0 0;
+            background: #faf7f2;
+        }
+        #articleEditorContainer .ql-container.ql-snow {
+            border: 1px solid #d1d5db;
+            border-top: 0;
+            border-radius: 0 0 8px 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        #articleEditorContainer .ql-editor {
+            min-height: 16rem;
+            line-height: 1.7;
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -259,12 +277,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Isi Berita <span class="text-red-500">*</span>
                         <span class="text-xs text-gray-400 font-normal">(Minimal 10 karakter)</span>
                     </label>
-                    <textarea name="isi" rows="10" 
-                              class="form-input w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none" 
-                              placeholder="Tulis isi berita di sini..." 
-                              required
-                              minlength="10"><?= htmlspecialchars($old_isi) ?></textarea>
-                    <p class="text-xs text-gray-400 mt-1">Gunakan HTML untuk formatting (paragraf, list, dll)</p>
+                    <div id="articleEditorContainer">
+                        <div id="articleEditor"><?= sanitizeRichText($old_isi) ?></div>
+                    </div>
+                    <textarea name="isi" id="articleContent" class="hidden"><?= htmlspecialchars($old_isi) ?></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Format artikel akan dijaga saat disimpan; skrip dan atribut berbahaya otomatis dibuang.</p>
                 </div>
 
                 <!-- Tombol Aksi -->
@@ -284,6 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <script>
 // Preview image sebelum upload
 function previewImage(input) {
@@ -301,9 +319,26 @@ function previewImage(input) {
 }
 
 // Validasi form sebelum submit
+const articleContent = document.getElementById('articleContent');
+const articleQuill = new Quill('#articleEditor', {
+    theme: 'snow',
+    placeholder: 'Tulis isi berita di sini...',
+    modules: {
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ header: [2, 3, 4, false] }],
+            ['blockquote'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link'],
+            ['clean']
+        ]
+    }
+});
+
 document.getElementById('beritaForm').addEventListener('submit', function(e) {
     const judul = document.querySelector('input[name="judul"]').value.trim();
-    const isi = document.querySelector('textarea[name="isi"]').value.trim();
+    articleContent.value = articleQuill.root.innerHTML;
+    const isi = articleQuill.getText().trim();
     const tanggal = document.querySelector('input[name="tanggal"]').value;
     
     // Cek judul minimal 5 karakter

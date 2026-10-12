@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Jul 31, 2026 at 03:45 AM
--- Server version: 8.0.30
--- PHP Version: 8.1.10
+-- Host: 127.0.0.1
+-- Waktu pembuatan: 12 Okt 2026 pada 08.55
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,49 +24,50 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin`
+-- Struktur dari tabel `admin`
 --
 
 CREATE TABLE `admin` (
-  `id` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `reset_token` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `reset_token` varchar(255) DEFAULT NULL,
   `reset_token_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `admin`
+-- Dumping data untuk tabel `admin`
 --
 
 INSERT INTO `admin` (`id`, `username`, `email`, `password`, `full_name`, `created_at`, `reset_token`, `reset_token_expires`) VALUES
 (1, 'admin', 'admin@gunungbismo.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrator', '2026-07-23 16:06:05', NULL, NULL),
 (2, 'hafis', '123230051@student.upnyk.ac.id', '$2y$10$2Lzw1WZ/mm.23zfhDoU0MuWH0ZQB14jycxok5BnuOAHs/KVp4jVU.', 'hafid', '2026-07-23 16:42:28', NULL, NULL),
-(3, 'lutungjawa', 'lutungjawa99@gmail.com', '$2y$10$aDxrjl6RlwFnbWAXNEq0M.hGfQgbgMlpaY1SKu2A0DA7i52HKc5Ki', 'lutungjawa', '2026-07-30 14:25:34', NULL, NULL);
+(3, 'lutungjawa', 'lutungjawa99@gmail.com', '$2y$10$aDxrjl6RlwFnbWAXNEq0M.hGfQgbgMlpaY1SKu2A0DA7i52HKc5Ki', 'lutungjawa', '2026-07-30 14:25:34', NULL, NULL),
+(4, 'hafid', 'hallmaster677@gmail.com', '$2y$10$MHrxSBhumUs38lVf64HL7ufu9whY0bxgnrcwwy9NxpjOVzTXqXWrS', 'HAFID DWI SAPUTRA', '2026-10-12 04:07:46', NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `berita`
+-- Struktur dari tabel `berita`
 --
 
 CREATE TABLE `berita` (
-  `id` int NOT NULL,
-  `judul` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `isi` text COLLATE utf8mb4_general_ci NOT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `isi` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL,
   `tanggal` date NOT NULL,
-  `penulis` varchar(100) COLLATE utf8mb4_general_ci DEFAULT 'Admin',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `penulis` varchar(100) DEFAULT 'Admin',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `berita`
+-- Dumping data untuk tabel `berita`
 --
 
 INSERT INTO `berita` (`id`, `judul`, `slug`, `isi`, `foto`, `tanggal`, `penulis`, `created_at`, `updated_at`) VALUES
@@ -85,22 +86,22 @@ INSERT INTO `berita` (`id`, `judul`, `slug`, `isi`, `foto`, `tanggal`, `penulis`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fauna`
+-- Struktur dari tabel `fauna`
 --
 
 CREATE TABLE `fauna` (
-  `id` int NOT NULL,
-  `nama` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_ilmiah` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `deskripsi` text COLLATE utf8mb4_general_ci,
-  `foto` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `lokasi` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `nama_ilmiah` varchar(100) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `lokasi` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `fauna`
+-- Dumping data untuk tabel `fauna`
 --
 
 INSERT INTO `fauna` (`id`, `nama`, `nama_ilmiah`, `deskripsi`, `foto`, `lokasi`, `created_at`, `updated_at`) VALUES
@@ -120,22 +121,22 @@ INSERT INTO `fauna` (`id`, `nama`, `nama_ilmiah`, `deskripsi`, `foto`, `lokasi`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `flora`
+-- Struktur dari tabel `flora`
 --
 
 CREATE TABLE `flora` (
-  `id` int NOT NULL,
-  `nama` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `nama_ilmiah` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `deskripsi` text COLLATE utf8mb4_general_ci,
-  `foto` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `lokasi` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `nama_ilmiah` varchar(100) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `lokasi` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `flora`
+-- Dumping data untuk tabel `flora`
 --
 
 INSERT INTO `flora` (`id`, `nama`, `nama_ilmiah`, `deskripsi`, `foto`, `lokasi`, `created_at`, `updated_at`) VALUES
@@ -155,21 +156,21 @@ INSERT INTO `flora` (`id`, `nama`, `nama_ilmiah`, `deskripsi`, `foto`, `lokasi`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `galeri`
+-- Struktur dari tabel `galeri`
 --
 
 CREATE TABLE `galeri` (
-  `id` int NOT NULL,
-  `foto` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `judul` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `kategori` varchar(50) COLLATE utf8mb4_general_ci DEFAULT 'jalur',
-  `tag` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `deskripsi` text COLLATE utf8mb4_general_ci,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `foto` varchar(255) NOT NULL,
+  `judul` varchar(255) DEFAULT NULL,
+  `kategori` varchar(50) DEFAULT 'jalur',
+  `tag` varchar(50) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `galeri`
+-- Dumping data untuk tabel `galeri`
 --
 
 INSERT INTO `galeri` (`id`, `foto`, `judul`, `kategori`, `tag`, `deskripsi`, `created_at`) VALUES
@@ -187,19 +188,68 @@ INSERT INTO `galeri` (`id`, `foto`, `judul`, `kategori`, `tag`, `deskripsi`, `cr
 -- --------------------------------------------------------
 
 --
--- Table structure for table `peraturan`
+-- Struktur dari tabel `galeri_foto`
 --
 
-CREATE TABLE `peraturan` (
-  `id` int NOT NULL,
-  `kategori` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `teks` text COLLATE utf8mb4_general_ci NOT NULL,
-  `denda` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE `galeri_foto` (
+  `id` int(11) NOT NULL,
+  `galeri_id` int(11) NOT NULL,
+  `foto` varchar(255) NOT NULL,
+  `urutan` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `kisah_suasana`
+--
+
+CREATE TABLE `kisah_suasana` (
+  `id` int(11) NOT NULL,
+  `foto` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `komentar_berita`
+--
+
+CREATE TABLE `komentar_berita` (
+  `id` int(11) NOT NULL,
+  `berita_id` int(11) NOT NULL,
+  `nama` varchar(80) NOT NULL,
+  `isi` text NOT NULL,
+  `isi_plain` text DEFAULT NULL,
+  `status` enum('pending','approved','spam') NOT NULL DEFAULT 'approved',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `peraturan`
+-- Dumping data untuk tabel `komentar_berita`
+--
+
+INSERT INTO `komentar_berita` (`id`, `berita_id`, `nama`, `isi`, `isi_plain`, `status`, `created_at`) VALUES
+(2, 9, 'HAs', '<ol><li><span class=\"ql-ui\"></span><strong>hahhahhahaha<em> coba dlu </em></strong><sup><strong><em>ssdsad</em></strong></sup></li></ol><h1><strong><em>asdasdasd</em></strong></h1>', 'hahhahhahaha coba dlu ssdsad\nasdasdasd', 'approved', '2026-10-12 06:53:45');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `peraturan`
+--
+
+CREATE TABLE `peraturan` (
+  `id` int(11) NOT NULL,
+  `kategori` varchar(50) NOT NULL,
+  `teks` text NOT NULL,
+  `denda` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `peraturan`
 --
 
 INSERT INTO `peraturan` (`id`, `kategori`, `teks`, `denda`, `created_at`) VALUES
@@ -227,74 +277,69 @@ INSERT INTO `peraturan` (`id`, `kategori`, `teks`, `denda`, `created_at`) VALUES
 (22, 'larangan', 'Tidak Membawa Turun Sampah', 'Rp. 1.025.000', '2026-07-23 17:05:02'),
 (23, 'larangan', 'Berzinah', 'Rp. 1.025.000', '2026-07-23 17:05:02'),
 (24, 'larangan', 'Solo Hiking', 'Rp. 1.025.000', '2026-07-23 17:05:02'),
-(25, 'larangan', 'Camp Bukan Ditempat Camp Yang Sudah Di Sediakan', 'Rp. 1.025.000', '2026-07-23 17:05:02'),
-(26, 'fasilitas', 'Tiket Masuk Kawasan', NULL, '2026-07-23 17:05:02'),
-(27, 'fasilitas', 'Cek Kesehatan', NULL, '2026-07-23 17:05:02'),
-(28, 'fasilitas', 'Wifi', NULL, '2026-07-23 17:05:02'),
-(29, 'fasilitas', 'Toilet', NULL, '2026-07-23 17:05:02'),
-(30, 'fasilitas', 'Tempat Istirahat', NULL, '2026-07-23 17:05:02'),
-(31, 'fasilitas', 'Penitipan Barang', NULL, '2026-07-23 17:05:02'),
-(32, 'fasilitas', 'Mushola', NULL, '2026-07-23 17:05:02');
+(25, 'larangan', 'Camp Bukan Ditempat Camp Yang Sudah Di Sediakan', 'Rp. 1.025.000', '2026-07-23 17:05:02');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reset_password`
+-- Struktur dari tabel `reset_password`
 --
 
 CREATE TABLE `reset_password` (
-  `id` int NOT NULL,
-  `admin_id` int NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `expires_at` datetime NOT NULL,
-  `used` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `used` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `spot_jalur`
+-- Struktur dari tabel `spot_jalur`
 --
 
 CREATE TABLE `spot_jalur` (
-  `id` int NOT NULL,
-  `nama` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `posisi` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `ketinggian` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `estimasi_waktu` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `deskripsi` text COLLATE utf8mb4_general_ci,
-  `foto` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `jenis` varchar(50) COLLATE utf8mb4_general_ci DEFAULT 'spot',
-  `urutan` int DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `posisi` varchar(50) NOT NULL,
+  `ketinggian` varchar(50) DEFAULT NULL,
+  `estimasi_waktu` varchar(50) DEFAULT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `jenis` varchar(50) DEFAULT 'spot',
+  `urutan` int(11) DEFAULT 0,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `spot_jalur`
+-- Dumping data untuk tabel `spot_jalur`
 --
 
-INSERT INTO `spot_jalur` (`id`, `nama`, `posisi`, `ketinggian`, `estimasi_waktu`, `deskripsi`, `foto`, `jenis`, `urutan`, `created_at`) VALUES
-(1, 'Basecamp Deroduwur', 'basecamp', '', '0 (Start)', 'Basecamp pendakian Gunung Bismo via Deroduwur', '6a67aeaa134d4.jpg', 'wilayah', 0, '2026-07-23 17:05:02'),
-(2, 'Pos Ojek', 'pos_ojek', '', '', 'Titik akhir kendaraan bermotor', '6a67aeca5102d.jpeg', 'spot', 1, '2026-07-23 17:05:02'),
-(3, 'Hutan Pakis', 'pos1', '', '75 menit', 'Kawasan hutan pakis yang rimbun', '6a679b6900782.jpg', 'wilayah', 2, '2026-07-23 17:05:02'),
-(4, 'Pos I', 'pos1', '1.555 MDPL', '75 menit', 'Area peristirahatan pertama', '6a67aed6bc0dc.jpg', 'spot', 3, '2026-07-23 17:05:02'),
-(5, 'Banyu Bismo', 'pos1', '', '', 'Sumber air di jalur pendakian', '6a67af8ce6823.jpg', 'spot', 4, '2026-07-23 17:05:02'),
-(6, 'Kantong Semar', 'pos1', '', '', 'Spot tanaman kantong semar liar', '6a679c096b131.jpg', 'flora', 5, '2026-07-23 17:05:02'),
-(7, 'Pos II', 'pos2', '1.765 MDPL', '45 menit', 'Kumbang Alang-alang', '6a679c2187add.jpg', 'spot', 6, '2026-07-23 17:05:02'),
-(8, 'Pos III', 'pos3', '1.991 MDPL', '60 menit', 'Camp Area - Area perkemahan', '6a679c323fa19.jpeg', 'spot', 7, '2026-07-23 17:05:02'),
-(9, 'Tanjakan Jalak Wangi', 'pos3', '', '', 'Titik tanjakan menantang', '6a679c3d70c9c.jpeg', 'wilayah', 8, '2026-07-23 17:05:02'),
-(10, 'Pos IV', 'pos4', '2.204 MDPL', '60 menit', 'Camp Area - Area perkemahan terakhir', '6a67afecdcca7.jpg', 'spot', 9, '2026-07-23 17:05:02'),
-(11, 'Sunrise Camp', 'sunrise', '', '', 'Spot utama menikmati matahari terbit', '6a679c4a99e2f.jpeg', 'spot', 10, '2026-07-23 17:05:02'),
-(12, 'Puncak Hastinapura', 'puncak', '2.338 MDPL', '20 menit', 'Puncak dengan panorama 360 derajat', '6a679c6dbe2e5.jpeg', 'spot', 11, '2026-07-23 17:05:02'),
-(13, 'Puncak Indraprasta', 'puncak', '2.365 MDPL', '20 menit', 'Puncak tertinggi Gunung Bismo', '6a679de126d74.jpeg', 'spot', 12, '2026-07-23 17:05:02');
+INSERT INTO `spot_jalur` (`id`, `nama`, `posisi`, `ketinggian`, `estimasi_waktu`, `deskripsi`, `foto`, `jenis`, `urutan`, `latitude`, `longitude`, `created_at`) VALUES
+(1, 'Basecamp Deroduwur', 'basecamp', '', '0 (Start)', 'Basecamp pendakian Gunung Bismo via Deroduwur', '6a67aeaa134d4.jpg', 'wilayah', 0, -7.2772640, 109.8824200, '2026-07-23 17:05:02'),
+(2, 'Pos Ojek', 'pos_ojek', '', '', 'Titik akhir kendaraan bermotor', '6a67aeca5102d.jpeg', 'spot', 1, NULL, NULL, '2026-07-23 17:05:02'),
+(3, 'Hutan Pakis', 'pos1', '', '75 menit', 'Kawasan hutan pakis yang rimbun', '6a679b6900782.jpg', 'wilayah', 2, NULL, NULL, '2026-07-23 17:05:02'),
+(4, 'Pos I', 'pos1', '1.555 MDPL', '75 menit', 'Area peristirahatan pertama', '6a67aed6bc0dc.jpg', 'spot', 3, NULL, NULL, '2026-07-23 17:05:02'),
+(5, 'Banyu Bismo', 'pos1', '', '', 'Sumber air di jalur pendakian', '6a67af8ce6823.jpg', 'spot', 4, NULL, NULL, '2026-07-23 17:05:02'),
+(6, 'Kantong Semar', 'pos1', '', '', 'Spot tanaman kantong semar liar', '6a679c096b131.jpg', 'flora', 5, NULL, NULL, '2026-07-23 17:05:02'),
+(7, 'Pos II', 'pos2', '1.765 MDPL', '45 menit', 'Kumbang Alang-alang', '6a679c2187add.jpg', 'spot', 6, NULL, NULL, '2026-07-23 17:05:02'),
+(8, 'Pos III', 'pos3', '1.991 MDPL', '60 menit', 'Camp Area - Area perkemahan', '6a679c323fa19.jpeg', 'spot', 7, NULL, NULL, '2026-07-23 17:05:02'),
+(9, 'Tanjakan Jalak Wangi', 'pos3', '', '', 'Titik tanjakan menantang', '6a679c3d70c9c.jpeg', 'wilayah', 8, NULL, NULL, '2026-07-23 17:05:02'),
+(10, 'Pos IV', 'pos4', '2.204 MDPL', '60 menit', 'Camp Area - Area perkemahan terakhir', '6a67afecdcca7.jpg', 'spot', 9, NULL, NULL, '2026-07-23 17:05:02'),
+(11, 'Sunrise Camp', 'sunrise', '', '', 'Spot utama menikmati matahari terbit', '6a679c4a99e2f.jpeg', 'spot', 10, NULL, NULL, '2026-07-23 17:05:02'),
+(12, 'Puncak Hastinapura', 'puncak', '2.338 MDPL', '20 menit', 'Puncak dengan panorama 360 derajat', '6a679c6dbe2e5.jpeg', 'spot', 11, NULL, NULL, '2026-07-23 17:05:02'),
+(13, 'Puncak Indraprasta', 'puncak', '2.365 MDPL', '20 menit', 'Puncak tertinggi Gunung Bismo', '6a679de126d74.jpeg', 'spot', 12, NULL, NULL, '2026-07-23 17:05:02');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `admin`
+-- Indeks untuk tabel `admin`
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
@@ -302,38 +347,58 @@ ALTER TABLE `admin`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `berita`
+-- Indeks untuk tabel `berita`
 --
 ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `slug` (`slug`);
 
 --
--- Indexes for table `fauna`
+-- Indeks untuk tabel `fauna`
 --
 ALTER TABLE `fauna`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `flora`
+-- Indeks untuk tabel `flora`
 --
 ALTER TABLE `flora`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `galeri`
+-- Indeks untuk tabel `galeri`
 --
 ALTER TABLE `galeri`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `peraturan`
+-- Indeks untuk tabel `galeri_foto`
+--
+ALTER TABLE `galeri_foto`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `galeri_id` (`galeri_id`);
+
+--
+-- Indeks untuk tabel `kisah_suasana`
+--
+ALTER TABLE `kisah_suasana`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `komentar_berita`
+--
+ALTER TABLE `komentar_berita`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `berita_id` (`berita_id`);
+
+--
+-- Indeks untuk tabel `peraturan`
 --
 ALTER TABLE `peraturan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `reset_password`
+-- Indeks untuk tabel `reset_password`
 --
 ALTER TABLE `reset_password`
   ADD PRIMARY KEY (`id`),
@@ -341,69 +406,99 @@ ALTER TABLE `reset_password`
   ADD KEY `admin_id` (`admin_id`);
 
 --
--- Indexes for table `spot_jalur`
+-- Indeks untuk tabel `spot_jalur`
 --
 ALTER TABLE `spot_jalur`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `admin`
+-- AUTO_INCREMENT untuk tabel `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `berita`
+-- AUTO_INCREMENT untuk tabel `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `fauna`
+-- AUTO_INCREMENT untuk tabel `fauna`
 --
 ALTER TABLE `fauna`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT for table `flora`
+-- AUTO_INCREMENT untuk tabel `flora`
 --
 ALTER TABLE `flora`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT for table `galeri`
+-- AUTO_INCREMENT untuk tabel `galeri`
 --
 ALTER TABLE `galeri`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `peraturan`
+-- AUTO_INCREMENT untuk tabel `galeri_foto`
+--
+ALTER TABLE `galeri_foto`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `kisah_suasana`
+--
+ALTER TABLE `kisah_suasana`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `komentar_berita`
+--
+ALTER TABLE `komentar_berita`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `peraturan`
 --
 ALTER TABLE `peraturan`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
--- AUTO_INCREMENT for table `reset_password`
+-- AUTO_INCREMENT untuk tabel `reset_password`
 --
 ALTER TABLE `reset_password`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `spot_jalur`
+-- AUTO_INCREMENT untuk tabel `spot_jalur`
 --
 ALTER TABLE `spot_jalur`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `reset_password`
+-- Ketidakleluasaan untuk tabel `galeri_foto`
+--
+ALTER TABLE `galeri_foto`
+  ADD CONSTRAINT `galeri_foto_ibfk_1` FOREIGN KEY (`galeri_id`) REFERENCES `galeri` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `komentar_berita`
+--
+ALTER TABLE `komentar_berita`
+  ADD CONSTRAINT `komentar_berita_ibfk_1` FOREIGN KEY (`berita_id`) REFERENCES `berita` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `reset_password`
 --
 ALTER TABLE `reset_password`
   ADD CONSTRAINT `reset_password_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE CASCADE;

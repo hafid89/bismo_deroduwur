@@ -333,8 +333,8 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
         <!-- Brand -->
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
             <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">
-                <i class="bi bi-mountain text-lg"></i>
-            </div>
+    <i class="bi bi-person-circle text-lg"></i>
+</div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -355,11 +355,11 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
                 <span class="badge"><?= $total_galeri ?></span>
             </a>
             <a href="flora/index.php" class="nav-link flex items-center">
-                <i class="bi bi-leaf"></i> Flora
+                <i class="bi bi-tree"></i> Flora
                 <span class="badge"><?= $total_flora ?></span>
             </a>
             <a href="fauna/index.php" class="nav-link flex items-center">
-                <i class="bi bi-paw"></i> Fauna
+                <i class="bi bi-feather"></i> Fauna
                 <span class="badge"><?= $total_fauna ?></span>
             </a>
             <a href="peraturan/index.php" class="nav-link flex items-center">
@@ -369,6 +369,9 @@ $nama_admin = htmlspecialchars($_SESSION['admin_full_name'] ?? 'Admin');
             <a href="spot-jalur/index.php" class="nav-link flex items-center">
                 <i class="bi bi-geo-alt"></i> Spot Jalur
                 <span class="badge"><?= $total_spot ?></span>
+            </a>
+            <a href="kisah-suasana/index.php" class="nav-link flex items-center">
+                <i class="bi bi-images"></i> Suasana Basecamp
             </a>
         </nav>
 

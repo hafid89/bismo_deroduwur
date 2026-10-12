@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Navbar and mobile menu
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
-    const navbar = document.querySelector('nav');
+    const navbar = document.getElementById('navbar');
     const solidNavbar = navbar && navbar.dataset.solid === 'true';
     const dropdownMenus = document.querySelectorAll('.navbar-dropdown-menu');
 
@@ -81,6 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
    // 4. Navbar Scroll Effect - default transparan, jadi solid saat discroll ke bawah
     if (navbar) {
+        let lastSolidState = null;
+        let scrollUpdatePending = false;
+
         const toggleBg = () => {
             if (solidNavbar) {
                 navbar.classList.remove('bg-transparent', 'bg-forest-light');
@@ -88,9 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-            if (currentScroll > 10) {
-                // Jika sudah discroll sedikit, tampilkan background solid
+            const isSolid = (window.pageYOffset || document.documentElement.scrollTop) > 10;
+            if (isSolid === lastSolidState) return;
+            lastSolidState = isSolid;
+
+            if (isSolid) {
                 navbar.classList.remove('bg-transparent');
                 navbar.classList.add('bg-forest-light', 'shadow-lg');
                 dropdownMenus.forEach(menu => {
@@ -103,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     mobileMenu.style.backdropFilter = 'blur(8px)';
                 }
             } else {
-                // Kembali ke kondisi transparan saat di paling atas
                 navbar.classList.add('bg-transparent');
                 navbar.classList.remove('bg-forest', 'bg-forest-light', 'shadow-lg', 'shadow-xl');
                 dropdownMenus.forEach(menu => {
@@ -117,12 +121,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
 
-        // Cek saat load dan setiap scroll
         toggleBg();
-        window.addEventListener('scroll', toggleBg, { passive: true });
+        window.addEventListener('scroll', function() {
+            if (scrollUpdatePending) return;
+            scrollUpdatePending = true;
+            window.requestAnimationFrame(function() {
+                toggleBg();
+                scrollUpdatePending = false;
+            });
+        }, { passive: true });
 
         window.addEventListener('resize', function() {
-            if (window.innerWidth >= 1280) {
+            if (mobileMenu && window.innerWidth >= 1280) {
                 mobileMenu.classList.add('hidden');
             }
         });

@@ -438,66 +438,6 @@
         </div>
     </section>
 
-    <!-- Informasi Porter, Rental, Ojek -->
-    <section class="py-20 bg-[#FAF7F2]">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#2F5233] text-center mb-6">Layanan Pendukung</h2>
-            <div class="mb-8 flex justify-center">
-                <img src="<?= BASE_URL ?>assets/images/persiapan/rental-alat.jpg" alt="Informasi rental alat" class="w-full max-w-3xl h-auto rounded-2xl shadow-lg object-cover">
-            </div>
-            <div class="grid grid-cols-3 gap-2 md:gap-4 lg:gap-6">
-                <!-- Porter -->
-                <div class="service-card bg-white rounded-2xl p-3 md:p-4 lg:p-8 text-center shadow-lg">
-                    <div class="icon-wrapper text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">🎒</div>
-                    <h3 class="text-base md:text-lg lg:text-2xl font-bold text-[#2F5233] mb-2">Porter</h3>
-                    <p class="text-[#5C5C50] text-[10px] md:text-xs lg:text-sm mb-3">
-                        Melayani kebutuhan untuk membawa perlengkapan logistik selama pendakian.
-                    </p>
-                    <p class="text-[10px] md:text-xs lg:text-sm text-[#A9784B] font-medium mb-3 md:mb-4">Start from Rp200.000,-</p>
-                    <a href="https://wa.me/6285701005336" target="_blank"
-                        class="inline-block bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-2 md:px-4 lg:px-6 py-2 md:py-2.5 lg:py-3 rounded-xl font-semibold text-[10px] md:text-xs lg:text-base transition duration-300 w-full">
-                        Pesan Porter
-                    </a>
-                </div>
-
-                <!-- Rental Alat -->
-                <div class="service-card bg-white rounded-2xl p-3 md:p-4 lg:p-8 text-center shadow-lg">
-                    <div class="icon-wrapper text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">⛺</div>
-                    <h3 class="text-base md:text-lg lg:text-2xl font-bold text-[#2F5233] mb-2">Persewaan Alat</h3>
-                    <p class="text-[#5C5C50] text-[10px] md:text-xs lg:text-sm mb-3">
-                        Menyediakan berbagai jenis perlengkapan outdoor
-                    </p>
-                    <p class="text-[10px] md:text-xs lg:text-sm text-[#A9784B] font-medium mb-3 md:mb-4">Start from Rp5.000,</p>
-                    <a href="https://wa.me/6285701005336" target="_blank"
-                        class="inline-block bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-2 md:px-4 lg:px-6 py-2 md:py-2.5 lg:py-3 rounded-xl font-semibold text-[10px] md:text-xs lg:text-base transition duration-300 w-full">
-                        Cek Ketersediaan
-                    </a>
-                </div>
-
-                <!-- Ojek -->
-                <div class="service-card bg-white rounded-2xl p-3 md:p-4 lg:p-8 text-center shadow-lg">
-                    <div class="icon-wrapper text-3xl md:text-4xl lg:text-5xl mb-3 md:mb-4">🛵</div>
-                    <h3 class="text-base md:text-lg lg:text-2xl font-bold text-[#2F5233] mb-2">Ojek Gunung</h3>
-                    <p class="text-[#5C5C50] text-[10px] md:text-xs lg:text-sm mb-3">
-                        Melayani perjalanan dari basecamp hingga antar pos untuk kenyamanan pendakian.
-                    </p>
-                    <p class="text-[10px] md:text-xs lg:text-sm text-[#A9784B] font-medium mb-3 md:mb-4">Start from Rp50.000,-</p>
-                    <a href="https://wa.me/6282137188300" target="_blank"
-                        class="inline-block bg-[#E0BE45] hover:bg-[#C46F2A] text-white px-2 md:px-4 lg:px-6 py-2 md:py-2.5 lg:py-3 rounded-xl font-semibold text-[10px] md:text-xs lg:text-base transition duration-300 w-full">
-                        Pesan Ojek
-                    </a>
-                </div>
-            </div>
-
-            <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-xl max-w-3xl mx-auto">
-                <p class="text-[#5C5C50] text-sm flex items-start gap-2">
-                    <span><strong>Catatan:</strong> Seluruh pemesanan tiap layanan pendukung dilakukan melalui WhatsApp.
-                        Klik fitur untuk melanjutkan pemesanan dan dapatkan informasi lebih lanjut.</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
     <!-- CTA Denda & Penutup -->
     <section class="py-2 pt-16 bg-[#2F5233] text-white">
         <div class="container mx-auto px-4 text-center max-w-3xl">

@@ -239,7 +239,9 @@ $berita_list = $stmt->fetchAll();
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
+                   <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">
+    <i class="bi bi-person-circle text-lg"></i>
+</div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -250,10 +252,13 @@ $berita_list = $stmt->fetchAll();
             <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
             <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita <span class="badge"><?= $total ?></span></a>
             <a href="../galeri/index.php" class="nav-link"><i class="bi bi-image"></i> Galeri</a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-tree"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-feather"></i></span> Fauna</a>
             <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
             <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
+        <a href="../kisah-suasana/index.php" class="nav-link flex items-center">
+                <i class="bi bi-images"></i> Suasana Basecamp
+            </a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">

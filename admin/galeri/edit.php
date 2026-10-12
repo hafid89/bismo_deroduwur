@@ -19,6 +19,16 @@ if (!$foto) {
     redirect(BASE_URL . 'admin/galeri/index.php');
 }
 
+// Ambil foto tambahan (slide)
+$fotoTambahan = [];
+try {
+    $stmt = $pdo->prepare("SELECT * FROM galeri_foto WHERE galeri_id = ? ORDER BY urutan, id");
+    $stmt->execute([$id]);
+    $fotoTambahan = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // Tabel galeri_foto belum dibuat
+}
+
 $error = '';
 $success = '';
 
@@ -79,33 +89,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 9. Cek upload foto baru
-    $foto_baru = $foto['foto'];
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        // Cek ukuran file
-        if ($_FILES['foto']['size'] > 5 * 1024 * 1024) {
-            $errors[] = 'Ukuran foto terlalu besar. Maksimal 5MB';
-        } else {
-            // Cek tipe file
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime_type = finfo_file($finfo, $_FILES['foto']['tmp_name']);
-            finfo_close($finfo);
-            
-            if (!in_array($mime_type, $allowed_types)) {
-                $errors[] = 'Tipe file tidak diizinkan. Gunakan JPG, PNG, GIF, atau WEBP';
-            } else {
-                $upload = uploadFile($_FILES['foto'], GALERI_UPLOAD_PATH);
-                if ($upload['success']) {
-                    // Hapus foto lama
-                    if ($foto_baru && file_exists(GALERI_UPLOAD_PATH . $foto_baru)) {
-                        unlink(GALERI_UPLOAD_PATH . $foto_baru);
-                    }
-                    $foto_baru = $upload['filename'];
-                } else {
-                    $errors[] = $upload['message'];
-                }
-            }
+    // 9. Validasi foto sampul baru (opsional)
+    $coverFile = null;
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $coverFile = $_FILES['foto'];
+        $msg = validateImageFile($coverFile);
+        if ($msg !== '') {
+            $errors[] = $msg;
+        }
+    }
+
+    // 10. Validasi foto tambahan (slide)
+    $extraFiles = normalizeUploadedFiles($_FILES['foto_tambahan'] ?? null);
+    $hapusIds = array_map('intval', (array)($_POST['hapus_foto'] ?? []));
+    $jumlahDihapus = count(array_intersect($hapusIds, array_map('intval', array_column($fotoTambahan, 'id'))));
+    if (count($fotoTambahan) - $jumlahDihapus + count($extraFiles) > 9) {
+        $errors[] = 'Maksimal 10 foto per galeri (1 sampul + 9 tambahan)';
+    }
+    foreach ($extraFiles as $f) {
+        $msg = validateImageFile($f);
+        if ($msg !== '') {
+            $errors[] = $msg;
         }
     }
 
@@ -113,14 +117,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($errors)) {
         $error = implode('<br>', $errors);
     } else {
-        $stmt = $pdo->prepare("UPDATE galeri SET judul = ?, kategori = ?, tag = ?, deskripsi = ?, foto = ? WHERE id = ?");
-        if ($stmt->execute([$judul, $kategori, $tag, $deskripsi, $foto_baru, $id])) {
-            $_SESSION['message'] = 'Foto "' . htmlspecialchars($judul) . '" berhasil diupdate!';
-            $_SESSION['message_type'] = 'success';
-            redirect(BASE_URL . 'admin/galeri/index.php');
-        } else {
-            $errors[] = 'Gagal mengupdate foto. Silakan coba lagi.';
+        $uploadedNew = [];          // file baru yang diupload (untuk dibersihkan bila gagal)
+        $foto_baru = $foto['foto'];
+        $foto_lama_dihapus = null;
+        $extraUploaded = [];
+
+        // Upload sampul baru
+        if ($coverFile) {
+            $up = uploadFile($coverFile, GALERI_UPLOAD_PATH);
+            if ($up['success']) {
+                $foto_baru = $up['filename'];
+                $uploadedNew[] = $up['filename'];
+                $foto_lama_dihapus = $foto['foto'];
+            } else {
+                $errors[] = $up['message'];
+            }
+        }
+
+        // Upload foto tambahan baru
+        if (empty($errors)) {
+            foreach ($extraFiles as $f) {
+                $up = uploadFile($f, GALERI_UPLOAD_PATH);
+                if (!$up['success']) {
+                    $errors[] = $up['message'];
+                    break;
+                }
+                $extraUploaded[] = $up['filename'];
+                $uploadedNew[] = $up['filename'];
+            }
+        }
+
+        if (!empty($errors)) {
+            foreach ($uploadedNew as $u) {
+                @unlink(GALERI_UPLOAD_PATH . $u);
+            }
             $error = implode('<br>', $errors);
+        } else {
+            try {
+                $pdo->beginTransaction();
+
+                $stmt = $pdo->prepare("UPDATE galeri SET judul = ?, kategori = ?, tag = ?, deskripsi = ?, foto = ? WHERE id = ?");
+                $stmt->execute([$judul, $kategori, $tag, $deskripsi, $foto_baru, $id]);
+
+                // Hapus foto tambahan yang dicentang
+                $fileUntukDihapus = [];
+                $stmtCari = $pdo->prepare("SELECT foto FROM galeri_foto WHERE id = ? AND galeri_id = ?");
+                $stmtHapus = $pdo->prepare("DELETE FROM galeri_foto WHERE id = ? AND galeri_id = ?");
+                foreach ($hapusIds as $fid) {
+                    $stmtCari->execute([$fid, $id]);
+                    if ($row = $stmtCari->fetch()) {
+                        $stmtHapus->execute([$fid, $id]);
+                        $fileUntukDihapus[] = basename($row['foto']);
+                    }
+                }
+
+                // Simpan foto tambahan baru
+                if ($extraUploaded) {
+                    $stmtMax = $pdo->prepare("SELECT COALESCE(MAX(urutan), 0) FROM galeri_foto WHERE galeri_id = ?");
+                    $stmtMax->execute([$id]);
+                    $urutan = (int)$stmtMax->fetchColumn();
+                    $stmtIns = $pdo->prepare("INSERT INTO galeri_foto (galeri_id, foto, urutan) VALUES (?, ?, ?)");
+                    foreach ($extraUploaded as $namaFile) {
+                        $stmtIns->execute([$id, $namaFile, ++$urutan]);
+                    }
+                }
+
+                $pdo->commit();
+
+                // Hapus file fisik setelah database berhasil
+                foreach ($fileUntukDihapus as $f) {
+                    @unlink(GALERI_UPLOAD_PATH . $f);
+                }
+                if ($foto_lama_dihapus) {
+                    @unlink(GALERI_UPLOAD_PATH . basename($foto_lama_dihapus));
+                }
+
+                $_SESSION['message'] = 'Foto "' . htmlspecialchars($judul) . '" berhasil diupdate!';
+                $_SESSION['message_type'] = 'success';
+                redirect(BASE_URL . 'admin/galeri/index.php');
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                foreach ($uploadedNew as $u) {
+                    @unlink(GALERI_UPLOAD_PATH . $u);
+                }
+                $error = 'Gagal mengupdate galeri. Pastikan tabel galeri_foto sudah dibuat.';
+            }
         }
     }
 }
@@ -222,7 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 8px;
         }
         .error-list li::before {
-            content: '<i class="bi bi-exclamation-triangle"></i>';
+            content: '⚠';
             flex-shrink: 0;
         }
         .alert-error {
@@ -285,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-person-circle text-lg"></i></div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -296,8 +379,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
             <a href="../berita/index.php" class="nav-link"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita</a>
             <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-image"></i></span> Galeri</a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-tree"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-feather"></i></span> Fauna</a>
             <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
             <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
         </nav>
@@ -316,7 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div>
                 <p class="text-sm text-[#8a7e72] font-medium"><i class="bi bi-image"></i> Edit Galeri</p>
                 <h1 class="text-2xl font-bold text-[#1e3a2a]">Edit Foto</h1>
-                <p class="text-sm text-[#8a7e72]">Edit data foto di galeri</p>
+                <p class="text-sm text-[#8a7e72]">Edit data dan foto di galeri</p>
             </div>
             <a href="index.php" class="text-[#4a7a4e] hover:text-[#2a4a35] font-medium flex items-center gap-1 transition duration-300">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -342,12 +425,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="card-form animate-in delay-2">
             <form method="POST" action="" enctype="multipart/form-data">
 
-                <!-- Preview Foto -->
+                <!-- Preview Foto Saat Ini -->
                 <div class="mb-6 flex items-center gap-4 p-4 bg-[#faf7f2] rounded-xl border border-[#f0ebe6]">
                     <div class="w-20 h-20 rounded-lg overflow-hidden border border-[#e0d8d0] flex-shrink-0">
                         <?php if (!empty($foto['foto']) && file_exists(GALERI_UPLOAD_PATH . $foto['foto'])): ?>
-                        <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
-                             alt="<?= htmlspecialchars($foto['judul']) ?>" 
+                        <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>"
+                             alt="<?= htmlspecialchars($foto['judul']) ?>"
                              class="w-full h-full object-cover">
                         <?php else: ?>
                         <div class="w-full h-full flex items-center justify-center text-2xl text-[#b8aaa0] bg-[#f0ebe6]">
@@ -356,8 +439,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-[#1e3a2a]">Foto saat ini</p>
-                        <p class="text-xs text-[#8a7e72]">Upload foto baru untuk mengganti</p>
+                        <p class="text-sm font-medium text-[#1e3a2a]">Foto sampul saat ini</p>
+                        <p class="text-xs text-[#8a7e72]">Total <?= 1 + count($fotoTambahan) ?> foto di galeri ini</p>
                     </div>
                 </div>
 
@@ -367,9 +450,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Judul Foto <span class="text-red-500">*</span>
                         <span class="text-xs text-gray-400 font-normal">(Minimal 3 karakter, tanpa angka)</span>
                     </label>
-                    <input type="text" name="judul" value="<?= htmlspecialchars($foto['judul']) ?>" 
-                           class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" 
-                           placeholder="Contoh: Pemandangan Puncak Indraprasta" 
+                    <input type="text" name="judul" value="<?= htmlspecialchars($foto['judul']) ?>"
+                           class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none"
+                           placeholder="Contoh: Pemandangan Puncak Indraprasta"
                            required
                            minlength="3"
                            maxlength="255"
@@ -383,9 +466,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Kategori <span class="text-red-500">*</span>
                     </label>
                     <select name="kategori" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" required>
-                        <option value="jalur" <?= $foto['kategori'] == 'jalur' ? 'selected' : '' ?>><i class="bi bi-geo-alt"></i> Jalur</option>
-                        <option value="ekosistem" <?= $foto['kategori'] == 'ekosistem' ? 'selected' : '' ?>><i class="bi bi-leaf"></i> Ekosistem</option>
-                        <option value="kegiatan" <?= $foto['kategori'] == 'kegiatan' ? 'selected' : '' ?>><i class="bi bi-activity"></i> Kegiatan</option>
+                        <option value="jalur" <?= $foto['kategori'] == 'jalur' ? 'selected' : '' ?>>Jalur</option>
+                        <option value="ekosistem" <?= $foto['kategori'] == 'ekosistem' ? 'selected' : '' ?>>Ekosistem</option>
+                        <option value="kegiatan" <?= $foto['kategori'] == 'kegiatan' ? 'selected' : '' ?>>Kegiatan</option>
                     </select>
                     <span class="badge-kategori <?= $foto['kategori'] == 'jalur' ? 'badge-jalur' : ($foto['kategori'] == 'ekosistem' ? 'badge-ekosistem' : 'badge-kegiatan') ?> mt-2 inline-block">
                         Kategori saat ini: <?= ucfirst($foto['kategori']) ?>
@@ -397,9 +480,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="block text-gray-700 font-semibold mb-2">
                         Tag <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
-                    <input type="text" name="tag" value="<?= htmlspecialchars($foto['tag']) ?>" 
-                           class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" 
-                           placeholder="Contoh: puncak,spot,flora" 
+                    <input type="text" name="tag" value="<?= htmlspecialchars($foto['tag']) ?>"
+                           class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none"
+                           placeholder="Contoh: puncak,spot,flora"
                            maxlength="50">
                     <p class="text-xs text-gray-400 mt-1">Maksimal 50 karakter, gunakan koma (,) untuk memisahkan tag</p>
                 </div>
@@ -409,15 +492,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="block text-gray-700 font-semibold mb-2">
                         Deskripsi <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
-                    <textarea name="deskripsi" rows="3" 
-                              class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" 
+                    <textarea name="deskripsi" rows="3"
+                              class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none"
                               placeholder="Tambahkan deskripsi foto..."><?= htmlspecialchars($foto['deskripsi']) ?></textarea>
                 </div>
 
-                <!-- Upload Foto Baru -->
+                <!-- Ganti Foto Sampul -->
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">
-                        Ganti Foto <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                        Ganti Foto Sampul <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
                     </label>
                     <div class="flex items-center justify-center w-full">
                         <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-[#faf7f2] transition duration-300">
@@ -432,10 +515,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </label>
                     </div>
                     <div id="imagePreview" class="mt-3 hidden">
-                        <p class="text-sm text-[#2F5233] font-medium mb-2">Preview:</p>
+                        <p class="text-sm text-[#2F5233] font-medium mb-2">Preview sampul baru:</p>
                         <img id="previewImg" src="#" alt="Preview" class="preview-image w-40 h-32 object-cover rounded-lg shadow-md border border-gray-200">
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Kosongkan jika tidak ingin mengubah foto</p>
+                    <p class="text-xs text-gray-500 mt-2">Kosongkan jika tidak ingin mengubah foto sampul</p>
+                </div>
+
+                <!-- Foto Tambahan (Slide) -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Foto Tambahan (Slide) <span class="text-xs text-gray-400 font-normal">(Opsional, maks 9 foto)</span>
+                    </label>
+
+                    <?php if (!empty($fotoTambahan)): ?>
+                    <p class="text-xs text-gray-500 mb-2">Foto tambahan saat ini. Centang "Hapus" lalu klik Update untuk menghapus.</p>
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        <?php foreach ($fotoTambahan as $ft): ?>
+                        <div>
+                            <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($ft['foto']) ?>" alt=""
+                                 class="w-28 h-24 object-cover rounded-lg border border-gray-200">
+                            <label class="mt-1 flex items-center gap-1 text-xs text-red-600 cursor-pointer">
+                                <input type="checkbox" name="hapus_foto[]" value="<?= (int)$ft['id'] ?>"> Hapus
+                            </label>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+
+                    <input type="file" name="foto_tambahan[]" accept="image/*" multiple
+                           class="block w-full rounded-xl border border-gray-300 bg-white p-2 text-sm"
+                           onchange="previewExtra(this)">
+                    <p class="text-xs text-gray-500 mt-2">Pilih beberapa foto sekaligus. Foto ini tampil sebagai slide setelah foto sampul.</p>
+                    <div id="extraPreview" class="mt-3 flex flex-wrap gap-2"></div>
                 </div>
 
                 <!-- Tombol Aksi -->
@@ -459,11 +570,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
-// Preview image sebelum upload
+// Preview sampul baru
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
-    
+
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -474,32 +585,59 @@ function previewImage(input) {
     }
 }
 
+// Preview foto tambahan baru
+function previewExtra(input) {
+    const box = document.getElementById('extraPreview');
+    box.innerHTML = '';
+    Array.from(input.files || []).forEach(function(file) {
+        const img = document.createElement('img');
+        img.className = 'preview-image w-28 h-24 object-cover rounded-lg shadow-md border border-gray-200';
+        img.alt = file.name;
+        img.src = URL.createObjectURL(file);
+        box.appendChild(img);
+    });
+}
+
 // Validasi form sebelum submit
 document.querySelector('form').addEventListener('submit', function(e) {
     const judul = document.querySelector('input[name="judul"]').value.trim();
     const kategori = document.querySelector('select[name="kategori"]').value;
-    
-    // Cek judul minimal 3 karakter
+
     if (judul.length < 3) {
         e.preventDefault();
         alert('❌ Judul foto minimal 3 karakter!');
         return false;
     }
-    
-    // Cek apakah ada angka di judul
+
     if (/\d/.test(judul)) {
         e.preventDefault();
         alert('❌ Judul foto tidak boleh mengandung angka!');
         return false;
     }
-    
-    // Cek kategori dipilih
+
     if (kategori === '') {
         e.preventDefault();
         alert('❌ Silakan pilih kategori!');
         return false;
     }
-    
+
+    const semuaFile = []
+        .concat(Array.from(document.querySelector('input[name="foto"]').files || []))
+        .concat(Array.from(document.querySelector('input[name="foto_tambahan[]"]').files || []));
+
+    for (const f of semuaFile) {
+        if (/\.(heic|heif)$/i.test(f.name)) {
+            e.preventDefault();
+            alert('❌ ' + f.name + ': format HEIC/HEIF belum didukung. Konversi ke JPG, PNG, atau WEBP.');
+            return false;
+        }
+        if (f.size > 5 * 1024 * 1024) {
+            e.preventDefault();
+            alert('❌ ' + f.name + ' lebih dari 5MB!');
+            return false;
+        }
+    }
+
     return true;
 });
 </script>

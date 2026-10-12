@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
+$spotCoordinates = require __DIR__ . '/../../includes/spot-coordinates.php';
 
 if (!isLoggedIn()) {
     redirect(BASE_URL . 'admin/login.php');
@@ -30,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deskripsi = trim($_POST['deskripsi']);
     $jenis = $_POST['jenis'];
     $urutan = (int)$_POST['urutan'];
+    $latitude = trim($_POST['latitude'] ?? '');
+    $longitude = trim($_POST['longitude'] ?? '');
     $foto = $spot['foto'];
 
     // ========== VALIDASI ==========
@@ -51,6 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Jenis tidak valid. Pilih: spot, flora, fauna, atau wilayah';
     }
     if ($urutan < 0) $errors[] = 'Urutan harus berupa angka positif';
+
+    if (($latitude === '') !== ($longitude === '')) {
+        $errors[] = 'Latitude dan longitude harus diisi berpasangan';
+    } elseif ($latitude !== '' && (!is_numeric($latitude) || !is_numeric($longitude) || $latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180)) {
+        $errors[] = 'Koordinat tidak valid';
+    }
 
     // Cek duplikat nama (kecuali dirinya sendiri)
     if (!empty($nama)) {
@@ -84,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($errors)) {
         $error = implode('<br>', $errors);
     } else {
-        $stmt = $pdo->prepare("UPDATE spot_jalur SET nama = ?, posisi = ?, ketinggian = ?, estimasi_waktu = ?, deskripsi = ?, foto = ?, jenis = ?, urutan = ? WHERE id = ?");
-        if ($stmt->execute([$nama, $posisi, $ketinggian, $estimasi_waktu, $deskripsi, $foto, $jenis, $urutan, $id])) {
+        $stmt = $pdo->prepare("UPDATE spot_jalur SET nama = ?, posisi = ?, ketinggian = ?, estimasi_waktu = ?, deskripsi = ?, foto = ?, jenis = ?, urutan = ?, latitude = ?, longitude = ? WHERE id = ?");
+        if ($stmt->execute([$nama, $posisi, $ketinggian, $estimasi_waktu, $deskripsi, $foto, $jenis, $urutan, $latitude === '' ? null : $latitude, $longitude === '' ? null : $longitude, $id])) {
             $_SESSION['message'] = 'Spot "' . htmlspecialchars($nama) . '" berhasil diupdate!';
             $_SESSION['message_type'] = 'success';
             redirect(BASE_URL . 'admin/spot-jalur/index.php');
@@ -244,6 +253,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="posisi" value="<?= htmlspecialchars($spot['posisi']) ?>" 
                            class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" 
                            required maxlength="50">
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 mb-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Latitude <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                        <input type="number" name="latitude" step="any" min="-90" max="90" value="<?= htmlspecialchars($spot['latitude'] ?? $spotCoordinates[$spot['nama']]['lat'] ?? '') ?>" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" placeholder="-7.2771094">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Longitude <span class="text-xs text-gray-400 font-normal">(Opsional)</span></label>
+                        <input type="number" name="longitude" step="any" min="-180" max="180" value="<?= htmlspecialchars($spot['longitude'] ?? $spotCoordinates[$spot['nama']]['lng'] ?? '') ?>" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" placeholder="109.8825220">
+                    </div>
                 </div>
 
                 <!-- Ketinggian -->

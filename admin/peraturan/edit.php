@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <select name="kategori" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" required>
                         <option value="kewajiban" <?= $peraturan['kategori'] == 'kewajiban' ? 'selected' : '' ?>><i class="bi bi-pin"></i> Kewajiban</option>
                         <option value="larangan" <?= $peraturan['kategori'] == 'larangan' ? 'selected' : '' ?>><i class="bi bi-slash-circle"></i> Larangan</option>
-                        <option value="fasilitas" <?= $peraturan['kategori'] == 'fasilitas' ? 'selected' : '' ?>><i class="bi bi-check-circle"></i> Fasilitas</option>
+                       
                     </select>
                 </div>
 

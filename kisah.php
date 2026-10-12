@@ -1,5 +1,14 @@
 
-<?php require_once __DIR__ . '/includes/config.php'; ?>
+<?php
+require_once __DIR__ . '/includes/config.php';
+$stmt = $pdo->query('SELECT * FROM kisah_suasana ORDER BY created_at DESC, id DESC');
+$suasanaPhotos = $stmt->fetchAll();
+if (!$suasanaPhotos) {
+    $suasanaPhotos = array_map(static function ($photo) {
+        return ['foto' => $photo, 'legacy' => true];
+    }, ['suasana1.jpg', 'suasana2.jpg', 'suasana3.jpg', 'suasana4.jpg']);
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -338,22 +347,16 @@
         </p>
 
         <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6">
-            <!-- Foto 1 -->
-            <div class="zoom-card" onclick="openLightbox('<?= BASE_URL ?>assets/images/kisah/suasana/suasana1.jpg')">
-                <img src="<?= BASE_URL ?>assets/images/kisah/suasana/suasana1.jpg" alt="Suasana Basecamp 1" loading="lazy">
-            </div>
-            <!-- Foto 2 -->
-            <div class="zoom-card" onclick="openLightbox('<?= BASE_URL ?>assets/images/kisah/suasana/suasana2.jpg')">
-                <img src="<?= BASE_URL ?>assets/images/kisah/suasana/suasana2.jpg" alt="Suasana Basecamp 2" loading="lazy">
-            </div>
-            <!-- Foto 3 -->
-            <div class="zoom-card" onclick="openLightbox('<?= BASE_URL ?>assets/images/kisah/suasana/suasana3.jpg')">
-                <img src="<?= BASE_URL ?>assets/images/kisah/suasana/suasana3.jpg" alt="Suasana Basecamp 3" loading="lazy">
-            </div>
-            <!-- Foto 4 -->
-            <div class="zoom-card" onclick="openLightbox('<?= BASE_URL ?>assets/images/kisah/suasana/suasana4.jpg')">
-                <img src="<?= BASE_URL ?>assets/images/kisah/suasana/suasana4.jpg" alt="Suasana Basecamp 4" loading="lazy">
-            </div>
+            <?php foreach ($suasanaPhotos as $index => $photo):
+                $isLegacyPhoto = !empty($photo['legacy']);
+                $imageUrl = $isLegacyPhoto
+                    ? BASE_URL . 'assets/images/kisah/suasana/' . rawurlencode($photo['foto'])
+                    : BASE_URL . 'uploads/kisah-suasana/' . rawurlencode($photo['foto']);
+            ?>
+            <button type="button" class="zoom-card text-left" data-image="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>" onclick="openLightbox(this.dataset.image)" aria-label="Lihat foto suasana basecamp <?= $index + 1 ?>">
+                <img src="<?= htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') ?>" alt="Suasana Basecamp <?= $index + 1 ?>" loading="lazy">
+            </button>
+            <?php endforeach; ?>
         </div>
 
         <p class="text-center text-sm text-[#A9784B] mt-6">* Klik foto untuk melihat ukuran penuh</p>

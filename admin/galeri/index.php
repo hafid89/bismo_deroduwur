@@ -6,7 +6,7 @@ if (!isLoggedIn()) {
     redirect(BASE_URL . 'admin/login.php');
 }
 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 12;
 $offset = ($page - 1) * $limit;
 
@@ -18,6 +18,16 @@ $limit = intval($limit);
 $offset = intval($offset);
 $stmt = $pdo->query("SELECT * FROM galeri ORDER BY created_at DESC LIMIT $limit OFFSET $offset");
 $galeri_list = $stmt->fetchAll();
+
+// Jumlah foto tambahan per galeri
+$extraCount = [];
+try {
+    foreach ($pdo->query("SELECT galeri_id, COUNT(*) AS jumlah FROM galeri_foto GROUP BY galeri_id") as $r) {
+        $extraCount[$r['galeri_id']] = (int)$r['jumlah'];
+    }
+} catch (PDOException $e) {
+    // Tabel galeri_foto belum dibuat
+}
 
 // Pesan sukses/error dari session
 $message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
@@ -134,6 +144,20 @@ $kategori_stats = $stmt->fetchAll();
         }
         .gallery-card:hover .image-wrap img {
             transform: scale(1.05);
+        }
+        .gallery-card .photo-count {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         .gallery-card .body {
             padding: 14px 16px 16px;
@@ -257,7 +281,9 @@ $kategori_stats = $stmt->fetchAll();
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar w-[220px] flex-shrink-0 h-full flex flex-col p-4">
         <div class="flex items-center gap-3 px-2 py-4 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl"><i class="bi bi-mountain text-lg"></i></div>
+            <div class="w-10 h-10 rounded-xl bg-[#E0BE45]/20 flex items-center justify-center text-xl">
+                <i class="bi bi-person-circle text-lg"></i>
+            </div>
             <div>
                 <p class="text-white font-bold text-sm leading-tight">Gunung Bismo</p>
                 <p class="text-[#b8c9b0] text-[10px] font-medium tracking-wider">PANEL ADMIN</p>
@@ -268,10 +294,11 @@ $kategori_stats = $stmt->fetchAll();
             <a href="../dashboard.php" class="nav-link"><span class="icon"><i class="bi bi-bar-chart"></i></span> Dashboard</a>
             <a href="../berita/index.php" class="nav-link"><span class="icon"><i class="bi bi-newspaper"></i></span> Berita</a>
             <a href="index.php" class="nav-link active"><span class="icon"><i class="bi bi-image"></i></span> Galeri <span class="badge"><?= $total ?></span></a>
-            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-leaf"></i></span> Flora</a>
-            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-paw"></i></span> Fauna</a>
+            <a href="../flora/index.php" class="nav-link"><span class="icon"><i class="bi bi-tree"></i></span> Flora</a>
+            <a href="../fauna/index.php" class="nav-link"><span class="icon"><i class="bi bi-feather"></i></span> Fauna</a>
             <a href="../peraturan/index.php" class="nav-link"><span class="icon"><i class="bi bi-list-check"></i></span> Peraturan</a>
             <a href="../spot-jalur/index.php" class="nav-link"><span class="icon"><i class="bi bi-geo-alt"></i></span> Spot Jalur</a>
+            <a href="../kisah-suasana/index.php" class="nav-link"><span class="icon"><i class="bi bi-images"></i></span> Suasana Basecamp</a>
         </nav>
 
         <div class="pt-4 border-t border-white/10 mt-auto">
@@ -305,7 +332,7 @@ $kategori_stats = $stmt->fetchAll();
         <!-- Statistik -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
             <div class="stat-card animate-in delay-2">
-                <p class="label">Total Foto</p>
+                <p class="label">Total Galeri</p>
                 <p class="num"><?= $total ?></p>
             </div>
             <div class="stat-card animate-in delay-3">
@@ -327,7 +354,7 @@ $kategori_stats = $stmt->fetchAll();
         <!-- Kategori Stats -->
         <?php if (!empty($kategori_stats)): ?>
         <div class="flex flex-wrap gap-2 mb-6 animate-in delay-3">
-            <?php 
+            <?php
             $badgeClass = ['jalur' => 'badge-jalur', 'ekosistem' => 'badge-ekosistem', 'kegiatan' => 'badge-kegiatan'];
             foreach ($kategori_stats as $k):
             ?>
@@ -350,14 +377,18 @@ $kategori_stats = $stmt->fetchAll();
         </div>
         <?php else: ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <?php foreach ($galeri_list as $index => $foto): 
+            <?php foreach ($galeri_list as $index => $foto):
                 $delay = 'delay-' . (min(($index % 6) + 1, 6));
                 $badgeClass = $foto['kategori'] == 'jalur' ? 'badge-jalur' : ($foto['kategori'] == 'ekosistem' ? 'badge-ekosistem' : 'badge-kegiatan');
+                $jumlahFoto = 1 + ($extraCount[$foto['id']] ?? 0);
             ?>
             <div class="gallery-card animate-in <?= $delay ?>">
                 <div class="image-wrap">
-                    <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>" 
+                    <img src="<?= BASE_URL ?>uploads/galeri/<?= htmlspecialchars($foto['foto']) ?>"
                          alt="<?= htmlspecialchars($foto['judul']) ?>">
+                    <?php if ($jumlahFoto > 1): ?>
+                    <span class="photo-count"><i class="bi bi-images"></i> <?= $jumlahFoto ?> foto</span>
+                    <?php endif; ?>
                 </div>
                 <div class="body">
                     <div class="flex items-start justify-between gap-2">
@@ -373,7 +404,7 @@ $kategori_stats = $stmt->fetchAll();
                     <div class="mt-3 pt-3 border-t border-[#f0ebe6] flex items-center gap-3">
                         <a href="edit.php?id=<?= $foto['id'] ?>" class="btn-edit text-xs">Edit</a>
                         <span class="text-[#e0d8d0]">|</span>
-                        <a href="hapus.php?id=<?= $foto['id'] ?>" class="btn-delete text-xs" onclick="return confirm('Yakin ingin menghapus foto ini?')">Hapus</a>
+                        <a href="hapus.php?id=<?= $foto['id'] ?>" class="btn-delete text-xs" onclick="return confirm('Yakin ingin menghapus galeri ini beserta semua fotonya?')">Hapus</a>
                     </div>
                 </div>
             </div>
@@ -387,14 +418,14 @@ $kategori_stats = $stmt->fetchAll();
             <a href="?page=<?= $page - 1 ?>" class="pagination-btn">‹</a>
             <?php endif; ?>
 
-            <?php 
+            <?php
             $start = max(1, $page - 2);
             $end = min($totalPages, $page + 2);
             if ($start > 1) { echo '<a href="?page=1" class="pagination-btn">1</a>'; if ($start > 2) echo '<span class="text-[#b8aaa0] px-1">…</span>'; }
             for ($i = $start; $i <= $end; $i++):
             ?>
             <a href="?page=<?= $i ?>" class="pagination-btn <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
-            <?php endfor; 
+            <?php endfor;
             if ($end < $totalPages) { if ($end < $totalPages - 1) echo '<span class="text-[#b8aaa0] px-1">…</span>'; echo '<a href="?page='.$totalPages.'" class="pagination-btn">'.$totalPages.'</a>'; }
             ?>
 

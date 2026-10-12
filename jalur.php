@@ -3,22 +3,7 @@
 $stmt = $pdo->query("SELECT * FROM spot_jalur ORDER BY urutan ASC");
 $spots = $stmt->fetchAll();
 
-// Koordinat spot yang sudah ditentukan
-$spotCoordinates = [
-    'Basecamp Deroduwur' => ['lat' => -7.277109360392517, 'lng' => 109.88252197062681],
-    'Pos Ojek' => ['lat' => -7.2767872, 'lng' => 109.8826357],
-    'Hutan Pakis' => ['lat' => -7.2757148, 'lng' => 109.8825928],
-    'Pos I' => ['lat' => -7.261790953381199, 'lng' => 109.88517987714762],
-    'Banyu Bismo' => ['lat' => -7.261247285357853, 'lng' => 109.88578710849409],
-    'Kantong Semar' => ['lat' => -7.2608867, 'lng' => 109.8852702],
-    'Pos II' => ['lat' => -7.257795841701307, 'lng' => 109.88617187577394],
-    'Pos III' => ['lat' => -7.252985478281804, 'lng' => 109.88824678002217],
-    'Tanjakan Jalak Wangi' => ['lat' => -7.2524526, 'lng' => 109.8885454],
-    'Pos IV' => ['lat' => -7.2500403947923155, 'lng' => 109.88889473470591],
-    'Sunrise Camp' => ['lat' => -7.24736831503517, 'lng' => 109.88807604023916],
-    'Puncak Hastinapura' => ['lat' => -7.2472013510496085, 'lng' => 109.88833085009672],
-    'Puncak Indraprasta' => ['lat' => -7.239103523689495, 'lng' => 109.88885808274736],
-];
+$spotCoordinates = require __DIR__ . '/includes/spot-coordinates.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -164,6 +149,14 @@ $spotCoordinates = [
 
         .marker-spot {
             background: #eab308;
+        }
+
+        .marker-flora {
+            background: #2f855a;
+        }
+
+        .marker-fauna {
+            background: #0f766e;
         }
 
         .custom-popup .leaflet-popup-content-wrapper {
@@ -591,7 +584,9 @@ const spotData = <?php
     $data = [];
     foreach ($spots as $spot) {
         $nama = $spot['nama'];
-        $coord = $spotCoordinates[$nama] ?? null;
+        $coord = isset($spot['latitude'], $spot['longitude']) && $spot['latitude'] !== '' && $spot['longitude'] !== ''
+            ? ['lat' => (float)$spot['latitude'], 'lng' => (float)$spot['longitude']]
+            : ($spotCoordinates[$nama] ?? null);
         if ($coord) {
             $data[] = [
                 'nama' => $nama,
@@ -906,6 +901,8 @@ function getMarkerIcon(spot) {
     let className = 'custom-marker';
     if (isBasecamp) className += ' marker-basecamp';
     else if (isPuncak) className += ' marker-puncak';
+    else if (spot.jenis === 'flora') className += ' marker-flora';
+    else if (spot.jenis === 'fauna') className += ' marker-fauna';
     else if (isPos) className += ' marker-pos';
     else className += ' marker-spot';
     
@@ -919,19 +916,24 @@ function getMarkerIcon(spot) {
 function addMarkers() {
     markerLayer = L.layerGroup().addTo(map);
 
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    })[character]);
+
     spotData.forEach((spot, index) => {
         const icon = getMarkerIcon(spot);
         const marker = L.marker([spot.lat, spot.lng], { icon: icon });
         
-        const fotoUrl = spot.foto ? `${BASE_URL}uploads/spot/${spot.foto}` : `${BASE_URL}assets/images/default-spot.jpg`;
-        const fotoHtml = spot.foto ? `<img src="${fotoUrl}" alt="${spot.nama}" class="popup-image" onclick="event.stopPropagation(); openLightbox('${fotoUrl}')">` : '';
+        const fotoUrl = spot.foto ? `${BASE_URL}uploads/spot/${encodeURIComponent(spot.foto)}` : `${BASE_URL}assets/images/default-spot.jpg`;
+        const fotoHtml = spot.foto ? `<img src="${escapeHtml(fotoUrl)}" alt="${escapeHtml(spot.nama)}" class="popup-image" onclick="event.stopPropagation(); openLightbox('${escapeHtml(fotoUrl)}')">` : '';
+        const typeIcon = spot.jenis === 'flora' ? '🌿' : (spot.jenis === 'fauna' ? '🐾' : '📍');
         
         const popupContent = `
             <div class="popup-content">
-                <h3>${spot.nama}</h3>
-                ${spot.ketinggian ? `<p>📏 ${spot.ketinggian}</p>` : ''}
-                ${spot.estimasi_waktu ? `<p>⏱️ ${spot.estimasi_waktu}</p>` : ''}
-                ${spot.deskripsi ? `<p class="text-gray-500 text-xs">${spot.deskripsi}</p>` : ''}
+            <h3>${typeIcon} ${escapeHtml(spot.nama)}</h3>
+            ${spot.ketinggian ? `<p>📏 ${escapeHtml(spot.ketinggian)}</p>` : ''}
+            ${spot.estimasi_waktu ? `<p>⏱️ ${escapeHtml(spot.estimasi_waktu)}</p>` : ''}
+            ${spot.deskripsi ? `<p class="text-gray-500 text-xs">${escapeHtml(spot.deskripsi)}</p>` : ''}
                 ${fotoHtml}
             </div>
         `;

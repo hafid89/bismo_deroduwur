@@ -23,7 +23,9 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = trim($_POST['judul']);
-    $isi = trim($_POST['isi']);
+    $isi = sanitizeRichText(trim($_POST['isi'] ?? ''));
+    $isiPlainText = trim(html_entity_decode(strip_tags($isi), ENT_QUOTES, 'UTF-8'));
+    $berita['isi'] = $isi;
     $tanggal = $_POST['tanggal'];
     $foto = $berita['foto'];
 
@@ -33,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($isi)) $errors[] = 'Isi berita wajib diisi';
     if (empty($tanggal)) $errors[] = 'Tanggal berita wajib diisi';
     if (strlen($judul) < 5) $errors[] = 'Judul berita minimal 5 karakter';
-    if (strlen($isi) < 10) $errors[] = 'Isi berita minimal 10 karakter';
+    if (strlen($isiPlainText) < 10) $errors[] = 'Isi berita minimal 10 karakter';
     if ($tanggal > date('Y-m-d')) $errors[] = 'Tanggal tidak boleh lebih dari hari ini';
 
     // Cek judul duplikat
@@ -204,7 +206,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">Isi Berita <span class="text-red-500">*</span> <span class="text-xs text-gray-400 font-normal">(Minimal 10 karakter)</span></label>
-                    <textarea name="isi" rows="8" class="form-input w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none" required minlength="10"><?= htmlspecialchars($berita['isi']) ?></textarea>
+                    <div class="mb-2 flex flex-wrap gap-2" id="editorToolbar">
+                        <button type="button" data-command="bold" class="rounded border px-3 py-1 font-bold" aria-label="Tebalkan">B</button>
+                        <button type="button" data-command="italic" class="rounded border px-3 py-1 italic" aria-label="Miring">I</button>
+                        <button type="button" data-command="underline" class="rounded border px-3 py-1 underline" aria-label="Garis bawah">U</button>
+                        <button type="button" data-command="insertUnorderedList" class="rounded border px-3 py-1">• Daftar</button>
+                        <button type="button" data-command="formatBlock" data-value="h2" class="rounded border px-3 py-1">Judul</button>
+                        <select id="fontFamily" class="rounded border px-2 py-1" aria-label="Jenis huruf">
+                            <option value="Arial">Arial</option><option value="Georgia">Georgia</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option><option value="Trebuchet MS">Trebuchet MS</option>
+                        </select>
+                        <select id="fontSize" class="rounded border px-2 py-1" aria-label="Ukuran huruf">
+                            <option value="2">Kecil</option><option value="3" selected>Normal</option><option value="4">Besar</option><option value="5">Judul</option>
+                        </select>
+                    </div>
+                    <div id="articleEditor" contenteditable="true" role="textbox" aria-multiline="true" class="form-input min-h-64 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 focus:outline-none"><?= sanitizeRichText($berita['isi']) ?></div>
+                    <textarea name="isi" id="articleContent" class="hidden"><?= htmlspecialchars($berita['isi']) ?></textarea>
                 </div>
 
                 <div class="flex gap-3">
@@ -217,5 +233,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="text-center text-[10px] text-[#b8aaa0] mt-8 tracking-wider border-t border-[#f0ebe6] pt-4">© <?= date('Y') ?> Gunung Bismo via Deroduwur · KKN 84.384 UPNVYK</p>
     </main>
 </div>
+<script>
+const articleEditor = document.getElementById('articleEditor');
+const articleContent = document.getElementById('articleContent');
+document.getElementById('editorToolbar').addEventListener('mousedown', function(event) {
+    if (event.target.closest('button')) event.preventDefault();
+});
+document.querySelectorAll('#editorToolbar [data-command]').forEach(function(button) {
+    button.addEventListener('click', function() {
+        document.execCommand(this.dataset.command, false, this.dataset.value || null);
+        articleEditor.focus();
+    });
+});
+document.getElementById('fontFamily').addEventListener('change', function() {
+    document.execCommand('fontName', false, this.value);
+    articleEditor.focus();
+});
+document.getElementById('fontSize').addEventListener('change', function() {
+    document.execCommand('fontSize', false, this.value);
+    articleEditor.focus();
+});
+document.querySelector('form').addEventListener('submit', function(event) {
+    articleContent.value = articleEditor.innerHTML;
+    if (articleEditor.innerText.trim().length < 10) {
+        event.preventDefault();
+        alert('Isi berita minimal 10 karakter.');
+        articleEditor.focus();
+    }
+});
+</script>
 </body>
 </html>
